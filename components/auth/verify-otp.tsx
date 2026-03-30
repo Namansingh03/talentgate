@@ -63,7 +63,7 @@ export default function VerifyOtp() {
       }
 
       toast.success("Otp verified successfully", { description: formatDate() });
-      router.push(`/setUsername/${email}`);
+      router.push(`/setUsername`);
     });
   }, [email, otp, router]);
 
@@ -77,7 +77,7 @@ export default function VerifyOtp() {
       if (res.error) {
         if (res.error.status === 429) {
           setStateError("please wait too many requests");
-          setTimer(60); // sync with backend
+          setTimer(60);
           return;
         }
 

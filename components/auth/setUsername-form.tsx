@@ -17,7 +17,6 @@ import { generateUsernameSuggestions } from "@/helpers/getUsernameSuggestions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
-import { CircleCheckBig, CircleOff } from "lucide-react";
 
 const SetUsernameForm = () => {
   const { data: session, isPending } = authClient.useSession();
@@ -113,40 +112,41 @@ const SetUsernameForm = () => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="">
         <div className="space-y-2">
-          <Label htmlFor="username">Username</Label>
+          <Label
+            htmlFor="username"
+            className="flex items-center justify-between"
+          >
+            Username
+            {isAvailable ? (
+              <span className="text-xs text-green-600">available</span>
+            ) : (
+              <span className="text-xs text-red-600">unavailable</span>
+            )}
+          </Label>
           <Input id="username" value={username} onChange={handleChange} />
-          {isAvailable ? (
-            <CircleCheckBig className="text-green-600" />
-          ) : (
-            <CircleOff className="text-red-600" />
-          )}
         </div>
 
         {suggestions.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mt-1">
             {suggestions.map((u) => (
-              <button
+              <p
                 key={u}
                 onClick={() => setUsername(u)}
-                className="px-3 py-1 text-sm rounded-full border hover:bg-muted transition"
+                className="text-xs text-blue-700 cursor-pointer"
               >
                 {u}
-              </button>
+              </p>
             ))}
           </div>
         )}
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground mt-5">
           This will be your public identity.
         </p>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
-
-        {!error && username && (
-          <p className="text-sm text-green-600">Username looks good ✅</p>
-        )}
       </CardContent>
 
       <CardFooter className="flex flex-col gap-3">

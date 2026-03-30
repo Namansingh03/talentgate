@@ -1,3 +1,5 @@
+"use server";
+
 import prismaDb from "@/lib/db";
 
 async function generateUsernameSuggestions(displayName: string) {
@@ -8,12 +10,12 @@ async function generateUsernameSuggestions(displayName: string) {
     .replace(/\s+/g, " ");
 
   const parts = base.split(" ");
-  const first = parts[0] || "user"; // fallback
+  const first = parts[0] || "user";
   const last = parts.slice(1).join("") || "";
 
   const suggestions = new Set<string>();
 
-  const randomNum = () => Math.floor(100 + Math.random() * 900); // 3 digit
+  const randomNum = () => Math.floor(100 + Math.random() * 900);
 
   // basic
   suggestions.add(first);

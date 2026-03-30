@@ -12,22 +12,85 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  CANDIDATE
+  EMPLOYER
+  ADMIN
+}
+
 model User {
-  id            String    @id
+  id            String   @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  username      String?
+  role          Role     @default(CANDIDATE)
 
-  username String?
+  candidateProfile CandidateProfile?
+  sessions         Session[]
+  accounts         Account[]
 
   @@unique([email])
   @@unique([username])
   @@map("user")
+}
+
+model CandidateProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  bio          String?  @db.Text
+  headline     String?
+  location     String?
+  resumeUrl    String?
+  portfolioUrl String?
+  linkedinUrl  String?
+  githubUrl    String?
+  skills       String[]
+  isOpenToWork Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  //* applications Application[]
+  education  Education[]
+  experience WorkExperience[]
+
+  @@index([userId])
+}
+
+model Education {
+  id          String    @id @default(cuid())
+  profileId   String
+  school      String
+  degree      String
+  field       String
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+  description String?   @db.Text
+
+  profile CandidateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model WorkExperience {
+  id          String    @id @default(cuid())
+  profileId   String
+  company     String
+  title       String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+  description String?   @db.Text
+
+  profile CandidateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
 }
 
 model Session {
