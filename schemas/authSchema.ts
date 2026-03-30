@@ -21,4 +21,9 @@ const SignUpSchema = z
     path: ["confirmPassword"],
   });
 
-export { SignUpSchema };
+const SignInSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export { SignUpSchema, SignInSchema };

@@ -15,7 +15,7 @@ export const auth = betterAuth({
     requireEmailVerificationA: true,
     onExistingUserSignUp: async ({ user }) => {
       void resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
+        from: "talentgate <onboarding@resend.dev>",
         to: user.email,
         subject: "Hello world",
         react: CustomEmail({
@@ -29,7 +29,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
       void resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
+        from: "talentgate <onboarding@resend.dev>",
         to: user.email,
         subject: "Hello world",
         react: VerificationEmail({ name: user.name, verificationUrl: url }),
@@ -41,6 +41,7 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      prompt: "select_account consent",
     },
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,
