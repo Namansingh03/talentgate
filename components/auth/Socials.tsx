@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Field } from "./ui/field";
-import { Button } from "./ui/button";
+import { Field } from "../ui/field";
+import { Button } from "../ui/button";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
 

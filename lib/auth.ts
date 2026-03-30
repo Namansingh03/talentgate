@@ -4,6 +4,8 @@ import resend from "./resend";
 import prismaDb from "./db";
 import CustomEmail from "@/emails/CustomEmailSend";
 import VerificationEmail from "@/emails/VerificationEmail";
+import { emailOTP, username } from "better-auth/plugins";
+import SendVerificationOtp from "@/emails/SendVerificationOtp";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -48,6 +50,36 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  plugins: [
+    username(),
+    emailOTP({
+      resendStrategy: "rotate",
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type === "email-verification") {
+          void resend.emails.send({
+            from: "talentgate <onboarding@resend.dev>",
+            to: email,
+            subject: "Hello world",
+            react: SendVerificationOtp({ otp, type: "email-verification" }),
+          });
+        } else if (type === "forget-password") {
+          void resend.emails.send({
+            from: "talentgate <onboarding@resend.dev>",
+            to: email,
+            subject: "Hello world",
+            react: SendVerificationOtp({ otp, type: "forgot-password" }),
+          });
+        }
+      },
+      allowedAttempts: 5,
+      expiresIn: 600,
+      otpLength: 6,
+      rateLimit: {
+        max: 5,
+        window: 60,
+      },
+    }),
+  ],
   session: {
     expiresIn: 60 * 60 * 24 * 7,
   },

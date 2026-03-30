@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { Loader2 } from "lucide-react";
 import Socials from "./Socials";
+import { useRouter } from "next/navigation";
 
 export function SignupForm({
   className,
@@ -30,6 +31,7 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const [stateError, setStateError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -62,6 +64,8 @@ export function SignupForm({
       toast.success("Sign up successful verify your email", {
         description: formatDate(),
       });
+
+      router.push(`/verify-email/${data.email}`);
     });
   };
 
@@ -145,13 +149,13 @@ export function SignupForm({
             </FieldGroup>
           </form>
           <div className="relative hidden bg-muted md:block">
-            <Image
-              src="/"
+            {/* <Image
+              src=""
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="w-full h-full"
               width={100}
               height={100}
-            />
+            /> */}
           </div>
         </CardContent>
       </Card>
