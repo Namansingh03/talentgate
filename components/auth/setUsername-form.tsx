@@ -79,10 +79,19 @@ const SetUsernameForm = () => {
           return;
         }
 
+        const { data: session } = await authClient.getSession();
+
+        const userRole = session?.user?.role;
+
         toast.success("Username created successfully", {
           description: formatDate(),
         });
-        router.push("/setSkills");
+
+        if (userRole === "EMPLOYER") {
+          router.push("/dashboard");
+        } else {
+          router.push("/candidate/tell-us-more");
+        }
       } else {
         setIsAvailable(false);
         toast.error(error?.message || "username not available", {

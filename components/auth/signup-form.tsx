@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { SignUpSchema } from "@/schemas/authSchema";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
@@ -35,6 +35,8 @@ export function SignupForm({
   const {
     register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors },
   } = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
@@ -43,7 +45,13 @@ export function SignupForm({
       email: "",
       password: "",
       confirmPassword: "",
+      role: "CANDIDATE",
     },
+  });
+  const selectedRole = useWatch({
+    control,
+    name: "role",
+    defaultValue: "CANDIDATE",
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof SignUpSchema>> = (data) => {
@@ -54,6 +62,7 @@ export function SignupForm({
         name: data.name,
         password: data.password,
         callbackURL: "/setUsername",
+        role: data.role,
       });
 
       if (error) {
@@ -81,6 +90,29 @@ export function SignupForm({
                   Enter your email below to create your account
                 </p>
               </div>
+              <Field>
+                <FieldLabel>Who are you?</FieldLabel>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    type="button"
+                    variant={
+                      selectedRole === "CANDIDATE" ? "default" : "outline"
+                    }
+                    onClick={() => setValue("role", "CANDIDATE")}
+                  >
+                    Candidate
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={
+                      selectedRole === "EMPLOYER" ? "default" : "outline"
+                    }
+                    onClick={() => setValue("role", "EMPLOYER")}
+                  >
+                    Employer
+                  </Button>
+                </div>
+              </Field>
               <Field data-invalid={!!errors.name}>
                 <FieldLabel htmlFor="name">Name</FieldLabel>
                 <Input

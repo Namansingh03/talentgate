@@ -50,6 +50,14 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: true,
+      },
+    },
+  },
   plugins: [
     username({
       minUsernameLength: 5,
