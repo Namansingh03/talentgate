@@ -23,16 +23,19 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import Socials from "./Socials";
+import { useRouter } from "next/navigation";
 
 export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter();
   const [stateError, setStateError] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),
@@ -42,22 +45,45 @@ export function SignInForm({
     },
   });
 
+  const onResetPassword = () => {
+    startTransition(async () => {
+      setStateError("");
+
+      const email = getValues("email");
+
+      const {} = await authClient.requestPasswordReset({
+        email,
+        redirectTo: `/reset-password/${email}`,
+      });
+    });
+  };
+
   const onSubmit: SubmitHandler<z.infer<typeof SignInSchema>> = (data) => {
     startTransition(async () => {
       setStateError("");
 
-      const { error } = await authClient.signIn.email({
+      const { data: signInData, error } = await authClient.signIn.email({
         email: data.email,
         password: data.password,
-        callbackURL: "/dashboard",
       });
-
+      console.log("signin data response : ", signInData);
       if (error) {
         setStateError(error.message || "Something went wrong while signin");
         return;
       }
 
       toast.success("Signin successful", { description: formatDate() });
+
+      if (!signInData?.user) {
+        setStateError("Invalid response from server");
+        return;
+      }
+
+      if (!signInData.user.username) {
+        router.push("/setUsername");
+      } else {
+        router.push("/dashboard");
+      }
     });
   };
 
@@ -84,11 +110,12 @@ export function SignInForm({
                 />
                 <FieldError errors={[errors.email]} />
               </Field>
-              <Field data-invalid={!!errors}>
+              <Field data-invalid={!!errors.password}>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <a
                     href="#"
+                    onClick={onResetPassword}
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?

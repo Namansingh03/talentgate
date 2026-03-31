@@ -27,6 +27,19 @@ export const auth = betterAuth({
         }),
       });
     },
+    sendResetPassword: async ({ user, url }) => {
+      await resend.emails.send({
+        from: "talentgate <onboarding@resend.dev>",
+        to: user.email,
+        subject: "Hello world",
+        react: CustomEmail({
+          content: "Reset your password",
+          title: `click on this button to reset your password`,
+          url: url,
+          footerText: "If it was you ignore this email",
+        }),
+      });
+    },
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {

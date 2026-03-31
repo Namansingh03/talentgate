@@ -57,13 +57,15 @@ export function SignupForm({
   const onSubmit: SubmitHandler<z.infer<typeof SignUpSchema>> = (data) => {
     startTransition(async () => {
       setStateError("");
-      const { error } = await authClient.signUp.email({
+      const { data: signupData, error } = await authClient.signUp.email({
         email: data.email,
         name: data.name,
         password: data.password,
         callbackURL: "/setUsername",
         role: data.role,
       });
+
+      console.log("sign up data : ", signupData);
 
       if (error) {
         setStateError(error.message ?? "something went wrong");

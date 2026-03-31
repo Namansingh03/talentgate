@@ -48,10 +48,12 @@ export default function VerifyOtp() {
   const handleVerify = useCallback(() => {
     console.log("Entered OTP:", otp);
     startTransition(async () => {
-      const { error } = await authClient.emailOtp.verifyEmail({
+      const { data, error } = await authClient.emailOtp.verifyEmail({
         email,
         otp,
       });
+
+      console.log("verify otp data : ", data);
 
       if (error) {
         toast.error(

@@ -5,6 +5,7 @@ import {
   Container,
   Text,
   Heading,
+  Button,
 } from "@react-email/components";
 import { Tailwind } from "@react-email/tailwind";
 
@@ -12,12 +13,14 @@ type CustomEmailProps = {
   title: string;
   content: string;
   footerText?: string;
+  url?: string;
 };
 
 export default function CustomEmail({
   title,
   content,
   footerText = "If you didn’t request this, you can safely ignore this email.",
+  url,
 }: CustomEmailProps) {
   return (
     <Html>
@@ -30,7 +33,10 @@ export default function CustomEmail({
             <Heading className="text-xl font-bold mb-4">{title}</Heading>
 
             {/* Content */}
-            <Text className="text-sm mb-4 whitespace-pre-line">{content}</Text>
+            <Text className="text-sm mb-4 whitespace-pre-line">
+              {content}
+              {url ?? <Button href={url}>Reset password</Button>}
+            </Text>
 
             {/* Footer */}
             <Text className="text-xs text-gray-400 mt-6">{footerText}</Text>

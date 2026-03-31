@@ -35,6 +35,8 @@ const VerifyEmailForm = () => {
         type: "email-verification",
       });
 
+      console.log("verify email data : ", data);
+
       if (!data?.success) {
         setStatError(
           error?.message || "Something went wrong while sending otp",

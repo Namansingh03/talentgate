@@ -25,7 +25,7 @@ const SetUsernameForm = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isAvailable, setIsAvailable] = useState<boolean>();
+  const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
 
   const router = useRouter();
 
@@ -41,7 +41,6 @@ const SetUsernameForm = () => {
 
     const displayName =
       session.user.name || session.user.email?.split("@")[0] || "";
-
     const loadSuggestions = async () => {
       try {
         const suggested = await generateUsernameSuggestions(displayName);
@@ -56,31 +55,43 @@ const SetUsernameForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
+    setIsAvailable(null);
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      const { data: response, error } = await authClient.isUsernameAvailable({
-        username,
-      });
+    if (!username) return;
 
-      if (response?.available) {
-        const { error } = await authClient.updateUser({
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const { data: response, error: availabilityError } =
+        await authClient.isUsernameAvailable({
           username,
         });
 
-        if (error) {
+      console.log("username availability  response : ", response);
+      console.log("username availability error : ", availabilityError);
+
+      if (response?.available) {
+        setIsAvailable(true);
+        const { error: updateError } = await authClient.updateUser({
+          username,
+        });
+
+        console.log("set username response : ", updateError);
+
+        if (updateError) {
           toast.error(
-            error.message || "something went wrong while creating username ",
+            updateError.message ||
+              "Something went wrong while updating username",
             { description: formatDate() },
           );
-          setUsername("");
+          console.log(updateError);
           return;
         }
 
         const { data: session } = await authClient.getSession();
-
         const userRole = session?.user?.role;
 
         toast.success("Username created successfully", {
@@ -94,7 +105,8 @@ const SetUsernameForm = () => {
         }
       } else {
         setIsAvailable(false);
-        toast.error(error?.message || "username not available", {
+
+        toast.error(availabilityError?.message || "Username not available", {
           description: formatDate(),
         });
       }
@@ -121,19 +133,21 @@ const SetUsernameForm = () => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="">
+      <CardContent>
         <div className="space-y-2">
           <Label
             htmlFor="username"
             className="flex items-center justify-between"
           >
             Username
-            {isAvailable ? (
-              <span className="text-xs text-green-600">available</span>
-            ) : (
-              <span className="text-xs text-red-600">unavailable</span>
-            )}
+            {isAvailable !== null &&
+              (isAvailable ? (
+                <span className="text-xs text-green-600">available</span>
+              ) : (
+                <span className="text-xs text-red-600">unavailable</span>
+              ))}
           </Label>
+
           <Input id="username" value={username} onChange={handleChange} />
         </div>
 
@@ -142,7 +156,10 @@ const SetUsernameForm = () => {
             {suggestions.map((u) => (
               <p
                 key={u}
-                onClick={() => setUsername(u)}
+                onClick={() => {
+                  setUsername(u);
+                  setIsAvailable(null);
+                }}
                 className="text-xs text-blue-700 cursor-pointer"
               >
                 {u}
