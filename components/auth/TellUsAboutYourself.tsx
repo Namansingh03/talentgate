@@ -1,59 +1,99 @@
 "use client";
 
 import * as React from "react";
-
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  type CarouselApi,
 } from "@/components/ui/carousel";
+import { CarouselCardWrapper } from "../ui/CarouselCardWrapper";
+import { SpecializationCard } from "../ui/SpecializationCard";
+import { SkillsCard } from "../ui/SkillsCard";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { formatDate } from "@/helpers/formatDate";
+import { UpdateProfileProps } from "@/app/api/candidate/profile";
 
 export function TellUsAboutYourself() {
-  const [api, setApi] = React.useState<CarouselApi>();
-  const [current, setCurrent] = React.useState(0);
-  const [count, setCount] = React.useState(0);
+  const [specialization, setSpecialization] = React.useState<string | null>(
+    null,
+  );
+  const [skills, setSkills] = React.useState<string[]>([]);
+  const [isPending, startTransition] = React.useTransition();
+  const router = useRouter();
 
-  React.useEffect(() => {
-    if (!api) return;
+  const handleSubmit = async () => {
+    startTransition(async () => {
+      const res = await UpdateProfileProps({
+        headline: specialization,
+        skills,
+      });
 
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
+      if (res.redirectUrl && !res.success) {
+        toast.error(res.message, { description: formatDate() });
+        router.push(res.redirectUrl);
+      }
 
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
+      if (!res.success) {
+        toast.error(res.message, { description: formatDate() });
+      }
+
+      if (res.success && res.redirectUrl) {
+        toast.success(res.message, { description: formatDate() });
+        router.push(res.redirectUrl);
+      }
     });
-  }, [api]);
+  };
 
   return (
-    <div className="mx-auto max-w-50 sm:max-w-2xl">
-      <Carousel setApi={setApi} className="w-full max-w-2xl">
-        <CarouselContent>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem key={index}>
-              <Card className="m-px">
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
+    <div className="mx-auto max-w-3xl flex flex-col items-center p-5 gap-1">
+      <div className="w-full rounded-t-lg bg-white p-5">
+        <h1 className="text-2xl text-center font-semibold">
+          Tell us about yourself
+        </h1>
+      </div>
+      <Carousel className="w-full">
+        <CarouselContent className="rounded-md">
+          <CarouselItem>
+            <CarouselCardWrapper>
+              <SpecializationCard
+                selected={specialization}
+                setSelected={setSpecialization}
+              />
+            </CarouselCardWrapper>
+          </CarouselItem>
+
+          <CarouselItem>
+            <CarouselCardWrapper>
+              <SkillsCard
+                selectedSkills={skills}
+                setSelectedSkills={setSkills}
+              />
+            </CarouselCardWrapper>
+          </CarouselItem>
         </CarouselContent>
 
-        {/* Bottom Controls */}
-        <div className="mt-4 flex flex-col items-center gap-2">
-          <div className="flex items-center justify-center gap-4">
-            <CarouselPrevious />
-            <CarouselNext />
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Slide {current} of {count}
-          </p>
-        </div>
+        <CarouselPrevious />
+        <CarouselNext />
       </Carousel>
+
+      <div className="w-full bg-white rounded-b-lg grid grid-cols-6 p-5">
+        <Button onClick={handleSubmit} className="col-span-2 col-start-3">
+          {isPending ? <Loader2 className="animate-spin" /> : "Submit"}
+        </Button>
+        <Button
+          className="col-start-6"
+          variant={"outline"}
+          onClick={() => router.push("/candidate/profile")}
+          disabled={isPending}
+        >
+          Skip
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,19 +1,37 @@
 export const SPECIALIZATIONS = [
+  // Core Development
   "Web Developer",
   "Frontend Developer",
   "Backend Developer",
   "Full Stack Developer",
-  "DevOps Engineer",
-  "Mobile App Developer",
-  "Data Scientist",
-  "Machine Learning Engineer",
-  "Game Developer",
-  "Cybersecurity Specialist",
-  "Cloud Engineer",
   "Software Engineer",
+
+  // Mobile & Platform
+  "Mobile App Developer",
+  "Android Developer",
+  "iOS Developer",
+  "Cross Platform Developer",
+
+  // Data & AI
+  "Data Scientist",
+  "Data Analyst",
+  "Machine Learning Engineer",
   "AI Engineer",
-  "Embedded Systems Developer",
-  "Blockchain Developer",
+  "Deep Learning Engineer",
+  "NLP Engineer",
+  "Computer Vision Engineer",
+
+  // Cloud & DevOps
+  "DevOps Engineer",
+  "Cloud Engineer",
+  "Site Reliability Engineer (SRE)",
+  "Platform Engineer",
+  "Infrastructure Engineer",
+
+  // UI/UX & Design
+  "UI Developer",
+  "UX Designer",
+  "Product Designer",
 ] as const;
 
 export const SKILLS = [

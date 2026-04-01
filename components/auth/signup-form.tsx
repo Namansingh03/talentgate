@@ -2,17 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 import { SignUpSchema } from "@/schemas/authSchema";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,21 +14,25 @@ import { formatDate } from "@/helpers/formatDate";
 import { Loader2 } from "lucide-react";
 import Socials from "./Socials";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+type SignUpFormValues = z.infer<typeof SignUpSchema>;
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [stateError, setStateError] = useState("");
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [serverError, setServerError] = useState("");
+  const [isPending, startTransition] = useTransition();
+
   const {
     register,
     handleSubmit,
     setValue,
     control,
     formState: { errors },
-  } = useForm<z.infer<typeof SignUpSchema>>({
+  } = useForm<SignUpFormValues>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
       name: "",
@@ -48,16 +42,18 @@ export function SignupForm({
       role: "CANDIDATE",
     },
   });
+
   const selectedRole = useWatch({
     control,
     name: "role",
     defaultValue: "CANDIDATE",
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof SignUpSchema>> = (data) => {
+  const onSubmit: SubmitHandler<SignUpFormValues> = (data) => {
     startTransition(async () => {
-      setStateError("");
-      const { data: signupData, error } = await authClient.signUp.email({
+      setServerError("");
+
+      const { error } = await authClient.signUp.email({
         email: data.email,
         name: data.name,
         password: data.password,
@@ -65,14 +61,12 @@ export function SignupForm({
         role: data.role,
       });
 
-      console.log("sign up data : ", signupData);
-
       if (error) {
-        setStateError(error.message ?? "something went wrong");
+        setServerError(error.message ?? "Something went wrong");
         return;
       }
 
-      toast.success("Sign up successful verify your email", {
+      toast.success("Account created! Please verify your email.", {
         description: formatDate(),
       });
 
@@ -81,122 +75,187 @@ export function SignupForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0 ">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create your account</h1>
-                <p className="text-sm text-balance text-muted-foreground">
-                  Enter your email below to create your account
-                </p>
-              </div>
-              <Field>
-                <FieldLabel>Who are you?</FieldLabel>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    type="button"
-                    variant={
-                      selectedRole === "CANDIDATE" ? "default" : "outline"
-                    }
-                    onClick={() => setValue("role", "CANDIDATE")}
-                  >
-                    Candidate
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={
-                      selectedRole === "EMPLOYER" ? "default" : "outline"
-                    }
-                    onClick={() => setValue("role", "EMPLOYER")}
-                  >
-                    Employer
-                  </Button>
-                </div>
-              </Field>
-              <Field data-invalid={!!errors.name}>
-                <FieldLabel htmlFor="name">Name</FieldLabel>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder=""
-                  {...register("name")}
-                  required
-                />
-                <FieldError errors={[errors.name]} />
-              </Field>
-              <Field data-invalid={!!errors.email}>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  {...register("email")}
-                  required
-                />
-                <FieldError errors={[errors.email]} />
-              </Field>
-              <Field>
-                <Field className="grid grid-cols-2 gap-4">
-                  <Field data-invalid={!!errors.password}>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      {...register("password")}
-                      required
-                    />
-                    <FieldError errors={[errors.password]} />
-                  </Field>
-                  <Field data-invalid={!!errors.confirmPassword}>
-                    <FieldLabel htmlFor="confirm-password">
-                      Confirm Password
-                    </FieldLabel>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      {...register("confirmPassword")}
-                      required
-                    />
-                    <FieldError errors={[errors.confirmPassword]} />
-                  </Field>
-                </Field>
-              </Field>
-              <FieldError>{stateError}</FieldError>
-              <Field>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    "Create Account"
-                  )}
+    <div
+      className={cn("flex flex-col gap-6 w-full max-w-md mx-auto", className)}
+      {...props}
+    >
+      {/* Card */}
+      <div className="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm">
+        {/* Brand */}
+        <div className="flex items-center gap-2 mb-8">
+          <div className="w-2 h-2 rounded-full bg-foreground" />
+          <span className="font-serif text-lg tracking-tight">Talentgate</span>
+        </div>
+
+        {/* Heading */}
+        <div className="mb-7">
+          <h1 className="text-2xl font-serif font-medium tracking-tight">
+            Create account
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Join Talentgate today
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          {/* Role selector */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              I am a
+            </span>
+            <div className="grid grid-cols-2 gap-2.5">
+              {(["CANDIDATE", "EMPLOYER"] as const).map((role) => (
+                <Button
+                  key={role}
+                  type="button"
+                  variant={selectedRole === role ? "default" : "outline"}
+                  onClick={() => setValue("role", role)}
+                  className="h-11"
+                >
+                  {role === "CANDIDATE" ? "Candidate" : "Employer"}
                 </Button>
-              </Field>
-              <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
-              </FieldSeparator>
-              <Socials />
-              <FieldDescription className="text-center">
-                Already have an account? <a href="signin">Sign in</a>
-              </FieldDescription>
-            </FieldGroup>
-          </form>
-          <div className="relative hidden bg-muted md:block">
-            {/* <Image
-              src=""
-              alt="Image"
-              className="w-full h-full"
-              width={100}
-              height={100}
-            /> */}
+              ))}
+            </div>
           </div>
-        </CardContent>
-      </Card>
-      <FieldDescription className="px-6 text-center text-white">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+
+          {/* Name */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="name"
+              className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+            >
+              Full name
+            </label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Alex Johnson"
+              {...register("name")}
+              className={cn(errors.name && "border-destructive")}
+            />
+            {errors.name && (
+              <p className="text-xs text-destructive">{errors.name.message}</p>
+            )}
+          </div>
+
+          {/* Email */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="email"
+              className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+            >
+              Email
+            </label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              {...register("email")}
+              className={cn(errors.email && "border-destructive")}
+            />
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Password row */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="password"
+                className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+              >
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                {...register("password")}
+                className={cn(errors.password && "border-destructive")}
+              />
+              {errors.password && (
+                <p className="text-xs text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="confirm-password"
+                className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+              >
+                Confirm
+              </label>
+              <Input
+                id="confirm-password"
+                type="password"
+                placeholder="••••••••"
+                {...register("confirmPassword")}
+                className={cn(errors.confirmPassword && "border-destructive")}
+              />
+              {errors.confirmPassword && (
+                <p className="text-xs text-destructive">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Server error */}
+          {serverError && (
+            <p className="text-sm text-destructive text-center">
+              {serverError}
+            </p>
+          )}
+
+          <Button type="submit" disabled={isPending} className="w-full mt-1">
+            {isPending ? (
+              <Loader2 className="animate-spin size-4" />
+            ) : (
+              "Create account"
+            )}
+          </Button>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <div className="flex-1 h-px bg-border" />
+            or continue with
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          <Socials />
+        </form>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Already have an account?{" "}
+          <Link
+            href="/signin"
+            className="text-foreground font-medium hover:underline underline-offset-4"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
+
+      {/* Footer */}
+      <p className="text-center text-xs text-white px-6">
+        By creating an account you agree to our{" "}
+        <Link
+          href="#"
+          className="underline underline-offset-4 hover:text-foreground transition-colors"
+        >
+          Terms
+        </Link>{" "}
+        and{" "}
+        <Link
+          href="#"
+          className="underline underline-offset-4 hover:text-foreground transition-colors"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </p>
     </div>
   );
 }
