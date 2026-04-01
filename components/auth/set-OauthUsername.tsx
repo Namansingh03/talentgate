@@ -1,35 +1,32 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { generateUsernameSuggestions } from "@/helpers/getUsernameSuggestions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
-import { Role } from "@/app/generated/prisma/enums";
+import { Loader2 } from "lucide-react";
+// import { cn } from "@/lib/utils";
+import type { Role } from "@/app/generated/prisma/enums";
+
+const ROLE_REDIRECT: Record<Role, string> = {
+  CANDIDATE: "/candidate/tell-us-more",
+  EMPLOYER: "/dashboard",
+  // ADMIN: "/admin/panel",
+};
 
 const SetOauthUsernameRole = () => {
   const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
 
   const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
+  const [role, setRole] = useState<Role>("CANDIDATE");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
-  const [role, setRole] = useState<Role>("CANDIDATE");
-
-  const router = useRouter();
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -40,162 +37,157 @@ const SetOauthUsernameRole = () => {
 
   useEffect(() => {
     if (!session?.user) return;
-
     const displayName =
       session.user.name || session.user.email?.split("@")[0] || "";
-    const loadSuggestions = async () => {
-      try {
-        const suggested = await generateUsernameSuggestions(displayName);
-        setSuggestions(suggested);
-      } catch (err) {
-        console.log("Suggestion error:", err);
-      }
-    };
-
-    loadSuggestions();
+    generateUsernameSuggestions(displayName)
+      .then(setSuggestions)
+      .catch(console.error);
   }, [session]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-    setIsAvailable(null);
-  };
 
   const handleSubmit = async () => {
     if (!username) return;
-
     setIsLoading(true);
-    setError("");
 
     try {
       const { data: response, error: availabilityError } =
-        await authClient.isUsernameAvailable({
-          username,
-        });
+        await authClient.isUsernameAvailable({ username });
 
-      if (response?.available) {
-        setIsAvailable(true);
-        const { error: updateError } = await authClient.updateUser({
-          username,
-          role,
-        });
-
-        if (updateError) {
-          toast.error(
-            updateError.message ||
-              "Something went wrong while updating username",
-            { description: formatDate() },
-          );
-          console.log(updateError);
-          return;
-        }
-
-        toast.success("Username created successfully", {
-          description: formatDate(),
-        });
-
-        if (role === "EMPLOYER") {
-          router.push("/dashboard");
-        } else if (role === "CANDIDATE") {
-          router.push("/candidate/tell-us-more");
-        }
-      } else {
+      if (!response?.available) {
         setIsAvailable(false);
-
-        toast.error(availabilityError?.message || "Username not available", {
+        toast.error(availabilityError?.message ?? "Username not available", {
           description: formatDate(),
         });
+        return;
       }
 
-      console.log("Username set:", username);
-    } catch (err) {
-      setError("Something went wrong. Try again.");
-      console.log(err);
+      setIsAvailable(true);
+      const { error: updateError } = await authClient.updateUser({
+        username,
+        role,
+      });
+
+      if (updateError) {
+        toast.error(updateError.message ?? "Something went wrong", {
+          description: formatDate(),
+        });
+        return;
+      }
+
+      toast.success("Username created successfully", {
+        description: formatDate(),
+      });
+      router.push(ROLE_REDIRECT[role]);
+    } catch {
+      toast.error("Something went wrong. Try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const isValid = username && !error;
-
   if (isPending || !session) return null;
 
   return (
-    <Card className="w-full max-w-md shadow-lg rounded-2xl">
-      <CardHeader className="text-center space-y-2">
-        <CardTitle className="text-2xl font-bold">Talentgate</CardTitle>
-        <CardDescription className="text-base">
-          Choose your unique username
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              type="button"
-              variant={role === "CANDIDATE" ? "default" : "outline"}
-              onClick={() => setRole("CANDIDATE")}
-            >
-              Candidate
-            </Button>
-            <Button
-              type="button"
-              variant={role === "EMPLOYER" ? "default" : "outline"}
-              onClick={() => setRole("EMPLOYER")}
-            >
-              Employer
-            </Button>
-          </div>
-          <Label
-            htmlFor="username"
-            className="flex items-center justify-between"
-          >
-            Username
-            {isAvailable !== null &&
-              (isAvailable ? (
-                <span className="text-xs text-green-600">available</span>
-              ) : (
-                <span className="text-xs text-red-600">unavailable</span>
-              ))}
-          </Label>
-
-          <Input id="username" value={username} onChange={handleChange} />
+    <div className="w-full max-w-md mx-auto">
+      <div className="bg-white border border-stone-200 rounded-2xl p-8 shadow-sm">
+        {/* Brand */}
+        <div className="flex items-center gap-2 mb-8">
+          <div className="w-2 h-2 rounded-full bg-foreground" />
+          <span className="font-serif text-lg tracking-tight">Talentgate</span>
         </div>
 
-        {suggestions.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-1">
-            {suggestions.map((u) => (
-              <p
-                key={u}
-                onClick={() => {
-                  setUsername(u);
-                  setIsAvailable(null);
-                }}
-                className="text-xs text-blue-700 cursor-pointer"
-              >
-                {u}
-              </p>
-            ))}
+        <div className="mb-7">
+          <h1 className="text-2xl font-serif font-medium tracking-tight">
+            Almost there
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Choose your public identity
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-5">
+          {/* Role */}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              I am a
+            </span>
+            <div className="grid grid-cols-2 gap-2.5">
+              {(["CANDIDATE", "EMPLOYER"] as Role[]).map((r) => (
+                <Button
+                  key={r}
+                  type="button"
+                  variant={role === r ? "default" : "outline"}
+                  onClick={() => setRole(r)}
+                  className="h-11"
+                >
+                  {r === "CANDIDATE" ? "Candidate" : "Employer"}
+                </Button>
+              ))}
+            </div>
           </div>
-        )}
 
-        <p className="text-sm text-muted-foreground mt-5">
-          This will be your public identity.
-        </p>
+          {/* Username */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="username"
+                className="text-xs font-medium uppercase tracking-widest text-muted-foreground"
+              >
+                Username
+              </label>
+              {isAvailable === true && (
+                <span className="text-xs text-green-700">available</span>
+              )}
+              {isAvailable === false && (
+                <span className="text-xs text-destructive">unavailable</span>
+              )}
+            </div>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setIsAvailable(null);
+              }}
+            />
+          </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
-      </CardContent>
+          {/* Suggestions */}
+          {suggestions.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => {
+                    setUsername(s);
+                    setIsAvailable(null);
+                  }}
+                  className="text-xs px-2.5 py-1 rounded-full border border-stone-200 text-muted-foreground hover:border-stone-400 hover:text-foreground transition-colors"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
 
-      <CardFooter className="flex flex-col gap-3">
-        <Button
-          className="w-full"
-          onClick={handleSubmit}
-          disabled={!isValid || isLoading}
-        >
-          {isLoading ? "Saving..." : "Continue"}
-        </Button>
-      </CardFooter>
-    </Card>
+          <p className="text-xs text-muted-foreground">
+            This will be your public identity on Talentgate.
+          </p>
+
+          <Button
+            onClick={handleSubmit}
+            disabled={!username || isLoading}
+            className="w-full"
+          >
+            {isLoading ? (
+              <Loader2 className="animate-spin size-4" />
+            ) : (
+              "Continue"
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
