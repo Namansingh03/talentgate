@@ -1,12 +1,25 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import CTASection from "@/components/home/CtaSection";
+import FeaturesSection from "@/components/home/FeatureSection";
+import Footer from "@/components/home/Footer";
+import HeroSection from "@/components/home/HeroSection";
+import HomeNavbar from "@/components/home/HomeNavbar";
+import LatestJobsSection from "@/components/home/LatestJobSection";
+import LatestJobsSkeleton from "@/components/home/LatestJobSkeleton";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <div className="w-full h-screen flex items-center justify-center ">
-      <Button>
-        <Link href={"/signup"}>SIGNUP</Link>
-      </Button>
-    </div>
+    <main>
+      <HomeNavbar />
+      <HeroSection />
+      <FeaturesSection />
+
+      <Suspense fallback={<LatestJobsSkeleton />}>
+        <LatestJobsSection />
+      </Suspense>
+
+      <CTASection />
+      <Footer />
+    </main>
   );
 }

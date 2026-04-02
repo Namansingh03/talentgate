@@ -1,4 +1,4 @@
-import { SPECIALIZATIONS } from "@/schemas/values";
+import { SPECIALIZATIONS } from "@/utils/values";
 import { cn } from "@/lib/utils";
 
 export const SpecializationCard = ({

@@ -1,4 +1,4 @@
-import { SKILLS } from "@/schemas/values";
+import { SKILLS } from "@/utils/values";
 import { cn } from "@/lib/utils";
 
 export const SkillsCard = ({

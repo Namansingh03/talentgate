@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="dark"
       className={cn(
         "h-full",
         "antialiased",
@@ -38,9 +40,30 @@ export default function RootLayout({
         inter.variable,
       )}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function() {
+try {
+  const theme = localStorage.getItem("theme");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (theme === "dark" || (!theme && systemDark)) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+} catch (_) {}
+})();
+`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
-        <main>{children}</main>
-        <Toaster richColors position="top-right" />
+        <Providers>
+          <main>{children}</main>
+          <Toaster richColors position="top-right" />
+        </Providers>
       </body>
     </html>
   );
