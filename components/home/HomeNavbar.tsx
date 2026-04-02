@@ -1,15 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "../ui/button";
-import { FaMoon } from "react-icons/fa";
-import { MdSunny } from "react-icons/md";
-import { useTheme } from "next-themes";
-import ThemeToggle from "../ui/ThemeToggleBtn";
+import { ThemeToggle } from "../ui/ThemeToggleBtn";
 
 export default function HomeNavbar() {
-  const { setTheme, theme } = useTheme();
-
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-6">
