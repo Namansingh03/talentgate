@@ -1,176 +1,83 @@
-const features = [
-  {
-    title: "Candidate profiles",
-    description:
-      "Showcase your skills, experience, resume, and portfolio in a clean public profile employers can browse.",
-    color: "bg-blue-50 dark:bg-blue-900/30",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect
-          x="2"
-          y="5"
-          width="14"
-          height="10"
-          rx="2"
-          stroke="#378ADD"
-          strokeWidth="1.2"
-        />
-        <path d="M6 5V4a3 3 0 016 0v1" stroke="#378ADD" strokeWidth="1.2" />
-      </svg>
-    ),
-  },
-  {
-    title: "Smart job filters",
-    description:
-      "Filter by role, location, salary, remote, experience level, and tech stack to find exactly the right fit.",
-    color: "bg-green-50 dark:bg-green-900/30",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <circle cx="9" cy="9" r="6.5" stroke="#1D9E75" strokeWidth="1.2" />
-        <path
-          d="M6 9l2.5 2.5L12 6"
-          stroke="#1D9E75"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Application tracking",
-    description:
-      "Candidates track every application. Employers manage applicants and update statuses with internal notes.",
-    color: "bg-pink-50 dark:bg-pink-900/30",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path
-          d="M9 2.5l1.8 3.6 4 .6-2.9 2.8.7 4L9 11.5l-3.6 1.9.7-4L3.2 6.7l4-.6z"
-          stroke="#993556"
-          strokeWidth="1.2"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Company pages",
-    description:
-      "Employers get a verified company page showing their open roles, team size, industry, and description.",
-    color: "bg-amber-50 dark:bg-amber-900/30",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect
-          x="2"
-          y="2"
-          width="6"
-          height="6"
-          rx="1.5"
-          stroke="#BA7517"
-          strokeWidth="1.2"
-        />
-        <rect
-          x="10"
-          y="2"
-          width="6"
-          height="6"
-          rx="1.5"
-          stroke="#BA7517"
-          strokeWidth="1.2"
-        />
-        <rect
-          x="2"
-          y="10"
-          width="6"
-          height="6"
-          rx="1.5"
-          stroke="#BA7517"
-          strokeWidth="1.2"
-        />
-        <rect
-          x="10"
-          y="10"
-          width="6"
-          height="6"
-          rx="1.5"
-          stroke="#BA7517"
-          strokeWidth="1.2"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "OAuth login",
-    description:
-      "Sign up with Google or GitHub in seconds. No forms, no friction — just start applying or posting.",
-    color: "bg-purple-50 dark:bg-purple-900/30",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <circle cx="9" cy="9" r="6.5" stroke="#534AB7" strokeWidth="1.2" />
-        <path
-          d="M9 6v3l2 2"
-          stroke="#534AB7"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Role-based access",
-    description:
-      "Three roles — Candidate, Employer, Admin — each with their own dashboard and permissions.",
-    color: "bg-gray-100 dark:bg-gray-800",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path
-          d="M3 5h12M3 9h8M3 13h5"
-          stroke="#5F5E5A"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
-];
+"use client";
 
 export default function FeaturesSection() {
   return (
-    <section className="py-16 px-4 bg-white dark:bg-gray-900">
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-10">
-          <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
-            Features
-          </p>
-          <h2 className="text-2xl font-medium text-gray-900 dark:text-white">
-            Everything you need to hire or get hired
+    <section className="py-20 bg-surface-container-low">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-14">
+          <span className="text-primary font-semibold uppercase tracking-widest text-xs">
+            Why CareerFlow
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-on-surface tracking-tight mt-3">
+            Built for modern professionals
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-md">
-            Built for developers and the companies that want to hire them.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 transition-colors"
-            >
-              <div
-                className={`w-9 h-9 rounded-xl ${f.color} flex items-center justify-center mb-3`}
-              >
-                {f.icon}
-              </div>
-
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1.5">
-                {f.title}
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          {/* Big Card */}
+          <div className="md:col-span-7 bg-surface-container-lowest rounded-xl p-7 flex flex-col justify-between relative overflow-hidden">
+            <div className="max-w-md relative z-10">
+              <span className="material-symbols-outlined text-primary text-3xl mb-4">
+                bolt
+              </span>
+              <h3 className="text-2xl font-semibold text-on-surface mb-3">
+                Smart Job Matching
               </h3>
-
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-                {f.description}
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                Our AI understands your skills beyond keywords and connects you
+                with roles that actually fit your growth.
               </p>
             </div>
-          ))}
+
+            <div className="absolute bottom-[-30%] right-[-20%] w-72 h-56 bg-primary/10 rounded-full blur-3xl"></div>
+          </div>
+
+          {/* Verified */}
+          <div className="md:col-span-5 bg-primary-container text-on-primary rounded-xl p-7 relative overflow-hidden group">
+            <span className="material-symbols-outlined text-white text-3xl mb-4">
+              verified_user
+            </span>
+            <h3 className="text-xl font-semibold mb-2">Verified Companies</h3>
+            <p className="text-sm text-on-primary-container leading-relaxed">
+              Every company is vetted — no spam, just real opportunities.
+            </p>
+
+            <span className="material-symbols-outlined text-white/10 text-8xl absolute -bottom-6 -right-6 group-hover:scale-110 transition">
+              verified
+            </span>
+          </div>
+
+          {/* Tracking */}
+          <div className="md:col-span-5 bg-surface-container-highest rounded-xl p-7">
+            <span className="material-symbols-outlined text-on-surface text-3xl mb-4">
+              timeline
+            </span>
+            <h3 className="text-xl font-semibold text-on-surface mb-2">
+              Real-time Tracking
+            </h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Track application status instantly — from viewed to hired.
+            </p>
+          </div>
+
+          {/* Salary */}
+          <div className="md:col-span-7 bg-surface-container-lowest rounded-xl p-7 flex items-center justify-between overflow-hidden">
+            <div className="max-w-sm">
+              <span className="material-symbols-outlined text-tertiary-container text-3xl mb-4">
+                auto_awesome
+              </span>
+              <h3 className="text-2xl font-semibold text-on-surface mb-3">
+                Salary Insights
+              </h3>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                Know your worth with real salary benchmarks for tech roles.
+              </p>
+            </div>
+
+            <div className="hidden md:block w-32 h-32 bg-tertiary-fixed/20 rounded-full shrink-0"></div>
+          </div>
         </div>
       </div>
     </section>

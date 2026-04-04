@@ -7,6 +7,7 @@ type JobType =
   | "CONTRACT"
   | "INTERNSHIP"
   | "FREELANCE";
+
 type ExperienceLevel = "INTERN" | "JUNIOR" | "MID" | "SENIOR" | "LEAD";
 
 const jobTypeLabel: Record<JobType, string> = {
@@ -56,10 +57,10 @@ function CompanyInitials({ name }: { name: string }) {
   return (
     <div
       className="w-10 h-10 rounded-xl 
-    bg-gray-50 dark:bg-gray-800 
-    border border-gray-100 dark:border-gray-700 
-    flex items-center justify-center 
-    text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0"
+      bg-surface-container-highest
+      border border-black/5
+      flex items-center justify-center 
+      text-xs font-semibold text-on-surface-variant shrink-0"
     >
       {initials}
     </div>
@@ -70,32 +71,32 @@ export default async function LatestJobsSection() {
   const jobs = await getLatestJobs();
 
   return (
-    <section className="bg-white dark:bg-gray-900 border-t border-b border-gray-100 dark:border-gray-800 py-16 px-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-end justify-between mb-8">
+    <section className="bg-white py-20 px-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">
               Jobs
             </p>
-            <h2 className="text-2xl font-medium text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-bold text-on-surface tracking-tight">
               Latest openings
             </h2>
           </div>
 
           <Link
             href="/jobs"
-            className="text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="text-sm text-primary hover:opacity-80 transition"
           >
             View all →
           </Link>
         </div>
 
+        {/* Content */}
         {jobs.length === 0 ? (
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            No jobs posted yet.
-          </p>
+          <p className="text-sm text-on-surface-variant">No jobs posted yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {jobs.map((job) => {
               const salary = formatSalary(
                 job.salaryMin,
@@ -107,64 +108,45 @@ export default async function LatestJobsSection() {
                 <Link
                   key={job.id}
                   href={`/jobs/${job.slug}`}
-                  className="bg-white dark:bg-gray-800 
-                  border border-gray-100 dark:border-gray-700 
-                  rounded-2xl p-4 flex flex-col gap-3 
-                  hover:border-gray-200 dark:hover:border-gray-600 
-                  hover:bg-gray-50/50 dark:hover:bg-gray-800/80 
-                  transition-colors"
+                  className="group bg-surface-container-lowest 
+                  border border-black/5 
+                  rounded-xl p-5 flex flex-col gap-4 
+                  hover:-translate-y-1 hover:shadow-lg 
+                  transition-all duration-200"
                 >
-                  {/* Company */}
+                  {/* Top */}
                   <div className="flex items-center gap-3">
                     <CompanyInitials name={job.company.name} />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <p className="text-base font-semibold text-on-surface truncate">
                         {job.title}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-on-surface-variant">
                         {job.company.name}
                       </p>
                     </div>
                   </div>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5">
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-md 
-                    bg-blue-50 dark:bg-blue-900/30 
-                    text-blue-800 dark:text-blue-300 
-                    border border-blue-100 dark:border-blue-800"
-                    >
+                  <div className="flex flex-wrap gap-2">
+                    <span className="text-xs px-2.5 py-1 rounded-md bg-primary/10 text-primary">
                       {jobTypeLabel[job.type as JobType]}
                     </span>
 
                     {job.isRemote && (
-                      <span
-                        className="text-xs px-2 py-0.5 rounded-md 
-                      bg-green-50 dark:bg-green-900/30 
-                      text-green-800 dark:text-green-300 
-                      border border-green-100 dark:border-green-800"
-                      >
+                      <span className="text-xs px-2.5 py-1 rounded-md bg-green-100 text-green-700">
                         Remote
                       </span>
                     )}
 
-                    <span
-                      className="text-xs px-2 py-0.5 rounded-md 
-                    bg-gray-50 dark:bg-gray-700 
-                    text-gray-600 dark:text-gray-300 
-                    border border-gray-100 dark:border-gray-600"
-                    >
+                    <span className="text-xs px-2.5 py-1 rounded-md bg-black/5 text-on-surface-variant">
                       {levelLabel[job.level as ExperienceLevel]}
                     </span>
 
                     {job.skills.slice(0, 2).map((skill) => (
                       <span
                         key={skill}
-                        className="text-xs px-2 py-0.5 rounded-md 
-                        bg-gray-50 dark:bg-gray-700 
-                        text-gray-600 dark:text-gray-300 
-                        border border-gray-100 dark:border-gray-600"
+                        className="text-xs px-2.5 py-1 rounded-md bg-black/5 text-on-surface-variant"
                       >
                         {skill}
                       </span>
@@ -173,9 +155,9 @@ export default async function LatestJobsSection() {
 
                   {/* Salary */}
                   {salary && (
-                    <p className="text-xs text-gray-400 dark:text-gray-500">
-                      Salary:{" "}
-                      <span className="text-gray-700 dark:text-gray-200 font-medium">
+                    <p className="text-sm text-on-surface-variant">
+                      Salary{" "}
+                      <span className="text-on-surface font-medium">
                         {salary}
                       </span>
                     </p>

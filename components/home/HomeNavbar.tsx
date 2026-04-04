@@ -1,48 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { ThemeToggle } from "../ui/ThemeToggleBtn";
 
 export default function HomeNavbar() {
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-6">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="text-base font-medium text-gray-900 dark:text-white tracking-tight shrink-0"
-        >
-          Talent<span className="text-blue-500">Gate</span>
-        </Link>
-
-        {/* Nav links */}
-        <nav className="hidden sm:flex items-center gap-6">
-          <Link
-            href="/jobs"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+    <header className=" bg-white/80 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(79,70,229,0.08)] tonal-transition no-line">
+      <nav className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+        <div className="flex items-center gap-12">
+          <a
+            className="text-2xl font-black bg-linear-to-br from-indigo-600 to-indigo-800 bg-clip-text text-transparent tracking-tight font-['Inter']"
+            href="#"
           >
-            Browse jobs
-          </Link>
-          <Link
-            href="/employers"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-          >
-            For employers
-          </Link>
-        </nav>
-
-        {/* Auth buttons */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Link
-            href="/signin"
-            className="text-sm text-gray-700 dark:text-gray-300 border border-gray-400 dark:border-gray-600 px-6 py-2 rounded-lg transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-          >
-            sign in
-          </Link>
-
-          <ThemeToggle />
+            Talent
+            <span className=" text-indigo-400 ">Gate</span>
+          </a>
+          <div className="hidden md:flex gap-8 items-center">
+            <a
+              className="text-indigo-600 dark:text-indigo-400 font-semibold border-b-2 border-indigo-600 pb-1 font-['Inter'] tracking-tight"
+              href="#"
+            >
+              Find Jobs
+            </a>
+            <a
+              className="text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-colors font-['Inter'] tracking-tight"
+              href="#"
+            >
+              Companies
+            </a>
+          </div>
         </div>
-      </div>
+        <div className="flex items-center gap-4">
+          <button className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20">
+            <Link href={"signin"}>sign in</Link>
+          </button>
+        </div>
+      </nav>
     </header>
   );
 }

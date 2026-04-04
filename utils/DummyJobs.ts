@@ -111,46 +111,6 @@ export const dummyJobs: Job[] = [
       logo: null,
     },
   },
-  {
-    id: "job_5",
-    title: "DevOps Engineer",
-    slug: "devops-engineer",
-    location: "Pune, India",
-    isRemote: true,
-    type: "FULL_TIME",
-    level: "SENIOR",
-    salaryMin: 1800000,
-    salaryMax: 3000000,
-    salaryCurrency: "INR",
-    skills: ["AWS", "Docker"],
-    status: "ACTIVE",
-    createdAt: "2026-03-26T11:00:00.000Z",
-    company: {
-      name: "Cloudify",
-      slug: "cloudify",
-      logo: null,
-    },
-  },
-  {
-    id: "job_6",
-    title: "Software Intern",
-    slug: "software-intern",
-    location: "Noida, India",
-    isRemote: false,
-    type: "INTERNSHIP",
-    level: "INTERN",
-    salaryMin: 10000,
-    salaryMax: 25000,
-    salaryCurrency: "INR",
-    skills: ["JavaScript", "HTML"],
-    status: "ACTIVE",
-    createdAt: "2026-03-25T08:00:00.000Z",
-    company: {
-      name: "StartX",
-      slug: "startx",
-      logo: null,
-    },
-  },
 ];
 
 export async function getLatestJobs() {
@@ -160,5 +120,5 @@ export async function getLatestJobs() {
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )
-    .slice(0, 6);
+    .slice(0, 4);
 }
