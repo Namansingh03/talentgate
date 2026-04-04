@@ -1,85 +1,98 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-
-export default function ProfileHeader() {
+export default function EducationCard() {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col sm:flex-row gap-5 items-start">
-      {/* Avatar */}
-      <div className="shrink-0">
-        {/* {user.image ? (
-          <Image
-            src={user.image}
-            alt={user.name}
-            width={72}
-            height={72}
-            className="rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-[72px] h-[72px] rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium text-xl select-none">
-            {"initials"}
-          </div>
-        )} */}
+    <div className="bg-white border border-gray-100 rounded-2xl p-5">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+          Education
+        </p>
+
+        <button className="text-xs text-blue-500">+ Add</button>
       </div>
 
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <h1 className="text-xl font-medium text-gray-900 mb-0.5">
-          {"user.name"}
-        </h1>
+      {/* Timeline */}
+      <div className="ml-1">
+        {/* Education 1 */}
+        <div className="pl-4 relative pb-5 border-l border-gray-100">
+          <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-gray-200" />
 
-        {/* {profile.headline && ( */}
-        <p className="text-sm text-gray-500 mb-3">{"profile.headline"}</p>
-        {/* )} */}
+          <div>
+            <p className="text-sm font-medium text-gray-900">
+              B.Tech in Computer Science
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">IIT Delhi</p>
+            <p className="text-xs text-gray-400 mt-1">Aug 2019 – May 2023</p>
+            <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+              Focused on software engineering, data structures, and web
+              development.
+            </p>
+          </div>
+        </div>
 
-        <div className="flex flex-wrap gap-2">
-          {/* Open to work toggle for owner, badge for visitor */}
-          {/* {isOwner ? ( */}
-          {/* <button
-              onClick={handleToggleOpenToWork}
-              className={`text-xs px-2.5 py-1 rounded-md transition-colors ${
-                isOpen
-                  ? "bg-green-50 text-green-700 hover:bg-green-100"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
-            >
-              {isOpen ? "✓ Open to work" : "Not open to work"}
-            </button>
-          ) : ( */}
-          isOpen && (
-          <span className="text-xs px-2.5 py-1 rounded-md bg-green-50 text-green-700">
-            Open to work
-          </span>
-          ){/* )} */}
-          {/* {profile.location && ( */}
-          <span className="text-xs px-2.5 py-1 rounded-md border border-gray-100 text-gray-500">
-            {"profile.location"}
-          </span>
-          {/* )} */}
-          {/* {profile.experience.length > 0 && ( */}
-          <span className="text-xs px-2.5 py-1 rounded-md border border-gray-100 text-gray-500">
-            {"profile.experience.length"} {"roles"}
-          </span>
-          {/* )} */}
+        {/* Education 2 */}
+        <div className="pl-4 relative border-l border-transparent">
+          <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-gray-200" />
+
+          <div>
+            <p className="text-sm font-medium text-gray-900">
+              Senior Secondary (PCM)
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">Delhi Public School</p>
+            <p className="text-xs text-gray-400 mt-1">Apr 2017 – Mar 2019</p>
+            <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+              Studied Physics, Chemistry, and Mathematics with a focus on
+              problem-solving.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Actions */}
-      {/* {isOwner && ( */}
-      <div className="flex gap-2 shrink-0">
-        <Link
-          href="/profile/edit"
-          className="text-sm px-3.5 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          Edit profile
-        </Link>
-        <button
-          onClick={}
-          className="text-sm px-3.5 py-1.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          {"share"}
-        </button>
+      {/* Static Add Form UI (for design only) */}
+      <div className="mt-4 space-y-2 border-t border-gray-50 pt-4">
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            placeholder="School / University"
+            className="col-span-2 text-sm border border-gray-200 rounded-lg px-3 py-2"
+          />
+          <input
+            placeholder="Degree"
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
+          />
+          <input
+            placeholder="Field"
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
+          />
+          <input
+            type="month"
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
+          />
+          <input
+            type="month"
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
+          />
+        </div>
+
+        <label className="flex items-center gap-2 text-sm text-gray-600">
+          <input type="checkbox" />
+          Currently studying here
+        </label>
+
+        <textarea
+          placeholder="Description"
+          rows={3}
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 resize-none"
+        />
+
+        <div className="flex gap-2">
+          <button className="text-sm px-3.5 py-1.5 rounded-lg bg-blue-500 text-white">
+            Save
+          </button>
+          <button className="text-sm px-3.5 py-1.5 rounded-lg border border-gray-200 text-gray-600">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
