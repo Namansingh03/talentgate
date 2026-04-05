@@ -1,30 +1,24 @@
+"use client";
+
 import ProfileHeader from "@/components/profile/ProfileHeader";
-import ContactCard from "@/components/profile/ContactCard";
-import AboutCard from "@/components/profile/AboutCard";
-import SkillsCard from "@/components/profile/SkillsCard";
+import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ExperienceCard from "@/components/profile/ExperienceCard";
 import EducationCard from "@/components/profile/EducationCard";
+import AboutCard from "@/components/profile/AboutCard";
 
 export default function ProfilePage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 space-y-4">
+    <div className="bg-gray-50 min-h-screen">
       <ProfileHeader />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <ContactCard />
+      <div className="w-full h-auto flex flex-row gap-x-30 px-30 py-10 absolute top-55">
+        <ProfileSidebar />
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center justify-center text-sm text-gray-400">
-          Profile completion
+        <div className="flex flex-col justify-center gap-y-5">
+          <AboutCard />
+          <ExperienceCard />
+          <EducationCard />
         </div>
-      </div>
-
-      <AboutCard />
-
-      <SkillsCard />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <ExperienceCard />
-        <EducationCard />
       </div>
     </div>
   );
