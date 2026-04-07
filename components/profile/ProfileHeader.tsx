@@ -19,10 +19,6 @@ export default function ProfileHeader() {
                 className="object-cover h-full w-full"
               />
             </div>
-
-            <span className="absolute bottom-2 right-2 bg-green-500 text-white px-1 py-1 rounded-full text-xs font-semibold shadow">
-              OPEN TO WORK
-            </span>
           </div>
 
           {/* User Info */}
@@ -38,17 +34,6 @@ export default function ProfileHeader() {
               <span>@arivera_dev</span>
             </div>
           </div>
-        </div>
-
-        {/* RIGHT: Actions */}
-        <div className="flex items-center gap-4">
-          <button className="px-5 py-2.5 bg-white border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition">
-            Edit Profile
-          </button>
-
-          <button className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition shadow">
-            Download Resume
-          </button>
         </div>
       </div>
     </header>

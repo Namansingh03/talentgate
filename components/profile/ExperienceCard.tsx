@@ -45,52 +45,6 @@ export default function ExperienceCard() {
           </div>
         </div>
       </div>
-
-      {/* Static Add Form UI (for design only) */}
-      <div className="mt-4 space-y-2 border-t border-gray-50 pt-4">
-        <div className="grid grid-cols-2 gap-2">
-          <input
-            placeholder="Job title"
-            className="col-span-2 text-sm border border-gray-200 rounded-lg px-3 py-2"
-          />
-          <input
-            placeholder="Company"
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
-          />
-          <input
-            placeholder="Location"
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
-          />
-          <input
-            type="month"
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
-          />
-          <input
-            type="month"
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2"
-          />
-        </div>
-
-        <label className="flex items-center gap-2 text-sm text-gray-600">
-          <input type="checkbox" />
-          Currently working here
-        </label>
-
-        <textarea
-          placeholder="Description"
-          rows={3}
-          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 resize-none"
-        />
-
-        <div className="flex gap-2">
-          <button className="text-sm px-3.5 py-1.5 rounded-lg bg-blue-500 text-white">
-            Save
-          </button>
-          <button className="text-sm px-3.5 py-1.5 rounded-lg border border-gray-200 text-gray-600">
-            Cancel
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

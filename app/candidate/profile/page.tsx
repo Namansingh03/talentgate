@@ -5,19 +5,39 @@ import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ExperienceCard from "@/components/profile/ExperienceCard";
 import EducationCard from "@/components/profile/EducationCard";
 import AboutCard from "@/components/profile/AboutCard";
+import SkillsCard from "@/components/profile/SkillsCard";
+import { Suspense } from "react";
+import SkillsCardSkeleton from "@/components/profile/skeletons/SkillsCardSkeleton";
+import TimelineCardSkeleton from "@/components/profile/skeletons/TimelineCardSkeleton";
+import AboutCardSkeleton from "@/components/profile/skeletons/AboutCardSkeleton";
 
 export default function ProfilePage() {
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="w-full bg-blue-300 relative">
       <ProfileHeader />
 
-      <div className="w-full h-auto flex flex-row gap-x-30 px-30 py-10 absolute top-55">
+      {/* Main Content Wrapper */}
+      <div className="w-full flex justify-center absolute top-60 px-10">
         <ProfileSidebar />
+        <div className="w-full max-w-7xl flex gap-10 items-start">
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col gap-5 rounded-2xl p-8">
+            <Suspense fallback={<AboutCardSkeleton />}>
+              <AboutCard />
+            </Suspense>
 
-        <div className="flex flex-col justify-center gap-y-5">
-          <AboutCard />
-          <ExperienceCard />
-          <EducationCard />
+            <Suspense fallback={<TimelineCardSkeleton />}>
+              <ExperienceCard />
+            </Suspense>
+
+            <Suspense fallback={<TimelineCardSkeleton />}>
+              <EducationCard />
+            </Suspense>
+
+            <Suspense fallback={<SkillsCardSkeleton />}>
+              <SkillsCard />
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>
