@@ -19,6 +19,35 @@ async function getServerSession(): Promise<ApiResponse<User | null>> {
   return createResponse(true, "user found", session.user);
 }
 
+export async function GetUserProfile() {
+  try {
+    const res = await getServerSession();
+
+    if (!res.success || !res.data) {
+      return createResponse(res.success, res.message);
+    }
+
+    const userId = res.data.id;
+
+    const user = await prismaDb.user.findFirst({
+      where: { id: userId },
+      include: {
+        candidateProfile: {
+          include: {
+            education: true,
+            experience: true,
+          },
+        },
+      },
+    });
+
+    return createResponse(true, "profile found", user);
+  } catch (error) {
+    console.log(error);
+    return createResponse(false, "something went wrong while fetching profile");
+  }
+}
+
 export async function UpdateProfileProps(data: UpdateProfileInput) {
   try {
     const res = await getServerSession();

@@ -1,8 +1,44 @@
 "use client";
 
-export default function EducationCard() {
+import { CardWrapper } from "../ui/CardWrapper";
+
+interface Education {
+  id: string;
+  school: string;
+  degree: string;
+  field: string;
+  startDate: Date;
+  endDate?: Date | null;
+  isCurrent: boolean;
+  description?: string | null;
+}
+
+interface EducationCardProps {
+  education?: Education[];
+}
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+export default function EducationCard({ education }: EducationCardProps) {
+  if (!education?.length) {
+    return (
+      <CardWrapper>
+        <p className="text-sm text-gray-400">No education added yet.</p>
+      </CardWrapper>
+    );
+  }
+
+  const sorted = [...education].sort(
+    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+  );
+
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5">
+    <CardWrapper>
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
@@ -14,40 +50,46 @@ export default function EducationCard() {
 
       {/* Timeline */}
       <div className="ml-1">
-        {/* Education 1 */}
-        <div className="pl-4 relative pb-5 border-l border-gray-100">
-          <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-gray-200" />
+        {sorted.map((edu, index) => {
+          const isLast = index === sorted.length - 1;
 
-          <div>
-            <p className="text-sm font-medium text-gray-900">
-              B.Tech in Computer Science
-            </p>
-            <p className="text-sm text-gray-500 mt-0.5">IIT Delhi</p>
-            <p className="text-xs text-gray-400 mt-1">Aug 2019 – May 2023</p>
-            <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-              Focused on software engineering, data structures, and web
-              development.
-            </p>
-          </div>
-        </div>
+          return (
+            <div
+              key={edu.id}
+              className={`pl-4 relative ${
+                !isLast ? "pb-5 border-l border-gray-100" : ""
+              }`}
+            >
+              {/* Dot */}
+              <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-gray-200" />
 
-        {/* Education 2 */}
-        <div className="pl-4 relative border-l border-transparent">
-          <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-gray-200" />
+              {/* Content */}
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  {edu.degree} {edu.field && <span>in {edu.field}</span>}
+                </p>
 
-          <div>
-            <p className="text-sm font-medium text-gray-900">
-              Senior Secondary (PCM)
-            </p>
-            <p className="text-sm text-gray-500 mt-0.5">Delhi Public School</p>
-            <p className="text-xs text-gray-400 mt-1">Apr 2017 – Mar 2019</p>
-            <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-              Studied Physics, Chemistry, and Mathematics with a focus on
-              problem-solving.
-            </p>
-          </div>
-        </div>
+                <p className="text-sm text-gray-500 mt-0.5">{edu.school}</p>
+
+                <p className="text-xs text-gray-400 mt-1">
+                  {formatDate(edu.startDate)} –{" "}
+                  {edu.isCurrent
+                    ? "Present"
+                    : edu.endDate
+                      ? formatDate(edu.endDate)
+                      : "—"}
+                </p>
+
+                {edu.description && (
+                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+                    {edu.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </CardWrapper>
   );
 }

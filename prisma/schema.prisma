@@ -42,6 +42,7 @@ model CandidateProfile {
   id           String   @id @default(cuid())
   userId       String   @unique
   bio          String?  @db.Text
+  about        String?  @db.Text
   headline     String?
   location     String?
   resumeUrl    String?

@@ -1,24 +1,43 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import { Separator } from "../ui/separator";
-import ContactCardSkeleton from "./skeletons/ContactCardSkeleton";
 import ContactCard from "./ContactCard";
+import { CardWrapper } from "../ui/CardWrapper";
+import SkillsCard from "./SkillsCard";
 
-export default function ProfileSidebar() {
+interface ProfileSidebarProps {
+  bio?: string | null;
+  skills?: string[];
+  resumeUrl?: string | null;
+  portfolioUrl?: string | null;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+}
+
+export default function ProfileSidebar({
+  bio,
+  githubUrl,
+  linkedinUrl,
+  portfolioUrl,
+  resumeUrl,
+  skills,
+}: ProfileSidebarProps) {
   return (
-    <section className="space-y-6 w-max-sm border bg-white/95 border-slate-200 rounded-lg px-8 py-8 h-fit sticky">
+    <CardWrapper className="h-fit sticky flex flex-col gap-y-5">
       <div id="personal info">
         <h1 className="text-muted-foreground">Personal information</h1>
-        <p className="mt-2 text-sm">
-          Building scalable distributed systems and delightful user experiences.
-          8+ years of engineering across fintech and cloud infrastructure.
-        </p>
+        <p className="mt-2 text-sm">{bio}</p>
       </div>
       <Separator />
-      <Suspense fallback={<ContactCardSkeleton />}>
-        <ContactCard />
-      </Suspense>
-    </section>
+      <ContactCard
+        githubUrl={githubUrl}
+        linkedinUrl={linkedinUrl}
+        portfolioUrl={portfolioUrl}
+        resumeUrl={resumeUrl}
+      />
+      <Separator />
+      <SkillsCard skills={skills} />
+    </CardWrapper>
   );
 }
