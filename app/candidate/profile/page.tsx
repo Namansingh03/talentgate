@@ -1,7 +1,7 @@
 "use server";
 
 import { GetUserProfile } from "@/app/api/candidate/profile";
-import ProfilePage from "@/components/profile/ProfilePage";
+import ProfilePage from "@/components/Candidate/profile/ProfilePage";
 
 export default async function Page() {
   const res = await GetUserProfile();

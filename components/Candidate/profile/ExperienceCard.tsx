@@ -1,20 +1,20 @@
 "use client";
 
-import { CardWrapper } from "../ui/CardWrapper";
+import { CardWrapper } from "../../ui/CardWrapper";
 
-interface Education {
+interface WorkExperience {
   id: string;
-  school: string;
-  degree: string;
-  field: string;
+  company: string;
+  title: string;
+  location?: string | null;
   startDate: Date;
   endDate?: Date | null;
   isCurrent: boolean;
   description?: string | null;
 }
 
-interface EducationCardProps {
-  education?: Education[];
+interface ExperienceCardProps {
+  experiences?: WorkExperience[];
 }
 
 function formatDate(date: Date) {
@@ -24,25 +24,21 @@ function formatDate(date: Date) {
   }).format(new Date(date));
 }
 
-export default function EducationCard({ education }: EducationCardProps) {
-  if (!education?.length) {
+export default function ExperienceCard({ experiences }: ExperienceCardProps) {
+  if (!experiences?.length) {
     return (
       <CardWrapper>
-        <p className="text-sm text-gray-400">No education added yet.</p>
+        <p className="text-sm text-gray-400">No experience added yet.</p>
       </CardWrapper>
     );
   }
-
-  const sorted = [...education].sort(
-    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
-  );
 
   return (
     <CardWrapper>
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-          Education
+          Work experience
         </p>
 
         <button className="text-xs text-blue-500">+ Add</button>
@@ -50,12 +46,12 @@ export default function EducationCard({ education }: EducationCardProps) {
 
       {/* Timeline */}
       <div className="ml-1">
-        {sorted.map((edu, index) => {
-          const isLast = index === sorted.length - 1;
+        {experiences.map((exp, index) => {
+          const isLast = index === experiences.length - 1;
 
           return (
             <div
-              key={edu.id}
+              key={exp.id}
               className={`pl-4 relative ${
                 !isLast ? "pb-5 border-l border-gray-100" : ""
               }`}
@@ -65,24 +61,25 @@ export default function EducationCard({ education }: EducationCardProps) {
 
               {/* Content */}
               <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {edu.degree} {edu.field && <span>in {edu.field}</span>}
+                <p className="text-sm font-medium text-gray-900">{exp.title}</p>
+
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {exp.company}
+                  {exp.location && ` · ${exp.location}`}
                 </p>
 
-                <p className="text-sm text-gray-500 mt-0.5">{edu.school}</p>
-
                 <p className="text-xs text-gray-400 mt-1">
-                  {formatDate(edu.startDate)} –{" "}
-                  {edu.isCurrent
+                  {formatDate(exp.startDate)} –{" "}
+                  {exp.isCurrent
                     ? "Present"
-                    : edu.endDate
-                      ? formatDate(edu.endDate)
+                    : exp.endDate
+                      ? formatDate(exp.endDate)
                       : "—"}
                 </p>
 
-                {edu.description && (
+                {exp.description && (
                   <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-                    {edu.description}
+                    {exp.description}
                   </p>
                 )}
               </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
 import { Edit } from "lucide-react";
 
 interface ProfileHeaderProps {

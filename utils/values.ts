@@ -81,4 +81,4 @@ export const SKILLS = [
   "System Design",
   "Data Structures",
   "Algorithms",
-] as const;
+];

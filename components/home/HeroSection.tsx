@@ -48,7 +48,7 @@ export default function HeroSection() {
         {/* CTA buttons */}
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <Link
-            href="/jobs"
+            href="/signin"
             className="text-sm px-5 py-2.5 rounded-xl 
             bg-blue-500 text-white hover:bg-blue-600 
             transition-colors font-medium"
@@ -57,7 +57,7 @@ export default function HeroSection() {
           </Link>
 
           <Link
-            href="/employers"
+            href="/signup"
             className="text-sm px-5 py-2.5 rounded-xl 
             border border-gray-200 text-gray-700 
             hover:bg-gray-50 transition-colors"

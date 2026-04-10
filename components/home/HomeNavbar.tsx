@@ -14,20 +14,6 @@ export default function HomeNavbar() {
             Talent
             <span className=" text-indigo-400 ">Gate</span>
           </a>
-          <div className="hidden md:flex gap-8 items-center">
-            <a
-              className="text-indigo-600 dark:text-indigo-400 font-semibold border-b-2 border-indigo-600 pb-1 font-['Inter'] tracking-tight"
-              href="#"
-            >
-              Find Jobs
-            </a>
-            <a
-              className="text-slate-600 dark:text-slate-400 hover:text-indigo-500 transition-colors font-['Inter'] tracking-tight"
-              href="#"
-            >
-              Companies
-            </a>
-          </div>
         </div>
         <div className="flex items-center gap-4">
           <button className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20">

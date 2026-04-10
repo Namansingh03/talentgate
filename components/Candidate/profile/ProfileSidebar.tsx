@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Separator } from "../ui/separator";
+import { Separator } from "../../ui/separator";
 import ContactCard from "./ContactCard";
-import { CardWrapper } from "../ui/CardWrapper";
+import { CardWrapper } from "../../ui/CardWrapper";
 import SkillsCard from "./SkillsCard";
 
 interface ProfileSidebarProps {

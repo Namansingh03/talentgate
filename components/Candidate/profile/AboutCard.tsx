@@ -1,6 +1,6 @@
 "use client";
 
-import { CardWrapper } from "../ui/CardWrapper";
+import { CardWrapper } from "../../ui/CardWrapper";
 
 interface AboutCardProps {
   about?: string | null;
