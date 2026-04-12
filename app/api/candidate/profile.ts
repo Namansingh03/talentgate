@@ -50,6 +50,7 @@ export async function GetUserProfile() {
 
 export async function UpdateProfileProps(data: UpdateProfileInput) {
   try {
+    console.log(data);
     const res = await getServerSession();
 
     if (!res.success || !res.data) {
@@ -61,16 +62,21 @@ export async function UpdateProfileProps(data: UpdateProfileInput) {
     const payload = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== undefined),
     );
+    console.log(payload);
 
     if (Object.keys(payload).length === 0) {
       return createResponse(false, "No fields provided to update");
     }
 
-    await prismaDb.candidateProfile.update({
+    await prismaDb.candidateProfile.upsert({
       where: {
         userId,
       },
-      data: payload,
+      update: payload,
+      create: {
+        userId,
+        ...payload,
+      },
     });
 
     return createResponse(true, "profile updated successfully", {

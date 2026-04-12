@@ -4,6 +4,7 @@ export type UpdateProfileInput = Partial<
   Pick<
     CandidateProfile,
     | "bio"
+    | "about"
     | "githubUrl"
     | "headline"
     | "isOpenToWork"

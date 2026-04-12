@@ -1,4 +1,4 @@
-import { TellUsAboutYourself } from "@/components/auth/TellUsAboutYourself";
+import TellUsAboutYourself from "@/components/auth/TellUsAboutYourself";
 
 export default function LoginPage() {
   return (
