@@ -1,23 +1,9 @@
 "use server";
 
-import { ApiResponse, createResponse } from "@/helpers/createResponse";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import type { User } from "better-auth";
+import { createResponse } from "@/helpers/createResponse";
 import prismaDb from "@/lib/db";
 import { UpdateProfileInput } from "@/types/schemaTypes";
-
-async function getServerSession(): Promise<ApiResponse<User | null>> {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user) {
-    return createResponse(false, "Unauthorized request", null, {
-      redirectUrl: "/",
-    });
-  }
-
-  return createResponse(true, "user found", session.user);
-}
+import { getServerSession } from "@/helpers/getServerSessions";
 
 export async function GetUserProfile() {
   try {

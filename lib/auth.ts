@@ -14,7 +14,8 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerificationA: true,
+    requireEmailVerification: true,
+    rememberMe: true,
     onExistingUserSignUp: async ({ user }) => {
       void resend.emails.send({
         from: "talentgate <onboarding@resend.dev>",
