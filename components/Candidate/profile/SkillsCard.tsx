@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 interface SkillsCardProps {
@@ -7,8 +9,6 @@ interface SkillsCardProps {
 }
 
 export default function SkillsCard({ skills }: SkillsCardProps) {
-  const [newSkill, setNewSkill] = useState("");
-
   return (
     <div className="bg-neutral-50">
       {/* Header */}
@@ -22,7 +22,7 @@ export default function SkillsCard({ skills }: SkillsCardProps) {
           skills.map((skill, index) => (
             <span
               key={`${skill}-${index}`}
-              className="text-xs px-2.5 py-1 rounded-md bg-gray-50 border border-gray-100 text-gray-600"
+              className="text-xs px-2 py-1 rounded-md bg-gray-50 border border-gray-100 text-gray-600"
             >
               {skill}
             </span>
@@ -30,32 +30,10 @@ export default function SkillsCard({ skills }: SkillsCardProps) {
         ) : (
           <p className="text-sm text-gray-400">No skills added yet.</p>
         )}
+        <div className="flex items-center justify-center border border-gray-200 rounded-md p-1">
+          <Plus size={14} className="text-gray-600" />
+        </div>
       </div>
-
-      {/* Input */}
-      {/* <div className="flex gap-2">
-        <input
-          type="text"
-          value={newSkill}
-          onChange={(e) => setNewSkill(e.target.value)}
-          placeholder="Add a skill..."
-          className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none"
-        />
-
-        <button
-          className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600"
-          onClick={() => {
-            if (!newSkill.trim()) return;
-
-            // For now just log (since no backend yet)
-            console.log("Add skill:", newSkill);
-
-            setNewSkill("");
-          }}
-        >
-          Add
-        </button>
-      </div> */}
     </div>
   );
 }

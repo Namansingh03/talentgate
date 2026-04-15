@@ -39,33 +39,26 @@ export default function ContactCard({
     },
   ];
 
-  const validLinks = links.filter((link) => link.href);
-
-  if (!validLinks.length) {
-    return (
-      <div className="text-sm text-gray-400">No contact links available.</div>
-    );
-  }
-
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5">
+    <div className="">
       {/* Header */}
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4">
+      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4 flex justify-between">
         Contact
+        <span className="text-blue-500 justify-self-end capitalize">Edit</span>
       </p>
 
       {/* Links */}
       <div className="flex flex-col gap-3">
-        {validLinks.map((link) => (
-          <Link
+        {links.map((link) => (
+          <div
             key={link.label}
-            href={link.href!}
-            target="_blank"
-            className="flex items-center gap-3 text-gray-700 hover:text-blue-500 transition-colors"
+            className="flex items-center gap-3 text-gray-700 hover:text-blue-500 transition-colors text-md"
           >
-            {link.icon}
-            <span className="text-sm">{link.label}</span>
-          </Link>
+            <Link href={link.href ?? ""}>{link.icon}</Link>
+            <p className="p-2 border-b border-slate-500 rounded-sm w-full">
+              {link.href}
+            </p>
+          </div>
         ))}
       </div>
     </div>

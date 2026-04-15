@@ -24,9 +24,12 @@ export default function ProfileSidebar({
   skills,
 }: ProfileSidebarProps) {
   return (
-    <CardWrapper className="h-fit sticky flex flex-col gap-y-5">
+    <CardWrapper className="h-fit sticky flex flex-col gap-y-5 max-w-1/3">
       <div id="personal info">
-        <h1 className="text-muted-foreground">Personal information</h1>
+        <h1 className="text-muted-foreground flex justify-between">
+          Personal information
+          <span className=" text-blue-500 text-xs">Edit</span>
+        </h1>
         <p className="mt-2 text-sm">{bio}</p>
       </div>
       <Separator />
