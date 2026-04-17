@@ -62,11 +62,13 @@ export function SignInForm({
       });
 
       if (error) {
+        console.log("signin error : ", error.message);
         setServerError(error.message ?? "Something went wrong");
         return;
       }
 
       if (!signInData?.user) {
+        console.log("server error in signin ");
         setServerError("Invalid response from server");
         return;
       }

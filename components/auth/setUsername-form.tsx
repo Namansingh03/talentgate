@@ -10,11 +10,6 @@ import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { Loader2 } from "lucide-react";
 
-const ROLE_REDIRECT: Record<string, string> = {
-  EMPLOYER: "/dashboard",
-  CANDIDATE: "/candidate/tell-us-more",
-};
-
 const SetUsernameForm = () => {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
@@ -68,11 +63,16 @@ const SetUsernameForm = () => {
 
       const { data: updatedSession } = await authClient.getSession();
       const role = updatedSession?.user?.role ?? "CANDIDATE";
+      const userId = updatedSession?.user?.id;
 
       toast.success("Username created successfully", {
         description: formatDate(),
       });
-      router.push(ROLE_REDIRECT[role] ?? "/candidate/tell-us-more");
+      router.push(
+        role.toUpperCase() === "CANDIDATE"
+          ? `/candidate/${userId}/tell-us-more`
+          : `/employer/${userId}/profile`,
+      );
     } catch {
       toast.error("Something went wrong. Try again.");
     } finally {

@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UpdateProfileProps } from "@/app/api/candidate/profile";
+import { UpdateProfile } from "@/app/api/candidate/profile";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/helpers/formatDate";
@@ -41,7 +41,11 @@ const STEPS = [
   { label: "Bio", index: 3 },
 ];
 
-const TellUsAboutYourself = () => {
+interface TellUsMore {
+  userId: string;
+}
+
+const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const [api, setApi] = useState<CarouselApi>();
   const [currentStep, setCurrentStep] = useState(0);
   const [open, setOpen] = useState(false);
@@ -97,11 +101,14 @@ const TellUsAboutYourself = () => {
   const onSubmit = (data: z.infer<typeof TellUsMoreSchema>) => {
     console.log(data);
     startTransition(async () => {
-      const res = await UpdateProfileProps({
-        bio: data.bio,
-        headline: data.headline,
-        skills: data.skills,
-        about: data.about,
+      const res = await UpdateProfile({
+        userId,
+        data: {
+          bio: data.bio,
+          headline: data.headline,
+          skills: data.skills,
+          about: data.about,
+        },
       });
 
       if (!res.success) {
@@ -110,7 +117,7 @@ const TellUsAboutYourself = () => {
       }
 
       toast.success(res.message, { description: formatDate() });
-      router.push("/candidate/profile");
+      router.push(`/candidate/${userId}/profile`);
     });
   };
 

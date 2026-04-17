@@ -3,18 +3,12 @@
 import { createResponse } from "@/helpers/createResponse";
 import prismaDb from "@/lib/db";
 import { UpdateProfileInput } from "@/types/schemaTypes";
-import { getServerSession } from "@/helpers/getServerSessions";
+import { cacheLife } from "next/cache";
 
-export async function GetUserProfile() {
+export async function GetUserProfile(userId: string) {
+  "use cache";
+  cacheLife("hours");
   try {
-    const res = await getServerSession();
-
-    if (!res.success || !res.data) {
-      return createResponse(res.success, res.message);
-    }
-
-    const userId = res.data.id;
-
     const user = await prismaDb.user.findFirst({
       where: { id: userId },
       include: {
@@ -34,17 +28,13 @@ export async function GetUserProfile() {
   }
 }
 
-export async function UpdateProfileProps(data: UpdateProfileInput) {
+interface updateProfileProps {
+  data: UpdateProfileInput;
+  userId: string;
+}
+
+export async function UpdateProfile({ data, userId }: updateProfileProps) {
   try {
-    console.log(data);
-    const res = await getServerSession();
-
-    if (!res.success || !res.data) {
-      return createResponse(res.success, res.message);
-    }
-
-    const userId = res.data.id;
-
     const payload = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== undefined),
     );

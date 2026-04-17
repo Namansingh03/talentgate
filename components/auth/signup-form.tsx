@@ -62,6 +62,7 @@ export function SignupForm({
       });
 
       if (error) {
+        console.log("signup error : ", error.message);
         setServerError(error.message ?? "Something went wrong");
         return;
       }
