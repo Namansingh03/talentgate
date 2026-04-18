@@ -65,7 +65,7 @@ export default function VerifyOtp() {
       }
 
       toast.success("Otp verified successfully", { description: formatDate() });
-      router.push(`/setUsername`);
+      router.push(`/setUsername/${email}`);
     });
   }, [email, otp, router]);
 

@@ -19,6 +19,8 @@ const SetUsernameForm = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
 
+  console.log("set username : ", session);
+
   useEffect(() => {
     if (!isPending && !session) {
       toast.error("Unauthorized", { description: formatDate() });
@@ -70,8 +72,9 @@ const SetUsernameForm = () => {
       });
       router.push(
         role.toUpperCase() === "CANDIDATE"
-          ? `/candidate/${userId}/tell-us-more`
+          ? `/tell-us-more/${userId}`
           : `/employer/${userId}/profile`,
+        //todo : change according to schema
       );
     } catch {
       toast.error("Something went wrong. Try again.");

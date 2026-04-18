@@ -6,10 +6,10 @@ import ProfilePage from "@/components/Candidate/profile/ProfilePage";
 export default async function Page({
   params,
 }: {
-  params: Promise<{ userId: string }>;
+  params: Promise<{ username: string }>;
 }) {
-  const { userId } = await params;
-  const res = await GetUserProfile(userId);
+  const { username } = await params;
+  const res = await GetUserProfile(username);
 
   if (!res.success || !res.data) {
     return <div>Error</div>;

@@ -3,14 +3,11 @@
 import { createResponse } from "@/helpers/createResponse";
 import prismaDb from "@/lib/db";
 import { UpdateProfileInput } from "@/types/schemaTypes";
-import { cacheLife } from "next/cache";
 
-export async function GetUserProfile(userId: string) {
-  "use cache";
-  cacheLife("hours");
+export async function GetUserProfile(username: string) {
   try {
     const user = await prismaDb.user.findFirst({
-      where: { id: userId },
+      where: { name: username },
       include: {
         candidateProfile: {
           include: {
@@ -30,10 +27,10 @@ export async function GetUserProfile(userId: string) {
 
 interface updateProfileProps {
   data: UpdateProfileInput;
-  userId: string;
+  username: string;
 }
 
-export async function UpdateProfile({ data, userId }: updateProfileProps) {
+export async function UpdateProfile({ data, username }: updateProfileProps) {
   try {
     const payload = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== undefined),
@@ -43,6 +40,20 @@ export async function UpdateProfile({ data, userId }: updateProfileProps) {
     if (Object.keys(payload).length === 0) {
       return createResponse(false, "No fields provided to update");
     }
+
+    const user = await prismaDb.user.findFirst({
+      where: {
+        name: username,
+      },
+    });
+
+    if (!user) {
+      return createResponse(false, "user not found", {
+        redirectUrl: "/signin",
+      });
+    }
+
+    const userId = user.id;
 
     await prismaDb.candidateProfile.upsert({
       where: {

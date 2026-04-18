@@ -1,4 +1,4 @@
-import TellUsAboutYourself from "@/components/Candidate/TellUsAboutYourself";
+import TellUsAboutYourself from "@/components/auth/TellUsAboutYourself";
 
 export default async function LoginPage({
   params,
