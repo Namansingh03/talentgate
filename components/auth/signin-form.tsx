@@ -15,20 +15,13 @@ import { formatDate } from "@/helpers/formatDate";
 import Socials from "./Socials";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import type { User } from "better-auth";
 
 type SignInFormValues = z.infer<typeof SignInSchema>;
 
-type Role = "CANDIDATE" | "EMPLOYER" | "ADMIN";
-
-type AppUser = {
-  role: Role;
-  username?: string | null;
-};
-
-const ROLE_REDIRECT: Record<Role, (user: AppUser) => string> = {
-  CANDIDATE: (user) => `/candidate/${user.username}/profile`,
-  EMPLOYER: () => "/dashboard",
-  ADMIN: () => "/admin/panel",
+const ROLE_REDIRECTS: Record<string, (user: User) => string> = {
+  CANDIDATE: (user) => `/candidate/${user.name}/profile`,
+  EMPLOYER: (user) => `/employer/${user.name}/profile`,
 };
 
 export function SignInForm({
@@ -82,20 +75,17 @@ export function SignInForm({
         description: formatDate(),
       });
 
-      const user = signInData.user as AppUser;
+      const user = signInData.user;
 
-      // username not set → onboarding
       if (!user.username) {
         return router.push("/setUsername");
       }
 
-      const redirectFn = ROLE_REDIRECT[user.role];
+      const role = user.role?.toUpperCase();
+      const redirect = ROLE_REDIRECTS[role];
 
-      if (redirectFn) {
-        const path = redirectFn(user);
-        router.push(path);
-      } else {
-        router.push("/");
+      if (redirect) {
+        router.push(redirect(user));
       }
     });
   };
