@@ -1,11 +1,15 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { Separator } from "../../ui/separator";
 import ContactCard from "./ContactCard";
 import { CardWrapper } from "../../ui/CardWrapper";
 import SkillsCard from "./SkillsCard";
 import SkillsSkeleton from "./ProfileSkeleton/SkillsSkeleton";
+import { UpdateProfile } from "@/app/api/candidate/profile";
+import { toast } from "sonner";
+import TextEditDialog from "./EditDialogs/TextEditDialogs";
+import { useRouter } from "next/navigation";
 
 interface ProfileSidebarProps {
   bio?: string | null;
@@ -24,13 +28,36 @@ export default function ProfileSidebar({
   resumeUrl,
   skills,
 }: ProfileSidebarProps) {
+  const [aboutText, setAboutText] = useState(bio ?? "");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (value: string): Promise<boolean> => {
+    const res = await UpdateProfile({ bio: value });
+
+    if (res.success) {
+      setAboutText(value);
+      toast.success("About updated successfully");
+      router.refresh();
+      return true;
+    }
+
+    toast.error(res.message ?? "Failed to update");
+    return false;
+  };
+
   return (
     <Suspense fallback={<SkillsSkeleton />}>
       <CardWrapper className="h-fit sticky flex flex-col gap-y-5 max-w-1/3">
         <div id="personal info">
           <h1 className="text-muted-foreground flex justify-between">
             Personal information
-            <span className=" text-blue-500 text-xs">Edit</span>
+            <span
+              className=" text-blue-500 text-xs"
+              onClick={() => setDialogOpen(true)}
+            >
+              Edit
+            </span>
           </h1>
           <p className="mt-2 text-sm">{bio}</p>
         </div>
@@ -44,6 +71,14 @@ export default function ProfileSidebar({
         <Separator />
         <SkillsCard skills={skills} />
       </CardWrapper>
+      <TextEditDialog
+        label="About"
+        initialText={aboutText}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={handleSubmit}
+        maxLength={200}
+      />
     </Suspense>
   );
 }

@@ -1,8 +1,22 @@
 "use server";
 
 import { createResponse } from "@/helpers/createResponse";
+import { auth } from "@/lib/auth";
 import prismaDb from "@/lib/db";
 import { UpdateProfileInput } from "@/types/schemaTypes";
+import { headers } from "next/headers";
+
+export async function getUserIdOrThrow(): Promise<string> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("UNAUTHORIZED");
+  }
+
+  return session.user.id;
+}
 
 export async function GetUserProfile(username: string) {
   try {
@@ -25,40 +39,20 @@ export async function GetUserProfile(username: string) {
   }
 }
 
-interface updateProfileProps {
-  data: UpdateProfileInput;
-  username: string;
-}
-
-export async function UpdateProfile({ data, username }: updateProfileProps) {
+export async function UpdateProfile(data: UpdateProfileInput) {
   try {
+    const userId = await getUserIdOrThrow();
+
     const payload = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== undefined),
     );
-    console.log(payload);
 
     if (Object.keys(payload).length === 0) {
       return createResponse(false, "No fields provided to update");
     }
 
-    const user = await prismaDb.user.findFirst({
-      where: {
-        name: username,
-      },
-    });
-
-    if (!user) {
-      return createResponse(false, "user not found", {
-        redirectUrl: "/signin",
-      });
-    }
-
-    const userId = user.id;
-
-    await prismaDb.candidateProfile.upsert({
-      where: {
-        userId,
-      },
+    const updatedProfile = await prismaDb.candidateProfile.upsert({
+      where: { userId },
       update: payload,
       create: {
         userId,
@@ -66,11 +60,9 @@ export async function UpdateProfile({ data, username }: updateProfileProps) {
       },
     });
 
-    return createResponse(true, "profile updated successfully", {
-      redirectUrl: "/candidate/profile",
-    });
+    return createResponse(true, "Profile updated successfully", updatedProfile);
   } catch (error) {
-    console.log(error);
-    return createResponse(false, "Something went wrong while updating profile");
+    console.error("UpdateProfile error:", error);
+    return createResponse(false, "Failed to update profile");
   }
 }
