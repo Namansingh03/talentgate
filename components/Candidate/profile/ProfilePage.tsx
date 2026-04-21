@@ -16,12 +16,13 @@ export default function ProfilePage({ user }: { user: UserWithProfile }) {
     <div className="w-full bg-blue-500 relative">
       <Suspense fallback={<ProfileHeaderSkeleton />}>
         <ProfileHeader
-          AvatarImageUrl={user?.image}
+          AvatarImageUrl={user.image}
           displayName={user?.name}
           headline={user?.candidateProfile?.headline}
           isAvailable={user?.candidateProfile?.isOpenToWork}
           location={user?.candidateProfile?.location}
           username={user?.username}
+          bannerImageUrl={user.candidateProfile?.bannerImage}
         />
       </Suspense>
 

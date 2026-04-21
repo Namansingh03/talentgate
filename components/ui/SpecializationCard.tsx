@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Field, FieldGroup, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Field, FieldGroup, FieldLabel } from "./field";
+import { Input } from "./input";
+import { Button } from "./button";
 
 export const SpecializationCard = () => {
   return (

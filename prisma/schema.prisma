@@ -45,6 +45,7 @@ model CandidateProfile {
   linkedinUrl  String?
   githubUrl    String?
   // customUrls   String[]
+  bannerImage  String?
   skills       String[]
   isOpenToWork Boolean  @default(true)
   createdAt    DateTime @default(now())
