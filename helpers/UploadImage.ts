@@ -3,9 +3,7 @@
 import cloudinary from "@/lib/cloudinary";
 import type { UploadApiResponse } from "cloudinary";
 
-export async function uploadImage(formData: FormData) {
-  const file = formData.get("file") as File;
-
+export async function uploadImage(file: File) {
   if (!file || file.size === 0) {
     throw new Error("No file uploaded");
   }

@@ -40,9 +40,11 @@ export default function ProfileHeader({
               <Avatar className="w-30 h-30">
                 {AvatarImageUrl && (
                   <Image
-                    alt={`${name} profile picture`}
+                    alt={"avatarImage"}
                     src={AvatarImageUrl}
                     className=""
+                    width={100}
+                    height={100}
                   />
                 )}
                 <AvatarFallback>{name[0]}</AvatarFallback>

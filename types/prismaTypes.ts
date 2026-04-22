@@ -11,4 +11,9 @@ type UserWithProfile = Prisma.UserGetPayload<{
   };
 }>;
 
-export type { UserWithProfile };
+type UpdateUserInput = {
+  user?: Prisma.UserUpdateInput;
+  candidateProfile?: Prisma.CandidateProfileUpdateInput;
+};
+
+export type { UserWithProfile, UpdateUserInput };

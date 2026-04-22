@@ -22,6 +22,11 @@ import {
   profileHeaderSchema,
   ProfileHeaderInput,
 } from "@/schemas/CandidateSchemas";
+import { UpdateProfile } from "@/app/api/candidate/profile";
+import { uploadImage } from "@/helpers/UploadImage";
+import { toast } from "sonner";
+import { formatDate } from "@/helpers/formatDate";
+import { useRouter } from "next/navigation";
 
 interface Props {
   avatarImageUrl?: string;
@@ -45,13 +50,13 @@ export default function EditProfileHeaderDialog({
   handleOpenChange,
 }: Props) {
   const [isPending, startTransition] = useTransition();
-
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     avatarImageUrl,
   );
   const [bannerPreview, setBannerPreview] = useState<string | undefined>(
     bannerImageUrl,
   );
+  const router = useRouter();
 
   const {
     register,
@@ -71,8 +76,41 @@ export default function EditProfileHeaderDialog({
   const onSubmit = (data: ProfileHeaderInput) => {
     startTransition(async () => {
       console.log("validated data:", data);
+      let avatarUrl = avatarPreview;
+      let bannerUrl = bannerPreview;
+      // cloudinary update
+      if (data.avatar) {
+        const res = await uploadImage(data.avatar);
+        avatarUrl = res.url;
+      }
+      if (data.banner) {
+        const res = await uploadImage(data.banner);
+        bannerUrl = res.url;
+      }
+      // db update
 
-      // 👉 call server action here
+      const res = await UpdateProfile({
+        user: {
+          image: avatarUrl?.toString(),
+          displayUsername: data.displayName.toString(),
+        },
+        candidateProfile: {
+          headline: data.headline?.toString(),
+          bannerImage: bannerUrl?.toString(),
+          isOpenToWork: data.isAvailable,
+          location: data.location?.toString(),
+        },
+      });
+
+      if (!res.success) {
+        toast.error(res.message, { description: formatDate() });
+        return res.redirectUrl
+          ? router.push(res.redirectUrl)
+          : router.refresh();
+      }
+
+      toast.success(res.message, { description: formatDate() });
+      router.refresh();
 
       handleOpenChange(false);
     });

@@ -3,7 +3,7 @@
 import { createResponse } from "@/helpers/createResponse";
 import { auth } from "@/lib/auth";
 import prismaDb from "@/lib/db";
-import { UpdateProfileInput } from "@/types/schemaTypes";
+import { UpdateUserInput } from "@/types/prismaTypes";
 import { headers } from "next/headers";
 
 export async function getUserIdOrThrow(): Promise<string> {
@@ -16,6 +16,12 @@ export async function getUserIdOrThrow(): Promise<string> {
   }
 
   return session.user.id;
+}
+
+function clean<T extends object>(obj: T) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined),
+  );
 }
 
 export async function GetUserProfile(username: string) {
@@ -39,28 +45,46 @@ export async function GetUserProfile(username: string) {
   }
 }
 
-export async function UpdateProfile(data: UpdateProfileInput) {
+export async function UpdateProfile(data: UpdateUserInput) {
   try {
     const userId = await getUserIdOrThrow();
 
-    const payload = Object.fromEntries(
-      Object.entries(data).filter(([, v]) => v !== undefined),
-    );
+    const userData = clean(data.user ?? {});
+    const profileData = clean(data.candidateProfile ?? {});
 
-    if (Object.keys(payload).length === 0) {
+    const hasUser = Object.keys(userData).length > 0;
+    const hasProfile = Object.keys(profileData).length > 0;
+
+    if (!hasUser && !hasProfile) {
       return createResponse(false, "No fields provided to update");
     }
 
-    const updatedProfile = await prismaDb.candidateProfile.upsert({
-      where: { userId },
-      update: payload,
-      create: {
-        userId,
-        ...payload,
+    console.log(userData, profileData);
+
+    const updatedUser = await prismaDb.user.update({
+      where: { id: userId },
+      data: {
+        ...userData,
+
+        ...(hasProfile && {
+          candidateProfile: {
+            upsert: {
+              create: {
+                ...profileData,
+              },
+              update: {
+                ...profileData,
+              },
+            },
+          },
+        }),
+      },
+      include: {
+        candidateProfile: true,
       },
     });
 
-    return createResponse(true, "Profile updated successfully", updatedProfile);
+    return createResponse(true, "Profile updated successfully", updatedUser);
   } catch (error) {
     console.error("UpdateProfile error:", error);
     return createResponse(false, "Failed to update profile");
