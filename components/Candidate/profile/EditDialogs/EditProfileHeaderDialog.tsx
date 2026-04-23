@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { Loader2Icon } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -16,17 +19,17 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2Icon } from "lucide-react";
 
 import {
   profileHeaderSchema,
   ProfileHeaderInput,
 } from "@/schemas/CandidateSchemas";
+
 import { UpdateProfile } from "@/app/api/candidate/profile";
 import { uploadImage } from "@/helpers/UploadImage";
-import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
-import { useRouter } from "next/navigation";
+
+import AvatarCropDialog from "./ImageCropDialog";
 
 interface Props {
   avatarImageUrl?: string;
@@ -37,6 +40,7 @@ interface Props {
   isAvailable: boolean;
   open: boolean;
   handleOpenChange: (open: boolean) => void;
+  username?: string | null;
 }
 
 export default function EditProfileHeaderDialog({
@@ -47,16 +51,27 @@ export default function EditProfileHeaderDialog({
   location,
   isAvailable,
   open,
+  username,
   handleOpenChange,
 }: Props) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     avatarImageUrl,
   );
+
   const [bannerPreview, setBannerPreview] = useState<string | undefined>(
     bannerImageUrl,
   );
-  const router = useRouter();
+
+  // crop dialog state
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!username) router.push("/signin");
+  }, [username, router]);
 
   const {
     register,
@@ -73,49 +88,68 @@ export default function EditProfileHeaderDialog({
     },
   });
 
+  // submit form
   const onSubmit = (data: ProfileHeaderInput) => {
     startTransition(async () => {
-      console.log("validated data:", data);
       let avatarUrl = avatarPreview;
       let bannerUrl = bannerPreview;
-      // cloudinary update
+
+      // upload avatar
       if (data.avatar) {
-        const res = await uploadImage(data.avatar);
+        const res = await uploadImage({
+          file: data.avatar,
+          imageTypes: "avatarImage",
+          username,
+        });
+
         avatarUrl = res.url;
       }
+
+      // upload banner
       if (data.banner) {
-        const res = await uploadImage(data.banner);
+        const res = await uploadImage({
+          file: data.banner,
+          imageTypes: "bannerImage",
+          username,
+        });
+
         bannerUrl = res.url;
       }
-      // db update
 
+      // db update
       const res = await UpdateProfile({
         user: {
           image: avatarUrl?.toString(),
-          displayUsername: data.displayName.toString(),
+          displayUsername: data.displayName,
         },
         candidateProfile: {
-          headline: data.headline?.toString(),
+          headline: data.headline,
           bannerImage: bannerUrl?.toString(),
           isOpenToWork: data.isAvailable,
-          location: data.location?.toString(),
+          location: data.location,
         },
       });
 
       if (!res.success) {
-        toast.error(res.message, { description: formatDate() });
+        toast.error(res.message, {
+          description: formatDate(),
+        });
+
         return res.redirectUrl
           ? router.push(res.redirectUrl)
           : router.refresh();
       }
 
-      toast.success(res.message, { description: formatDate() });
-      router.refresh();
+      toast.success(res.message, {
+        description: formatDate(),
+      });
 
+      router.refresh();
       handleOpenChange(false);
     });
   };
 
+  // file input
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "avatar" | "banner",
@@ -126,119 +160,148 @@ export default function EditProfileHeaderDialog({
     const preview = URL.createObjectURL(file);
 
     if (type === "avatar") {
-      setValue("avatar", file);
-      setAvatarPreview(preview);
+      setCropImage(preview);
+      setCropOpen(true);
     } else {
       setValue("banner", file);
       setBannerPreview(preview);
     }
   };
 
+  // receive cropped avatar
+  const handleCropSave = (file: File) => {
+    setValue("avatar", file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="min-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>Update your profile header</DialogDescription>
-        </DialogHeader>
+    <>
+      {/* Main Edit Dialog */}
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="min-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogDescription>Update your profile header</DialogDescription>
+          </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Banner */}
-          <div className="flex flex-col gap-y-3">
-            <label className="text-sm font-medium">Banner</label>
-            <div className="h-32 bg-gray-100 rounded-md overflow-hidden relative">
-              {bannerPreview && (
-                <Image
-                  src={bannerPreview}
-                  alt="banner"
-                  fill
-                  className="object-cover"
-                />
-              )}
-            </div>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileChange(e, "banner")}
-            />
-            {errors.banner && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.banner.message as string}
-              </p>
-            )}
-          </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Banner */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Banner</label>
 
-          <div className="flex flex-row items-center justify-center gap-x-5">
-            {/* Avatar */}
-            <div className="flex flex-col peer-first:items-center gap-y-2">
-              <label className="text-sm font-medium">Avatar</label>
-              <div className="w-30 h-30 rounded-full bg-gray-100 overflow-hidden relative">
-                {avatarPreview && (
+              <div className="h-32 rounded-md overflow-hidden bg-gray-100 relative">
+                {bannerPreview && (
                   <Image
-                    src={avatarPreview}
-                    alt="avatar"
+                    src={bannerPreview}
+                    alt="banner"
                     fill
                     className="object-cover"
                   />
                 )}
               </div>
+
               <Input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleFileChange(e, "avatar")}
+                onChange={(e) => handleFileChange(e, "banner")}
               />
-              {errors.avatar && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.avatar.message as string}
+
+              {errors.banner && (
+                <p className="text-xs text-red-500">
+                  {errors.banner.message as string}
                 </p>
               )}
             </div>
 
-            {/* Text fields */}
-            <div className="flex flex-col gap-y-4">
-              <Input placeholder="Name" {...register("displayName")} />
-              {errors.displayName && (
-                <p className="text-red-500 text-xs">
-                  {errors.displayName.message}
-                </p>
-              )}
+            {/* Avatar + Fields */}
+            <div className="flex gap-6">
+              {/* Avatar */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Avatar</label>
 
-              <Input placeholder="Headline" {...register("headline")} />
-              {errors.headline && (
-                <p className="text-red-500 text-xs">
-                  {errors.headline.message}
-                </p>
-              )}
+                <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100 relative">
+                  {avatarPreview && (
+                    <Image
+                      src={avatarPreview}
+                      alt="avatar"
+                      fill
+                      className="object-cover"
+                    />
+                  )}
+                </div>
 
-              <Input placeholder="Location" {...register("location")} />
-              {errors.location && (
-                <p className="text-red-500 text-xs">
-                  {errors.location.message}
-                </p>
-              )}
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" {...register("isAvailable")} />
-                Open to work
-              </label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileChange(e, "avatar")}
+                />
+
+                {errors.avatar && (
+                  <p className="text-xs text-red-500">
+                    {errors.avatar.message as string}
+                  </p>
+                )}
+              </div>
+
+              {/* Inputs */}
+              <div className="flex-1 space-y-3">
+                <Input placeholder="Name" {...register("displayName")} />
+
+                {errors.displayName && (
+                  <p className="text-xs text-red-500">
+                    {errors.displayName.message}
+                  </p>
+                )}
+
+                <Input placeholder="Headline" {...register("headline")} />
+
+                {errors.headline && (
+                  <p className="text-xs text-red-500">
+                    {errors.headline.message}
+                  </p>
+                )}
+
+                <Input placeholder="Location" {...register("location")} />
+
+                {errors.location && (
+                  <p className="text-xs text-red-500">
+                    {errors.location.message}
+                  </p>
+                )}
+
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" {...register("isAvailable")} />
+                  Open to work
+                </label>
+              </div>
             </div>
-          </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleOpenChange(false)}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
+            {/* Footer */}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isPending}
+                onClick={() => handleOpenChange(false)}
+              >
+                Cancel
+              </Button>
 
-            <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader2Icon className="animate-spin" /> : "Save"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? <Loader2Icon className="animate-spin" /> : "Save"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Separate Crop Dialog */}
+      <AvatarCropDialog
+        open={cropOpen}
+        image={cropImage}
+        onClose={() => setCropOpen(false)}
+        onSave={handleCropSave}
+      />
+    </>
   );
 }

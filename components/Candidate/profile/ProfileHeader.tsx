@@ -1,12 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Avatar, AvatarFallback } from "../../ui/avatar";
+import { Avatar } from "../../ui/avatar";
 import { Edit } from "lucide-react";
 import EditProfileHeaderDialog from "./EditDialogs/EditProfileHeaderDialog";
 import ProfileHeaderBackground from "../../ui/ImageHeaderBackground";
 import { useState } from "react";
-import { Boolean } from "@/app/generated/prisma/internal/prismaNamespace";
 
 interface ProfileHeaderProps {
   displayName?: string | null;
@@ -31,23 +30,33 @@ export default function ProfileHeader({
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <ProfileHeaderBackground imageUrl={bannerImageUrl} className="z-0">
-      <header className="relative bg-linear-to-b from-blue-500 to-blue-100 py-20 px-12">
+    <ProfileHeaderBackground className="z-0">
+      <header
+        className="relative py-20 px-12 bg-cover bg-center bg-no-repeat"
+        style={
+          bannerImageUrl
+            ? { backgroundImage: `url(${bannerImageUrl})` }
+            : undefined
+        }
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-10">
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-8 bg-white w-full p-3 opacity-95 rounded-lg">
             {/* Avatar */}
             <div className="relative">
               <Avatar className="w-30 h-30">
-                {AvatarImageUrl && (
+                {AvatarImageUrl ? (
                   <Image
-                    alt={"avatarImage"}
                     src={AvatarImageUrl}
-                    className=""
-                    width={100}
-                    height={100}
+                    alt={"avatarImage"}
+                    className="rounded-full object-cover"
+                    width={1800}
+                    height={1800}
                   />
+                ) : (
+                  <div className="w-35 h-35 text-xl font-semibold rounded-full">
+                    U
+                  </div>
                 )}
-                <AvatarFallback>{name[0]}</AvatarFallback>
               </Avatar>
             </div>
 
@@ -58,7 +67,7 @@ export default function ProfileHeader({
               <p className="text-lg text-gray-600 font-medium">
                 {headline && (
                   <>
-                    <span>{headline}</span>
+                    <span className="text-neutral-800">{headline}</span>
                     <span>,</span>
                   </>
                 )}
@@ -70,16 +79,17 @@ export default function ProfileHeader({
                 )}
               </p>
 
-              <div className="flex items-center gap-6 text-sm text-gray-500">
-                {location && <span>{location}</span>}
-                {username && <span>@{username}</span>}
+              <div className="flex items-center text-sm ">
+                {location && <span className="text-gray-600">{location}</span>}
+                <span className="mx-1">,</span>
+                {username && <span className="text-gray-800">@{username}</span>}
               </div>
             </div>
           </div>
         </div>
 
         <Edit
-          className="absolute top-10 right-10 text-neutral-700 cursor-pointer"
+          className="absolute top-10 right-10 text-blue-100 cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         />
         <EditProfileHeaderDialog
@@ -91,6 +101,7 @@ export default function ProfileHeader({
           location={location ?? ""}
           handleOpenChange={() => setIsOpen(!isOpen)}
           open={isOpen}
+          username={username}
         />
       </header>
     </ProfileHeaderBackground>
