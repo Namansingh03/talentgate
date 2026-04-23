@@ -15,7 +15,11 @@ export default function SkillsCard({ skills }: SkillsCardProps) {
   const [skillValues, setSkillValues] = useState<string[]>([]);
 
   const handleSubmit = async (): Promise<boolean> => {
-    const res = await UpdateProfile({ skills: skillValues });
+    const res = await UpdateProfile({
+      candidateProfile: {
+        skills: skillValues,
+      },
+    });
 
     if (res.success) {
       toast.success("About updated successfully");

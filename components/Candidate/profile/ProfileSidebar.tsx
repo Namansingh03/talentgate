@@ -33,7 +33,11 @@ export default function ProfileSidebar({
   const router = useRouter();
 
   const handleSubmit = async (value: string): Promise<boolean> => {
-    const res = await UpdateProfile({ bio: value });
+    const res = await UpdateProfile({
+      candidateProfile: {
+        bio: value,
+      },
+    });
 
     if (res.success) {
       setAboutText(value);

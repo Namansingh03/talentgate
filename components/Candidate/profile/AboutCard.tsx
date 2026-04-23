@@ -15,7 +15,11 @@ export default function AboutCard({ about }: AboutCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSubmit = async (value: string): Promise<boolean> => {
-    const res = await UpdateProfile({ about: value });
+    const res = await UpdateProfile({
+      candidateProfile: {
+        about: aboutText,
+      },
+    });
 
     if (res.success) {
       setAboutText(value);

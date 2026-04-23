@@ -2,6 +2,8 @@
 
 import { FaLinkedin, FaGithub, FaGlobe, FaUser } from "react-icons/fa";
 import Link from "next/link";
+import EditContactDialog from "./EditDialogs/EditContactDialog";
+import { useState } from "react";
 
 interface ContactCardProps {
   githubUrl?: string | null;
@@ -39,12 +41,19 @@ export default function ContactCard({
     },
   ];
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <div className="">
       {/* Header */}
       <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-4 flex justify-between">
         Contact
-        <span className="text-blue-500 justify-self-end capitalize">Edit</span>
+        <span
+          className="text-blue-500 justify-self-end capitalize cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          Edit
+        </span>
       </p>
 
       {/* Links */}
@@ -52,15 +61,24 @@ export default function ContactCard({
         {links.map((link) => (
           <div
             key={link.label}
-            className="flex items-center gap-3 text-gray-700 hover:text-blue-500 transition-colors text-md"
+            className="flex items-center gap-3 text-gray-700 hover:text-blue-500 transition-colors"
           >
             <Link href={link.href ?? ""}>{link.icon}</Link>
-            <p className="p-2 border-b border-slate-500 rounded-sm w-full">
+            <p className="text-md border-slate-500 border-b rounded-xs w-full p-2">
               {link.href}
             </p>
           </div>
         ))}
       </div>
+
+      <EditContactDialog
+        handleOpenChange={() => setIsOpen(!open)}
+        open={isOpen}
+        githubUrl={githubUrl}
+        linkedinUrl={linkedinUrl}
+        portfolioUrl={portfolioUrl}
+        resumeUrl={resumeUrl}
+      />
     </div>
   );
 }
