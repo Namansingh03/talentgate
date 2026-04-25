@@ -60,15 +60,14 @@ model CandidateProfile {
 }
 
 model Education {
-  id          String    @id @default(cuid())
-  profileId   String
-  school      String
-  degree      String
-  field       String
-  startDate   DateTime
-  endDate     DateTime?
-  isCurrent   Boolean   @default(false)
-  description String?   @db.Text
+  id        String    @id @default(cuid())
+  profileId String
+  school    String
+  degree    String
+  field     String
+  startDate DateTime
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
 
   profile CandidateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 

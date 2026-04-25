@@ -53,11 +53,11 @@ export default function ExperienceCard({ experiences }: ExperienceCardProps) {
             <div
               key={exp.id}
               className={`pl-4 relative ${
-                !isLast ? "pb-5 border-l border-gray-100" : ""
+                !isLast ? "pb-5 border-l border-blue-300" : ""
               }`}
             >
               {/* Dot */}
-              <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-gray-200" />
+              <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-blue-400" />
 
               {/* Content */}
               <div>

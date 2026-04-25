@@ -48,6 +48,38 @@ const profileHeaderSchema = z.object({
     }),
 });
 
-export { TellUsMoreSchema, profileHeaderSchema };
+const educationSchema = z
+  .object({
+    school: z.string().min(1, "School is required"),
 
+    degree: z.string().min(1, "Degree is required"),
+
+    field: z.string().min(1, "Field is required"),
+
+    startDate: z.coerce.date({
+      error: "Start date is required",
+    }),
+
+    endDate: z.coerce.date().nullable().optional(),
+
+    isCurrent: z.boolean().default(false),
+
+    description: z.string().nullable().optional(),
+
+    marksObtained: z
+      .number()
+      .max(100, "marks cannot be more than 100%")
+      .optional(),
+  })
+  .refine((data) => data.isCurrent || data.endDate, {
+    message: "End date is required if not currently studying",
+    path: ["endDate"],
+  })
+  .refine((data) => !data.endDate || data.endDate >= data.startDate, {
+    message: "End date cannot be before start date",
+    path: ["endDate"],
+  });
+
+export { profileHeaderSchema, educationSchema };
 export type ProfileHeaderInput = z.infer<typeof profileHeaderSchema>;
+export type EducationSchemaType = z.input<typeof educationSchema>;

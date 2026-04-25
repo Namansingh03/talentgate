@@ -3,13 +3,8 @@
 import { GetUserProfile } from "@/app/api/candidate/profile";
 import ProfilePage from "@/components/Candidate/profile/ProfilePage";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ username: string }>;
-}) {
-  const { username } = await params;
-  const res = await GetUserProfile(username);
+export default async function Page() {
+  const res = await GetUserProfile();
 
   if (!res.success || !res.data) {
     return <div>Error</div>;

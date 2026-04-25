@@ -24,10 +24,11 @@ function clean<T extends object>(obj: T) {
   );
 }
 
-export async function GetUserProfile(username: string) {
+export async function GetUserProfile() {
   try {
+    const userId = await getUserIdOrThrow();
     const user = await prismaDb.user.findFirst({
-      where: { name: username },
+      where: { id: userId },
       include: {
         candidateProfile: {
           include: {
@@ -80,7 +81,12 @@ export async function UpdateProfile(data: UpdateUserInput) {
         }),
       },
       include: {
-        candidateProfile: true,
+        candidateProfile: {
+          include: {
+            education: true,
+            experience: true,
+          },
+        },
       },
     });
 
