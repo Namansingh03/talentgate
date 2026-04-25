@@ -2,13 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { EllipsisVertical } from "lucide-react";
-
 import { Education } from "@/app/generated/prisma/client";
 import { EducationSchemaType } from "@/schemas/CandidateSchemas";
-
 import { CardWrapper } from "../../ui/CardWrapper";
 import EducationEditDialog from "./EditDialogs/EducationEditDialog";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { Separator } from "@/components/ui/separator";
 import { deleteProfileEducation } from "@/app/api/candidate/profile";
 import { toast } from "sonner";

@@ -1,23 +1,30 @@
 "use client";
 
+import { useState, useTransition } from "react";
+import { EllipsisVertical } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { WorkExperience } from "@/app/generated/prisma/client";
+import { ExperienceSchemaType } from "@/schemas/CandidateSchemas";
 import { CardWrapper } from "../../ui/CardWrapper";
-
-interface WorkExperience {
-  id: string;
-  company: string;
-  title: string;
-  location?: string | null;
-  startDate: Date;
-  endDate?: Date | null;
-  isCurrent: boolean;
-  description?: string | null;
-}
+import ExperienceEditDialog from "./EditDialogs/ExperienceEditDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { formatDate } from "@/helpers/formatDate";
+import { deleteProfileExperience } from "@/app/api/candidate/profile";
 
 interface ExperienceCardProps {
   experiences?: WorkExperience[];
 }
 
-function formatDate(date: Date) {
+function formatMonthYear(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     year: "numeric",
@@ -25,68 +32,185 @@ function formatDate(date: Date) {
 }
 
 export default function ExperienceCard({ experiences }: ExperienceCardProps) {
-  if (!experiences?.length) {
-    return (
-      <CardWrapper>
-        <p className="text-sm text-gray-400">No experience added yet.</p>
-      </CardWrapper>
-    );
-  }
+  const [open, setOpen] = useState(false);
+
+  const [selectedExperience, setSelectedExperience] =
+    useState<ExperienceSchemaType>();
+
+  const [experienceId, setExperienceId] = useState("");
+
+  const [isPending, startTransition] = useTransition();
+
+  const router = useRouter();
+
+  const handleAdd = () => {
+    setSelectedExperience(undefined);
+    setExperienceId("");
+    setOpen(true);
+  };
+
+  const handleUpdate = (exp: WorkExperience) => {
+    setSelectedExperience({
+      company: exp.company,
+      title: exp.title,
+      location: exp.location ?? "",
+      description: exp.description ?? "",
+      startDate: exp.startDate,
+      endDate: exp.endDate,
+      isCurrent: exp.isCurrent,
+    });
+
+    setExperienceId(exp.id);
+
+    setOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    startTransition(async () => {
+      try {
+        const res = await deleteProfileExperience(id);
+
+        if (!res.success) {
+          toast.error(res.message, {
+            description: formatDate(),
+          });
+          return;
+        }
+
+        toast.success("Experience deleted successfully", {
+          description: formatDate(),
+        });
+
+        router.refresh();
+      } catch {
+        toast.error("Something went wrong", {
+          description: formatDate(),
+        });
+      }
+    });
+  };
+
+  const sortedExperiences = [...(experiences || [])].sort(
+    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
+  );
 
   return (
-    <CardWrapper>
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-          Work experience
-        </p>
+    <>
+      <CardWrapper>
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium uppercase text-gray-400">
+            Work Experience
+          </p>
 
-        <button className="text-xs text-blue-500">+ Add</button>
-      </div>
+          <button
+            onClick={handleAdd}
+            className="text-xs font-medium text-blue-500 hover:underline"
+          >
+            + Add
+          </button>
+        </div>
 
-      {/* Timeline */}
-      <div className="ml-1">
-        {experiences.map((exp, index) => {
-          const isLast = index === experiences.length - 1;
+        <Separator className="my-4" />
 
-          return (
-            <div
-              key={exp.id}
-              className={`pl-4 relative ${
-                !isLast ? "pb-5 border-l border-blue-300" : ""
-              }`}
-            >
-              {/* Dot */}
-              <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-blue-400" />
+        {/* Empty State */}
+        {!experiences?.length ? (
+          <p className="text-sm text-muted-foreground">
+            No experience added yet.
+          </p>
+        ) : (
+          <div className="space-y-5">
+            {sortedExperiences.map((exp, index) => {
+              const isLast = index === sortedExperiences.length - 1;
 
-              {/* Content */}
-              <div>
-                <p className="text-sm font-medium text-gray-900">{exp.title}</p>
+              return (
+                <div
+                  key={exp.id}
+                  className={`relative pl-4 ${
+                    !isLast ? "border-l border-blue-300 pb-5" : ""
+                  }`}
+                >
+                  {/* Dot */}
+                  <div className="absolute top-1.5 -left-1 h-2 w-2 rounded-full bg-blue-500" />
 
-                <p className="text-sm text-gray-500 mt-0.5">
-                  {exp.company}
-                  {exp.location && ` · ${exp.location}`}
-                </p>
+                  <div className="flex justify-between gap-4">
+                    {/* Left */}
+                    <div>
+                      <p className="text-sm font-medium">{exp.title}</p>
 
-                <p className="text-xs text-gray-400 mt-1">
-                  {formatDate(exp.startDate)} –{" "}
-                  {exp.isCurrent
-                    ? "Present"
-                    : exp.endDate
-                      ? formatDate(exp.endDate)
-                      : "—"}
-                </p>
+                      <p className="text-sm text-muted-foreground">
+                        {exp.company}
+                        {exp.location && ` · ${exp.location}`}
+                      </p>
 
-                {exp.description && (
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-                    {exp.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </CardWrapper>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {formatMonthYear(exp.startDate)} —{" "}
+                        {exp.isCurrent
+                          ? "Present"
+                          : exp.endDate
+                            ? formatMonthYear(exp.endDate)
+                            : "—"}
+                      </p>
+
+                      {exp.description && (
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                          {exp.description}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Menu */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button>
+                          <EllipsisVertical
+                            size={16}
+                            className="cursor-pointer text-blue-500"
+                          />
+                        </button>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Button
+                            className="w-full"
+                            variant="secondary"
+                            onClick={() => handleUpdate(exp)}
+                          >
+                            Update
+                          </Button>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem>
+                          <Button
+                            className="w-full"
+                            variant="destructive"
+                            disabled={isPending}
+                            onClick={() => handleDelete(exp.id)}
+                          >
+                            Delete
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </CardWrapper>
+
+      {/* Dialog */}
+      <ExperienceEditDialog
+        key={experienceId || "new"}
+        open={open}
+        onOpenChange={setOpen}
+        experience={selectedExperience}
+        experienceId={experienceId}
+      />
+    </>
   );
 }

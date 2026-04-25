@@ -1,10 +1,12 @@
 "use server";
 
-import { Education } from "@/app/generated/prisma/client";
 import { createResponse } from "@/helpers/createResponse";
 import { auth } from "@/lib/auth";
 import prismaDb from "@/lib/db";
-import { EducationSchemaType } from "@/schemas/CandidateSchemas";
+import {
+  EducationSchemaType,
+  ExperienceSchemaType,
+} from "@/schemas/CandidateSchemas";
 import { UpdateUserInput } from "@/types/prismaTypes";
 import { headers } from "next/headers";
 
@@ -182,6 +184,93 @@ export async function deleteProfileEducation(educationId: string) {
     return createResponse(
       false,
       "Something went wrong while deleting Education entry",
+    );
+  }
+}
+
+type UpdateExperienceType = {
+  experience: ExperienceSchemaType;
+  experienceId?: string;
+};
+
+export async function UpdateProfileExperience({
+  experience,
+  experienceId,
+}: UpdateExperienceType) {
+  try {
+    const userId = await getUserIdOrThrow();
+
+    const userProfile = await prismaDb.candidateProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!userProfile) {
+      return createResponse(false, "Candidate profile not found");
+    }
+
+    if (experienceId) {
+      const existingExperience = await prismaDb.workExperience.findFirst({
+        where: {
+          id: experienceId,
+          profileId: userProfile.id,
+        },
+      });
+
+      if (!existingExperience) {
+        return createResponse(false, "Experience entry not found");
+      }
+
+      await prismaDb.workExperience.update({
+        where: {
+          id: experienceId,
+        },
+        data: {
+          ...experience,
+        },
+      });
+
+      return createResponse(true, "Experience updated successfully");
+    }
+
+    await prismaDb.workExperience.create({
+      data: {
+        ...experience,
+        profileId: userProfile.id,
+      },
+    });
+
+    return createResponse(true, "Experience added successfully");
+  } catch (error) {
+    console.error(error);
+
+    return createResponse(false, "Something went wrong");
+  }
+}
+
+export async function deleteProfileExperience(experienceId: string) {
+  try {
+    const existingExp = await prismaDb.workExperience.findFirst({
+      where: {
+        id: experienceId,
+      },
+    });
+
+    if (!existingExp) {
+      return createResponse(false, "Experience entry not found");
+    }
+
+    await prismaDb.workExperience.delete({
+      where: {
+        id: experienceId,
+      },
+    });
+
+    return createResponse(true, "experience entry deleted");
+  } catch (error) {
+    console.log(error);
+    return createResponse(
+      false,
+      "Something went wrong while deleting experience entry",
     );
   }
 }

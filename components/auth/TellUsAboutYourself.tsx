@@ -9,7 +9,10 @@ import {
   CarouselApi,
 } from "@/components/ui/carousel";
 import z from "zod";
-import { TellUsMoreSchema } from "@/schemas/CandidateSchemas";
+import {
+  TellUsMoreSchema,
+  TellUsMoreSchemaInput,
+} from "@/schemas/CandidateSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
@@ -59,7 +62,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<z.infer<typeof TellUsMoreSchema>>({
+  } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
       headline: "",
@@ -73,7 +76,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const skills = watch("skills");
   const specialization = watch("headline");
 
-  const next = async (fields: (keyof z.infer<typeof TellUsMoreSchema>)[]) => {
+  const next = async (fields: (keyof TellUsMoreSchemaInput)[]) => {
     const valid = await trigger(fields);
     if (valid) {
       api?.scrollNext();
@@ -102,8 +105,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
     console.log(data);
     startTransition(async () => {
       const res = await UpdateProfile({
-        userId,
-        data: {
+        candidateProfile: {
           bio: data.bio,
           headline: data.headline,
           skills: data.skills,

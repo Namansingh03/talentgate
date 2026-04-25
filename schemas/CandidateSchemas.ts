@@ -1,4 +1,4 @@
-import z, { nullable } from "zod";
+import z from "zod";
 
 const TellUsMoreSchema = z.object({
   headline: z.string().max(20).min(1, "Specialization is required").trim(),
@@ -57,6 +57,23 @@ const educationSchema = z.object({
   isCurrent: z.boolean(),
 });
 
-export { profileHeaderSchema, educationSchema };
+const experienceSchema = z.object({
+  company: z.string().min(2),
+  title: z.string().min(2),
+  location: z.string().min(2),
+  startDate: z.date(),
+  endDate: z.date().optional().nullable(),
+  isCurrent: z.boolean(),
+  description: z.string().max(200, "maximum 200 characters"),
+});
+
+export {
+  profileHeaderSchema,
+  educationSchema,
+  experienceSchema,
+  TellUsMoreSchema,
+};
+export type TellUsMoreSchemaInput = z.infer<typeof TellUsMoreSchema>;
 export type ProfileHeaderInput = z.infer<typeof profileHeaderSchema>;
 export type EducationSchemaType = z.input<typeof educationSchema>;
+export type ExperienceSchemaType = z.input<typeof experienceSchema>;
