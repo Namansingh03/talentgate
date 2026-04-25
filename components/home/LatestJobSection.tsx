@@ -1,5 +1,4 @@
 import { getLatestJobs } from "@/utils/DummyJobs";
-import { cacheLife, cacheTag } from "next/cache";
 import Link from "next/link";
 
 type JobType =
@@ -69,9 +68,6 @@ function CompanyInitials({ name }: { name: string }) {
 }
 
 export default async function LatestJobsSection() {
-  "use cache";
-  cacheLife("minutes");
-  cacheTag("jobs-home");
   const jobs = await getLatestJobs();
 
   return (

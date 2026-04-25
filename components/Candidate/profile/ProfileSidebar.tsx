@@ -54,7 +54,7 @@ export default function ProfileSidebar({
     <Suspense fallback={<SkillsSkeleton />}>
       <CardWrapper className="h-fit sticky flex flex-col gap-y-5 max-w-md min-w-3xs z-5">
         <div id="personal info">
-          <h1 className="text-muted-foreground flex justify-between">
+          <h1 className="text-neutral-400 mb-5 flex justify-between">
             Personal information
             <span
               className=" text-blue-500 text-xs"

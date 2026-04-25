@@ -29,31 +29,6 @@ export const SkillsOptionCard = ({ skills }: SkillsOptionsCardProps) => {
           <p className="text-sm text-gray-400">No skills added yet.</p>
         )}
       </div>
-
-      {/* Input */}
-      {/* <div className="flex gap-2">
-        <input
-          type="text"
-          value={newSkill}
-          onChange={(e) => setNewSkill(e.target.value)}
-          placeholder="Add a skill..."
-          className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none"
-        />
-
-        <button
-          className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600"
-          onClick={() => {
-            if (!newSkill.trim()) return;
-
-            // For now just log (since no backend yet)
-            console.log("Add skill:", newSkill);
-
-            setNewSkill("");
-          }}
-        >
-          Add
-        </button>
-      </div> */}
     </div>
   );
 };

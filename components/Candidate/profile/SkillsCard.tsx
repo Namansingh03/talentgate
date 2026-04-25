@@ -1,12 +1,16 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import EditSkillsDialog from "./EditDialogs/EditSkillsDialog";
 
 interface SkillsCardProps {
   skills?: string[];
 }
 
 export default function SkillsCard({ skills }: SkillsCardProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div className="bg-neutral-50">
       {/* Header */}
@@ -28,10 +32,21 @@ export default function SkillsCard({ skills }: SkillsCardProps) {
         ) : (
           <p className="text-sm text-gray-400">No skills added yet.</p>
         )}
-        <div className="flex items-center justify-center border border-gray-200 rounded-md p-1">
-          <Plus size={14} className="text-gray-600" />
+        <div className="flex items-center justify-center border border-gray-200 rounded-md ">
+          <Button
+            className="w-5 h-5 cursor-pointer"
+            variant={"secondary"}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <Plus size={14} className="text-neutral-700" />
+          </Button>
         </div>
       </div>
+      <EditSkillsDialog
+        open={isOpen}
+        onOpenChange={() => setIsOpen(!isOpen)}
+        skills={skills}
+      />
     </div>
   );
 }
