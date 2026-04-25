@@ -27,7 +27,7 @@ export default function ProfilePage({ user }: { user: UserWithProfile }) {
       </Suspense>
 
       {/* Main Content Wrapper */}
-      <div className="w-full flex justify-center absolute top-60 px-10 gap-x-10 ">
+      <div className="w-full flex justify-center absolute top-60 px-10 gap-x-10 bg-neutral-10 ">
         <ProfileSidebar
           skills={user.candidateProfile?.skills}
           bio={user.candidateProfile?.bio}
@@ -36,7 +36,7 @@ export default function ProfilePage({ user }: { user: UserWithProfile }) {
           portfolioUrl={user.candidateProfile?.portfolioUrl}
           resumeUrl={user.candidateProfile?.resumeUrl}
         />
-        <div className="w-full max-w-2xl flex gap-10 items-start">
+        <div className="w-full max-w-2xl flex gap-10 items-start z-2">
           {/* Main Content */}
           <div className="flex-1 flex flex-col gap-5 rounded-2xl">
             <Suspense fallback={<AboutSkeleton />}>

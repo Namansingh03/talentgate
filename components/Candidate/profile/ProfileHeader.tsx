@@ -30,7 +30,7 @@ export default function ProfileHeader({
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <ProfileHeaderBackground className="z-0">
+    <ProfileHeaderBackground className="z-1">
       <header
         className="relative py-20 px-12 bg-cover bg-center bg-no-repeat"
         style={
