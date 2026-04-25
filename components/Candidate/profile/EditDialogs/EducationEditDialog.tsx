@@ -1,4 +1,16 @@
+// EducationEditDialog.tsx
 "use client";
+
+import { useTransition } from "react";
+import { format } from "date-fns";
+import { CalendarIcon, Loader2Icon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import {
+  educationSchema,
+  EducationSchemaType,
+} from "@/schemas/CandidateSchemas";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,86 +21,108 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  educationSchema,
-  EducationSchemaType,
-} from "@/schemas/CandidateSchemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+
 import {
   Field,
   FieldContent,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
 } from "@/components/ui/field";
-import { useState, useTransition } from "react";
-import { Loader2Icon } from "lucide-react";
-import { UpdateProfile } from "@/app/api/candidate/profile";
+
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { UpdateProfileEducation } from "@/app/api/candidate/profile";
+import { toast } from "sonner";
+import { formatDate } from "@/helpers/formatDate";
+import { useRouter } from "next/navigation";
 
 interface EducationEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  school?: string;
-  degree?: string;
-  field?: string;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  isCurrent?: boolean;
-  description?: string;
-  marksObtained?: number;
+  education?: EducationSchemaType;
+  educationId?: string;
 }
 
-const EducationEditDialog = ({
-  degree,
-  field,
-  isCurrent,
-  onOpenChange,
+export default function EducationEditDialog({
   open,
-  school,
-  startDate,
-  description,
-  endDate,
-  marksObtained,
-}: EducationEditDialogProps) => {
-  const [checked, setChecked] = useState(false);
+  onOpenChange,
+  education,
+  educationId,
+}: EducationEditDialogProps) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<EducationSchemaType>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      degree: degree,
-      description: description,
-      startDate: startDate,
-      endDate: endDate,
-      field: field,
-      isCurrent: isCurrent,
-      school: school,
-      marksObtained: marksObtained,
+      school: education?.school ?? "",
+      degree: education?.degree ?? "",
+      field: education?.field ?? "",
+      startDate: education?.startDate ?? undefined,
+      endDate: education?.endDate ?? null,
+      isCurrent: education?.isCurrent ?? false,
     },
   });
 
-  async function onSubmit(values: EducationSchemaType) {
-    console.log(values);
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const isCurrent = watch("isCurrent");
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
 
-    onOpenChange(!open);
-  }
+  const onSubmit = async (values: EducationSchemaType) => {
+    startTransition(async () => {
+      console.log("educationId:", educationId);
+      console.log(values);
+
+      const res = await UpdateProfileEducation({
+        education: values,
+        educationId,
+      });
+
+      if (!res.success && res.redirectUrl) {
+        toast.error(res.message, { description: formatDate() });
+        router.push(res.redirectUrl);
+      }
+
+      if (!res.success) {
+        toast.error(res.message, { description: formatDate() });
+        return;
+      }
+
+      toast.success(res.message, { description: formatDate() });
+      router.refresh();
+
+      onOpenChange(false);
+    });
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Education</DialogTitle>
-          <DialogDescription>add your education</DialogDescription>
+
+          <DialogDescription>
+            {education ? "Update your education" : "Add your education"}
+          </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <FieldSet>
             <FieldGroup>
@@ -103,19 +137,24 @@ const EducationEditDialog = ({
                     <FieldError>{errors.school?.message}</FieldError>
                   </FieldContent>
                 </Field>
+
                 <Field>
-                  <FieldLabel>currently </FieldLabel>
-                  <FieldContent>
+                  <FieldLabel>Currently studying</FieldLabel>
+
+                  <FieldContent className="flex flex-row items-center gap-2">
                     <Checkbox
-                      {...register("isCurrent")}
-                      checked={checked}
-                      onClick={() => setChecked(!checked)}
+                      checked={isCurrent}
+                      onCheckedChange={(checked) =>
+                        setValue("isCurrent", !!checked, {
+                          shouldValidate: true,
+                        })
+                      }
                     />
-                    <FieldLabel className="m-0 font-normal">
-                      I am currently studying here
-                    </FieldLabel>
+
+                    <p>I am currently studying here</p>
                   </FieldContent>
                 </Field>
+
                 <Field>
                   <FieldLabel>Degree</FieldLabel>
                   <FieldContent>
@@ -126,8 +165,10 @@ const EducationEditDialog = ({
                     <FieldError>{errors.degree?.message}</FieldError>
                   </FieldContent>
                 </Field>
+
                 <Field>
                   <FieldLabel>Field of Study</FieldLabel>
+
                   <FieldContent>
                     <Input
                       placeholder="Computer Science"
@@ -138,42 +179,99 @@ const EducationEditDialog = ({
                 </Field>
               </div>
 
-              <div
-                className={`grid gap-4 ${checked} ? grid-col-4 : grid-col-2`}
-              >
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Start Date */}
                 <Field>
                   <FieldLabel>Start Date</FieldLabel>
+
                   <FieldContent>
-                    <Input type="date" {...register("startDate")} />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !startDate && "text-muted-foreground",
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+
+                          {startDate ? (
+                            format(startDate, "MMM yyyy")
+                          ) : (
+                            <span>Pick start date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={startDate}
+                          onSelect={(date) =>
+                            setValue("startDate", date!, {
+                              shouldValidate: true,
+                            })
+                          }
+                          captionLayout="dropdown"
+                          fromYear={1980}
+                          toYear={2035}
+                        />
+                      </PopoverContent>
+                    </Popover>
+
                     <FieldError>{errors.startDate?.message}</FieldError>
                   </FieldContent>
                 </Field>
 
-                {!checked && (
+                {/* End Date */}
+                {!isCurrent && (
                   <Field>
                     <FieldLabel>End Date</FieldLabel>
+
                     <FieldContent>
-                      <Input type="date" {...register("endDate")} />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !endDate && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+
+                            {endDate ? (
+                              format(endDate, "MMM yyyy")
+                            ) : (
+                              <span>Pick end date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={endDate ?? undefined}
+                            onSelect={(date) =>
+                              setValue("endDate", date ?? null, {
+                                shouldValidate: true,
+                              })
+                            }
+                            captionLayout="dropdown"
+                            fromYear={1980}
+                            toYear={2035}
+                          />
+                        </PopoverContent>
+                      </Popover>
+
                       <FieldError>{errors.endDate?.message}</FieldError>
                     </FieldContent>
                   </Field>
                 )}
               </div>
-
-              <Field>
-                <FieldLabel>Description</FieldLabel>
-                <FieldContent>
-                  <Textarea
-                    rows={4}
-                    placeholder="Achievements, coursework, activities..."
-                    {...register("description")}
-                  />
-                  <FieldDescription>
-                    Optional details about your studies.
-                  </FieldDescription>
-                  <FieldError>{errors.description?.message}</FieldError>
-                </FieldContent>
-              </Field>
             </FieldGroup>
           </FieldSet>
 
@@ -181,19 +279,23 @@ const EducationEditDialog = ({
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(!open)}
+              onClick={() => onOpenChange(false)}
             >
               Cancel
             </Button>
 
             <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader2Icon className="animate-spin" /> : "save"}
+              {isPending ? (
+                <Loader2Icon className="animate-spin" />
+              ) : education ? (
+                "Update"
+              ) : (
+                "Save"
+              )}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default EducationEditDialog;
+}

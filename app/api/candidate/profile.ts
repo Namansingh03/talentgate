@@ -1,8 +1,10 @@
 "use server";
 
+import { Education } from "@/app/generated/prisma/client";
 import { createResponse } from "@/helpers/createResponse";
 import { auth } from "@/lib/auth";
 import prismaDb from "@/lib/db";
+import { EducationSchemaType } from "@/schemas/CandidateSchemas";
 import { UpdateUserInput } from "@/types/prismaTypes";
 import { headers } from "next/headers";
 
@@ -94,5 +96,92 @@ export async function UpdateProfile(data: UpdateUserInput) {
   } catch (error) {
     console.error("UpdateProfile error:", error);
     return createResponse(false, "Failed to update profile");
+  }
+}
+
+type UpdateProfileType = {
+  education: EducationSchemaType;
+  educationId?: string;
+};
+
+export async function UpdateProfileEducation({
+  education,
+  educationId,
+}: UpdateProfileType) {
+  try {
+    const userId = await getUserIdOrThrow();
+
+    const userProfile = await prismaDb.candidateProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!userProfile) {
+      return createResponse(false, "Candidate profile not found");
+    }
+
+    if (educationId) {
+      const existingEducation = await prismaDb.education.findFirst({
+        where: {
+          id: educationId,
+          profileId: userProfile.id,
+        },
+      });
+
+      if (!existingEducation) {
+        return createResponse(false, "Education not found");
+      }
+
+      await prismaDb.education.update({
+        where: {
+          id: educationId,
+        },
+        data: {
+          ...education,
+        },
+      });
+
+      return createResponse(true, "Education updated successfully");
+    }
+
+    await prismaDb.education.create({
+      data: {
+        ...education,
+        profileId: userProfile.id,
+      },
+    });
+
+    return createResponse(true, "Education added successfully");
+  } catch (error) {
+    console.error(error);
+
+    return createResponse(false, "Something went wrong");
+  }
+}
+
+export async function deleteProfileEducation(educationId: string) {
+  try {
+    const existingEdu = await prismaDb.education.findFirst({
+      where: {
+        id: educationId,
+      },
+    });
+
+    if (!existingEdu) {
+      return createResponse(false, "Education entry not found");
+    }
+
+    await prismaDb.education.delete({
+      where: {
+        id: educationId,
+      },
+    });
+
+    return createResponse(true, "education entry deleted");
+  } catch (error) {
+    console.log(error);
+    return createResponse(
+      false,
+      "Something went wrong while deleting Education entry",
+    );
   }
 }
