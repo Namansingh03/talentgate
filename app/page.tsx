@@ -16,7 +16,7 @@ export default async function Home() {
     }
 
     if (role === "EMPLOYER") {
-      redirect(`/employer/${session.user.name}/profile`);
+      redirect(`/employer`);
     }
   }
   return <LandingPage />;
