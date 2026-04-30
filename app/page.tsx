@@ -1,23 +1,25 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import LandingPage from "@/components/home/LandingPage";
+import CTASection from "@/components/home/CtaSection";
+import FeaturesSection from "@/components/home/FeatureSection";
+import Footer from "@/components/home/Footer";
+import HeroSection from "@/components/home/HeroSection";
+import HomeNavbar from "@/components/home/HomeNavbar";
+import LatestJobsSection from "@/components/home/LatestJobSection";
+import LatestJobsSkeleton from "@/components/home/LatestJobSkeleton";
+import { Suspense } from "react";
 
 export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  return (
+    <main>
+      <HomeNavbar />
+      <HeroSection />
+      <FeaturesSection />
 
-  if (session) {
-    const role = session.user.role;
+      <Suspense fallback={<LatestJobsSkeleton />}>
+        <LatestJobsSection />
+      </Suspense>
 
-    if (role === "CANDIDATE") {
-      redirect(`/candidate/${session.user.name}/profile`);
-    }
-
-    if (role === "EMPLOYER") {
-      redirect(`/employer/${session.user.name}/profile`);
-    }
-  }
-  return <LandingPage />;
+      <CTASection />
+      <Footer />
+    </main>
+  );
 }

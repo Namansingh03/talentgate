@@ -1,8 +1,12 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
+import { Button } from "./ui/button";
 import Link from "next/link";
 
 export default function HomeNavbar() {
+  const { data: session, isPending } = authClient.useSession();
+
   return (
     <header className="bg-white/80 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(79,70,229,0.08)]">
       <nav className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
@@ -16,12 +20,21 @@ export default function HomeNavbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link
-            href="/signin"
-            className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20"
-          >
-            Sign In
-          </Link>
+          {isPending ? null : session ? (
+            <Button
+              variant={"destructive"}
+              onClick={() => authClient.signOut()}
+            >
+              logout
+            </Button>
+          ) : (
+            <Link
+              href="/signin"
+              className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </nav>
     </header>
