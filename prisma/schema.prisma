@@ -33,9 +33,9 @@ model User {
   role            Role     @default(CANDIDATE)
 
   candidateProfile CandidateProfile?
+  company          Company?
   sessions         Session[]
   accounts         Account[]
-  company          Company?
 
   @@unique([email])
   @@unique([username])

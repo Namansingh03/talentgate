@@ -14,7 +14,7 @@ import type { Role } from "@/app/generated/prisma/enums";
 
 const ROLE_REDIRECT: Record<Role, string> = {
   CANDIDATE: "/candidate/tell-us-more",
-  EMPLOYER: "/dashboard",
+  EMPLOYER: "/employer",
   // ADMIN: "/admin/panel",
 };
 

@@ -45,23 +45,20 @@ const EmployerNavbar = () => {
         </Link>
 
         <div className="flex flex-row gap-x-8 items-center text-md">
-          <Link
-            href="/candidate/dashboard"
-            className={linkClass(`/candidate/${user.name}`)}
-          >
+          <Link href="/employer" className={linkClass(`/employer`)}>
             Dashboard
           </Link>
 
           <Link
             href="/candidate/myJobs"
-            className={linkClass(`/candidate/${user.name}/myJobs`)}
+            className={linkClass(`/employer/myJobs`)}
           >
             Jobs
           </Link>
 
           <Link
-            href={`/candidate/${user.name}/profile`}
-            className={linkClass(`/candidate/${user.name}/profile`)}
+            href={`/candidate/profile`}
+            className={linkClass(`/employer/profile`)}
           >
             Profile
           </Link>
@@ -80,9 +77,7 @@ const EmployerNavbar = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="p-2">
-            <DropdownMenuItem
-              onClick={() => router.push(`/candidate/${user.name}/profile`)}
-            >
+            <DropdownMenuItem onClick={() => router.push(`/employer/profile`)}>
               profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />

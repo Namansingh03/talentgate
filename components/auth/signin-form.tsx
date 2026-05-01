@@ -21,7 +21,7 @@ type SignInFormValues = z.infer<typeof SignInSchema>;
 
 const ROLE_REDIRECTS: Record<string, (user: User) => string> = {
   CANDIDATE: (user) => `/candidate/${user.name}/profile`,
-  EMPLOYER: (user) => `/employer/${user.name}/profile`,
+  EMPLOYER: () => `/employer`,
 };
 
 export function SignInForm({

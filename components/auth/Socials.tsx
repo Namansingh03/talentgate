@@ -11,7 +11,7 @@ export default function Socials() {
     await authClient.signIn.social({
       provider,
       newUserCallbackURL: "/set-role",
-      callbackURL: "/dashboard",
+      callbackURL: "/redirect",
     });
   };
 

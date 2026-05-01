@@ -73,7 +73,7 @@ const SetUsernameForm = () => {
       router.push(
         role.toUpperCase() === "CANDIDATE"
           ? `/tell-us-more/${userId}`
-          : `/employer/${userId}/profile`,
+          : `/employer`,
         //todo : change according to schema
       );
     } catch {
