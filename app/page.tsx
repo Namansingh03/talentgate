@@ -12,7 +12,7 @@ export default async function Home() {
     const role = session.user.role;
 
     if (role === "CANDIDATE") {
-      redirect(`/candidate/${session.user.name}/profile`);
+      redirect(`/candidate/${session.user.name}`);
     }
 
     if (role === "EMPLOYER") {
