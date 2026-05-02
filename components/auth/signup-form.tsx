@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SignUpSchema } from "@/schemas/authSchema";
-import { useForm, SubmitHandler, useWatch } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
@@ -29,8 +29,6 @@ export function SignupForm({
   const {
     register,
     handleSubmit,
-    setValue,
-    control,
     formState: { errors },
   } = useForm<SignUpFormValues>({
     resolver: zodResolver(SignUpSchema),
@@ -39,14 +37,7 @@ export function SignupForm({
       email: "",
       password: "",
       confirmPassword: "",
-      role: "CANDIDATE",
     },
-  });
-
-  const selectedRole = useWatch({
-    control,
-    name: "role",
-    defaultValue: "CANDIDATE",
   });
 
   const onSubmit: SubmitHandler<SignUpFormValues> = (data) => {
@@ -58,7 +49,6 @@ export function SignupForm({
         name: data.name,
         password: data.password,
         callbackURL: "/setUsername",
-        role: data.role,
       });
 
       if (error) {
@@ -100,25 +90,6 @@ export function SignupForm({
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           {/* Role selector */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-              I am a
-            </span>
-            <div className="grid grid-cols-2 gap-2.5">
-              {(["CANDIDATE", "EMPLOYER"] as const).map((role) => (
-                <Button
-                  key={role}
-                  type="button"
-                  variant={selectedRole === role ? "default" : "outline"}
-                  onClick={() => setValue("role", role)}
-                  className="h-11"
-                >
-                  {role === "CANDIDATE" ? "Candidate" : "Employer"}
-                </Button>
-              ))}
-            </div>
-          </div>
-
           {/* Name */}
           <div className="flex flex-col gap-1.5">
             <label

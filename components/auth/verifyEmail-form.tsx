@@ -26,7 +26,7 @@ const VerifyEmailForm = () => {
     ? params.email[0]
     : params?.email;
   const email = rawEmail ? decodeURIComponent(rawEmail) : "";
-
+  console.log(email);
   const sendOtp = () => {
     startTransition(async () => {
       setStatError("");
@@ -34,8 +34,6 @@ const VerifyEmailForm = () => {
         email: email,
         type: "email-verification",
       });
-
-      console.log("verify email data : ", data);
 
       if (!data?.success) {
         setStatError(

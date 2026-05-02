@@ -7,61 +7,66 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  CANDIDATE
-  EMPLOYER
+enum CompanyRole {
+  ADMIN
+  RECRUITER
 }
 
 enum CompanySize {
-  STARTUP // 1-10
-  SMALL // 11-50
-  MEDIUM // 51-200
-  LARGE // 201-1000
-  ENTERPRISE // 1000+
+  STARTUP
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
 }
 
 model User {
-  id              String   @id
-  name            String
-  email           String
-  emailVerified   Boolean  @default(false)
-  image           String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  username        String?
-  displayUsername String?
-  role            Role     @default(CANDIDATE)
+  id            String  @id
+  name          String
+  email         String  @unique
+  emailVerified Boolean @default(false)
+  image         String?
 
+  username        String? @unique
+  displayUsername String?
+
+  // optional base profile (used for recruiters/admin too)
+  bio      String? @db.Text
+  headline String?
+  location String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
   candidateProfile CandidateProfile?
-  company          Company?
+  memberships      CompanyMember[]
   sessions         Session[]
   accounts         Account[]
 
-  @@unique([email])
-  @@unique([username])
   @@map("user")
 }
 
 model CandidateProfile {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  bio          String?  @db.Text
-  about        String?  @db.Text
-  headline     String?
-  location     String?
+  id     String @id @default(cuid())
+  userId String @unique
+
+  about String? @db.Text
+
   resumeUrl    String?
   portfolioUrl String?
   linkedinUrl  String?
   githubUrl    String?
-  // customUrls   String[]
+
   bannerImage  String?
   skills       String[]
   isOpenToWork Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 
-  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  //* applications Application[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   education  Education[]
   experience WorkExperience[]
 
@@ -69,11 +74,13 @@ model CandidateProfile {
 }
 
 model Education {
-  id        String    @id @default(cuid())
+  id        String @id @default(cuid())
   profileId String
-  school    String
-  degree    String
-  field     String
+
+  school String
+  degree String
+  field  String
+
   startDate DateTime
   endDate   DateTime?
   isCurrent Boolean   @default(false)
@@ -84,15 +91,18 @@ model Education {
 }
 
 model WorkExperience {
-  id          String    @id @default(cuid())
-  profileId   String
-  company     String
-  title       String
-  location    String?
-  startDate   DateTime
-  endDate     DateTime?
-  isCurrent   Boolean   @default(false)
-  description String?   @db.Text
+  id        String @id @default(cuid())
+  profileId String
+
+  company  String
+  title    String
+  location String?
+
+  startDate DateTime
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+
+  description String? @db.Text
 
   profile CandidateProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
@@ -100,27 +110,45 @@ model WorkExperience {
 }
 
 model Company {
-  id          String      @id @default(cuid())
-  userId      String      @unique // employer who owns this company
-  name        String
-  slug        String      @unique // e.g. "google", "meta" for /company/google
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+
   logo        String?
   website     String?
   linkedin    String?
-  description String?     @db.Text
-  industry    String?
-  size        CompanySize @default(SMALL)
-  location    String?
-  isVerified  Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  description String? @db.Text
+
+  industry String?
+  size     CompanySize @default(SMALL)
+  location String?
+
+  isVerified Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // jobs Job[]
+  members CompanyMember[]
 
   @@index([slug])
+}
+
+model CompanyMember {
+  id        String @id @default(cuid())
+  userId    String
+  companyId String
+
+  role CompanyRole @default(RECRUITER)
+
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
   @@index([userId])
+  @@index([companyId])
 }
 
 model Session {

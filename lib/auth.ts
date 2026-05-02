@@ -65,14 +65,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: true,
-      },
-    },
-  },
   plugins: [
     username({
       minUsernameLength: 5,
@@ -85,6 +77,7 @@ export const auth = betterAuth({
     emailOTP({
       resendStrategy: "rotate",
       async sendVerificationOTP({ email, otp, type }) {
+        console.log("verification otp : ", otp);
         if (type === "email-verification") {
           void resend.emails.send({
             from: "talentgate <onboarding@resend.dev>",

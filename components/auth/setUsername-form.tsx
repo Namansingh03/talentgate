@@ -62,20 +62,10 @@ const SetUsernameForm = () => {
         });
         return;
       }
-
-      const { data: updatedSession } = await authClient.getSession();
-      const role = updatedSession?.user?.role ?? "CANDIDATE";
-      const userId = updatedSession?.user?.id;
-
       toast.success("Username created successfully", {
         description: formatDate(),
       });
-      router.push(
-        role.toUpperCase() === "CANDIDATE"
-          ? `/tell-us-more/${userId}`
-          : `/employer`,
-        //todo : change according to schema
-      );
+      router.push("/tell-us-more");
     } catch {
       toast.error("Something went wrong. Try again.");
     } finally {
