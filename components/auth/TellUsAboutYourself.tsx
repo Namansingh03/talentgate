@@ -30,19 +30,32 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  Loader2,
+  MoveLeftIcon,
+  MoveRightIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UpdateProfile } from "@/app/api/candidate/profile";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Input } from "../ui/input";
+import { UpdateUser } from "@/app/api/candidate/profile";
 import { formatDate } from "@/helpers/formatDate";
+
+const intentVals = [
+  { label: "looking for a job", title: "candidate" },
+  { label: "looking for an employee", title: "company" },
+];
+
+const companyVals = ["recruiter", "admin"];
 
 const STEPS = [
   { label: "I am", index: 0 },
-  { label: "Specialization", index: 1 },
-  { label: "Skills", index: 2 },
-  { label: "About", index: 3 },
-  { label: "Bio", index: 4 },
+  { label: "specialization", index: 1 },
+  { label: "location", index: 2 },
+  { label: "Bio", index: 3 },
 ];
 
 interface TellUsMore {
@@ -51,6 +64,8 @@ interface TellUsMore {
 
 const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const [api, setApi] = useState<CarouselApi>();
+  const [intentValue, setIntentValue] = useState("");
+  const [companyTitle, setCompanyTitle] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -66,15 +81,16 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
-      intent: "candidate",
+      intent: "",
       headline: "",
-      bio: "",
       location: "",
+      bio: "",
     },
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const specialization = watch("headline");
+  const intent = watch("intent");
 
   const next = async (fields: (keyof TellUsMoreSchemaInput)[]) => {
     const valid = await trigger(fields);
@@ -90,9 +106,28 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   };
 
   const onSubmit = (data: z.infer<typeof TellUsMoreSchema>) => {
-    console.log(data);
     startTransition(async () => {
       console.log(data);
+      const res = await UpdateUser({
+        userId,
+        data,
+      });
+
+      if (!res.success) {
+        if (res.redirectUrl) {
+          toast.error(res.message, { description: formatDate() });
+          router.push(res.redirectUrl);
+        }
+        toast.error(res.message, { description: formatDate() });
+        return;
+      }
+
+      toast.success(res.message, { description: formatDate() });
+      if (companyTitle !== "admin") {
+        router.push(`/candidate/${res.data}/profile`);
+      } else if (companyTitle === "admin") {
+        router.push("/admin/company"); //todo add company route
+      }
     });
   };
 
@@ -139,34 +174,91 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
 
       {/* Form body */}
       <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6">
-        <Carousel setApi={setApi}>
+        <Carousel setApi={setApi} opts={{ watchDrag: false }}>
           <CarouselContent>
-            {/* STEP 1: Specialization */}
+            {/* STEP 0: I AM */}
+            <CarouselItem>
+              {/* ✅ Explicit div wrapper with min-height so carousel measures it correctly */}
+              <div className="flex flex-col gap-4 min-h-50 p-1">
+                <div className="grid grid-cols-2 gap-3">
+                  {intentVals.map((item) => (
+                    <Button
+                      key={item.title}
+                      type="button"
+                      onClick={() => {
+                        setIntentValue(item.label);
+                        setValue("intent", item.title, {
+                          shouldValidate: true,
+                        });
+                      }}
+                      variant={
+                        intentValue === item.label ? "default" : "outline"
+                      }
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
+                </div>
+
+                {intentValue === "looking for an employee" && (
+                  <div className="flex flex-col mt-5">
+                    <span className="text-muted-foreground">are you a —</span>
+                    <div className="flex flex-row justify-between mt-3">
+                      {companyVals.map((role) => (
+                        <Button
+                          key={role}
+                          type="button"
+                          onClick={() => setCompanyTitle(role)}
+                          className="w-52"
+                          variant={
+                            companyTitle === role ? "default" : "outline"
+                          }
+                        >
+                          {role}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {errors.intent && (
+                  <p className="text-red-500 text-xs">
+                    {errors.intent.message}
+                  </p>
+                )}
+
+                <div className="flex justify-end pt-4">
+                  <Button type="button" onClick={() => next(["intent"])}>
+                    Next →
+                  </Button>
+                </div>
+              </div>
+            </CarouselItem>
+
+            {/* STEP 1: HEADLINE */}
             <CarouselItem className="flex flex-col gap-y-4">
               <div className="flex flex-col gap-y-1">
                 <label className="text-sm font-medium text-zinc-700">
-                  What&apos;s your specialization?
+                  What are your specializations? {/* ✅ Bug 4 fix: typo */}
                 </label>
-                <p className="text-xs text-zinc-400">
-                  e.g. Frontend Engineer, Product Designer, Data Analyst
-                </p>
+                <p className="text-xs text-zinc-400">What defines you best.</p>
               </div>
-
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <button
                     type="button"
+                    // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
                     role="combobox"
-                    aria-controls=""
                     aria-expanded={open}
                     className={cn(
                       "w-full flex items-center justify-between px-3 py-2 rounded-md border text-sm transition-colors bg-zinc-50 hover:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-300",
-                      SPECIALIZATIONS
+                      specialization // ✅ Bug 1 fix: was incorrectly using SPECIALIZATIONS (array)
                         ? "text-zinc-900 border-zinc-300"
                         : "text-zinc-400 border-zinc-200",
                     )}
                   >
-                    {SPECIALIZATIONS || "Select a specialization..."}
+                    {specialization || "Select a specialization..."}{" "}
+                    {/* ✅ Bug 1 fix */}
                     <ChevronsUpDown className="h-4 w-4 text-zinc-400 shrink-0" />
                   </button>
                 </PopoverTrigger>
@@ -212,19 +304,53 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                   {errors.headline.message}
                 </p>
               )}
-
-              <div className="flex justify-end pt-2">
-                <Button
-                  type="button"
-                  onClick={() => next(["headline"])}
-                  className="px-6"
-                >
-                  Continue →
+              <div className="flex flex-row justify-between w-full">
+                <Button type="button" onClick={prev}>
+                  {" "}
+                  {/* ✅ Bug 3 fix */}
+                  <MoveLeftIcon />
+                  prev
+                </Button>
+                <Button type="button" onClick={() => next(["headline"])}>
+                  {" "}
+                  {/* ✅ Bug 3 fix */}
+                  next
+                  <MoveRightIcon />
                 </Button>
               </div>
             </CarouselItem>
 
-            {/* STEP 4: Bio */}
+            {/* STEP 2: LOCATION */}
+            <CarouselItem>
+              <div className="flex flex-col gap-y-1">
+                <label className="text-sm font-medium text-zinc-700">
+                  Location
+                </label>
+                <p className="text-xs text-zinc-400">Your office location.</p>
+              </div>
+              <Input placeholder="city, country" {...register("location")} />
+              {errors.location && (
+                <p className="text-red-500 text-xs">
+                  {errors.location.message}
+                </p>
+              )}
+              <div className="flex flex-row justify-between w-full mt-4">
+                <Button type="button" onClick={prev}>
+                  {" "}
+                  {/* ✅ Bug 3 fix */}
+                  <MoveLeftIcon />
+                  prev
+                </Button>
+                <Button type="button" onClick={() => next(["location"])}>
+                  {" "}
+                  {/* ✅ Bug 3 fix */}
+                  next
+                  <MoveRightIcon />
+                </Button>
+              </div>
+            </CarouselItem>
+
+            {/* STEP 3: BIO */}
             <CarouselItem className="flex flex-col gap-y-4">
               <div className="flex flex-col gap-y-1">
                 <label className="text-sm font-medium text-zinc-700">
@@ -248,7 +374,8 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
 
               <div className="flex justify-between pt-2">
                 <Button type="button" variant="ghost" onClick={prev}>
-                  ← Back
+                  {" "}
+                  {/* ✅ Bug 3 fix */}← Back
                 </Button>
                 <Button
                   type="submit"
