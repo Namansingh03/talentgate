@@ -35,7 +35,7 @@ type Role = "candidate" | "recruiter" | "admin";
 const intentRouting: Record<Role, string> = {
   admin: "/addCompany",
   recruiter: "/addMembership",
-  candidate: "/setProfile",
+  candidate: "/addProfile",
 };
 
 const intentVals = ["candidate", "recruiter", "admin"] as const;

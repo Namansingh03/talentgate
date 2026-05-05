@@ -29,7 +29,7 @@ import { UpdateProfile } from "@/app/api/candidate/profile";
 import { uploadImage } from "@/helpers/UploadImage";
 import { formatDate } from "@/helpers/formatDate";
 
-import AvatarCropDialog from "./ImageCropDialog";
+import AvatarCropDialog from "@/components/ui/ImageCropDialog";
 
 interface Props {
   avatarImageUrl?: string;

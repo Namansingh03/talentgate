@@ -10,6 +10,34 @@ const TellUsMoreSchema = z.object({
     .min(1, "Bio is required"),
 });
 
+const linkSchema = z.object({
+  label: z
+    .string()
+    .trim()
+    .min(1, "Label is required")
+    .max(50, "Label too long"),
+
+  url: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal("")) // allow empty input
+    .refine((val) => !val || /^https?:\/\/.+/.test(val), "Invalid URL"),
+});
+
+const AddProfileSchema = z.object({
+  avatarImage: z.instanceof(File).optional(),
+
+  skills: z
+    .array(z.string().min(1, "Skill cannot be empty"))
+    .min(1, "At least one skill is required")
+    .max(15, "Maximum 15 skills allowed"),
+
+  about: z.string().max(500, "About section must be under 500 characters"),
+
+  links: z.array(linkSchema).max(4, "Maximum 5 links allowed").optional(),
+});
+
 const profileHeaderSchema = z.object({
   displayName: z.string().min(2, "Name must be at least 2 characters").max(50),
 
@@ -68,8 +96,11 @@ export {
   educationSchema,
   experienceSchema,
   TellUsMoreSchema,
+  AddProfileSchema,
 };
+
 export type TellUsMoreSchemaInput = z.infer<typeof TellUsMoreSchema>;
 export type ProfileHeaderInput = z.infer<typeof profileHeaderSchema>;
 export type EducationSchemaType = z.input<typeof educationSchema>;
 export type ExperienceSchemaType = z.input<typeof experienceSchema>;
+export type AddProfileSchemaType = z.input<typeof AddProfileSchema>;
