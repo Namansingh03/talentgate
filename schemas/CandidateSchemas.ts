@@ -1,11 +1,7 @@
 import z from "zod";
 
-const allowed = ["candidate", "company"];
-
 const TellUsMoreSchema = z.object({
-  intent: z.string().refine((val) => allowed.includes(val), {
-    message: "Invalid role",
-  }),
+  intent: z.enum(["candidate", "recruiter", "admin"]),
   headline: z.string().max(20).min(1, "Specialization is required").trim(),
   location: z.string(),
   bio: z

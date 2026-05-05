@@ -20,6 +20,12 @@ enum CompanySize {
   ENTERPRISE
 }
 
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id            String  @id
   name          String
@@ -30,7 +36,6 @@ model User {
   username        String? @unique
   displayUsername String?
 
-  // optional base profile (used for recruiters/admin too)
   bio      String? @db.Text
   headline String?
   location String?
@@ -43,6 +48,8 @@ model User {
   memberships      CompanyMember[]
   sessions         Session[]
   accounts         Account[]
+  upgradeRequests  RecruiterUpgradeRequest[] @relation("UpgradeRequests")
+  reviewedRequests RecruiterUpgradeRequest[] @relation("ReviewedRequests")
 
   @@map("user")
 }
@@ -129,7 +136,8 @@ model Company {
   updatedAt DateTime @updatedAt
 
   // Relations
-  members CompanyMember[]
+  members                  CompanyMember[]
+  recruiterUpgradeRequests RecruiterUpgradeRequest[]
 
   @@index([slug])
 }
@@ -147,6 +155,28 @@ model CompanyMember {
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@unique([userId, companyId])
+  @@index([userId])
+  @@index([companyId])
+}
+
+model RecruiterUpgradeRequest {
+  id     String        @id @default(cuid())
+  status RequestStatus @default(PENDING)
+
+  userId String
+  user   User   @relation("UpgradeRequests", fields: [userId], references: [id], onDelete: Cascade)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  reviewedById String?
+  reviewedBy   User?   @relation("ReviewedRequests", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  rejectionNote String?
+  requestedAt   DateTime  @default(now())
+  reviewedAt    DateTime?
+
+  @@unique([userId, companyId, status])
   @@index([userId])
   @@index([companyId])
 }

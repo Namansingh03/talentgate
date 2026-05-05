@@ -16,40 +16,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { SPECIALIZATIONS } from "@/utils/values";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Check,
-  ChevronsUpDown,
-  Loader2,
-  MoveLeftIcon,
-  MoveRightIcon,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Loader2, MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { UpdateUser } from "@/app/api/candidate/profile";
 import { formatDate } from "@/helpers/formatDate";
-
-const intentVals = [
-  { label: "looking for a job", title: "candidate" },
-  { label: "looking for an employee", title: "company" },
-];
-
-const companyVals = ["recruiter", "admin"];
 
 const STEPS = [
   { label: "I am", index: 0 },
@@ -58,16 +30,23 @@ const STEPS = [
   { label: "Bio", index: 3 },
 ];
 
+type Role = "candidate" | "recruiter" | "admin";
+
+const intentRouting: Record<Role, string> = {
+  admin: "/addCompany",
+  recruiter: "/addMembership",
+  candidate: "/setProfile",
+};
+
+const intentVals = ["candidate", "recruiter", "admin"] as const;
+
 interface TellUsMore {
   userId?: string;
 }
 
 const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const [api, setApi] = useState<CarouselApi>();
-  const [intentValue, setIntentValue] = useState("");
-  const [companyTitle, setCompanyTitle] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
-  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -81,7 +60,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
-      intent: "",
+      intent: "candidate",
       headline: "",
       location: "",
       bio: "",
@@ -89,7 +68,6 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library
-  const specialization = watch("headline");
   const intent = watch("intent");
 
   const next = async (fields: (keyof TellUsMoreSchemaInput)[]) => {
@@ -122,17 +100,14 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
         return;
       }
 
+      const route = intentRouting[data.intent as Role];
       toast.success(res.message, { description: formatDate() });
-      if (companyTitle !== "admin") {
-        router.push(`/candidate/${res.data}/profile`);
-      } else if (companyTitle === "admin") {
-        router.push("/admin/company"); //todo add company route
-      }
+      router.push(route);
     });
   };
 
   return (
-    <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg border border-zinc-100 overflow-hidden">
+    <div className="w-full max-w-xl bg-white rounded-2xl shadow-lg border border-zinc-100 overflow-hidden">
       {/* Header */}
       <div className="px-8 pt-8 pb-5 border-b border-zinc-100">
         <div className="flex items-center justify-between mb-1">
@@ -180,46 +155,22 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
             <CarouselItem>
               {/* ✅ Explicit div wrapper with min-height so carousel measures it correctly */}
               <div className="flex flex-col gap-4 min-h-50 p-1">
-                <div className="grid grid-cols-2 gap-3">
-                  {intentVals.map((item) => (
+                <div className="grid grid-cols-3 space-x-5 space-y-5 last:grid-start-2">
+                  {intentVals.map((item, index) => (
                     <Button
-                      key={item.title}
+                      key={index}
                       type="button"
                       onClick={() => {
-                        setIntentValue(item.label);
-                        setValue("intent", item.title, {
+                        setValue("intent", item, {
                           shouldValidate: true,
                         });
                       }}
-                      variant={
-                        intentValue === item.label ? "default" : "outline"
-                      }
+                      variant={intent === item ? "default" : "outline"}
                     >
-                      {item.label}
+                      {item}
                     </Button>
                   ))}
                 </div>
-
-                {intentValue === "looking for an employee" && (
-                  <div className="flex flex-col mt-5">
-                    <span className="text-muted-foreground">are you a —</span>
-                    <div className="flex flex-row justify-between mt-3">
-                      {companyVals.map((role) => (
-                        <Button
-                          key={role}
-                          type="button"
-                          onClick={() => setCompanyTitle(role)}
-                          className="w-52"
-                          variant={
-                            companyTitle === role ? "default" : "outline"
-                          }
-                        >
-                          {role}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {errors.intent && (
                   <p className="text-red-500 text-xs">
@@ -243,61 +194,12 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                 </label>
                 <p className="text-xs text-zinc-400">What defines you best.</p>
               </div>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
-                    role="combobox"
-                    aria-expanded={open}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 rounded-md border text-sm transition-colors bg-zinc-50 hover:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-300",
-                      specialization // ✅ Bug 1 fix: was incorrectly using SPECIALIZATIONS (array)
-                        ? "text-zinc-900 border-zinc-300"
-                        : "text-zinc-400 border-zinc-200",
-                    )}
-                  >
-                    {specialization || "Select a specialization..."}{" "}
-                    {/* ✅ Bug 1 fix */}
-                    <ChevronsUpDown className="h-4 w-4 text-zinc-400 shrink-0" />
-                  </button>
-                </PopoverTrigger>
-
-                <PopoverContent className="w-full p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search specializations..." />
-                    <CommandList>
-                      <CommandEmpty>No specialization found.</CommandEmpty>
-                      <CommandGroup>
-                        {SPECIALIZATIONS.map((spec) => (
-                          <CommandItem
-                            key={spec}
-                            value={spec}
-                            onSelect={(val) => {
-                              setValue(
-                                "headline",
-                                val === specialization ? "" : val,
-                                { shouldValidate: true },
-                              );
-                              setOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                specialization === spec
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                            {spec}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <Input
+                className="p-5"
+                placeholder="Web developer , admin , ceo"
+                required
+                {...register("headline")}
+              />
 
               {errors.headline && (
                 <p className="text-red-500 text-xs">
@@ -374,7 +276,6 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
 
               <div className="flex justify-between pt-2">
                 <Button type="button" variant="ghost" onClick={prev}>
-                  {" "}
                   {/* ✅ Bug 3 fix */}← Back
                 </Button>
                 <Button
