@@ -15,14 +15,8 @@ import { formatDate } from "@/helpers/formatDate";
 import Socials from "./Socials";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { User } from "better-auth";
 
 type SignInFormValues = z.infer<typeof SignInSchema>;
-
-const ROLE_REDIRECTS: Record<string, (user: User) => string> = {
-  CANDIDATE: (user) => `/candidate/${user.name}/profile`,
-  EMPLOYER: () => `/employer`,
-};
 
 export function SignInForm({
   className,
@@ -74,19 +68,7 @@ export function SignInForm({
       toast.success("Signed in successfully", {
         description: formatDate(),
       });
-
-      const user = signInData.user;
-
-      if (!user.username) {
-        return router.push("/setUsername");
-      }
-
-      const role = user.role?.toUpperCase();
-      const redirect = ROLE_REDIRECTS[role];
-
-      if (redirect) {
-        router.push(redirect(user));
-      }
+      router.push("/dashboard");
     });
   };
 

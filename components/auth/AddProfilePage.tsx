@@ -25,6 +25,7 @@ import Image from "next/image";
 import AvatarCropDialog from "../ui/ImageCropDialog";
 import SelectedSkills from "../ui/SelectedSkills";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
+import { updateAddProfile } from "@/app/api/candidate/profile";
 
 const LINKS = [
   { label: "Github", icon: <FaGithub /> },
@@ -112,7 +113,20 @@ const AddProfilePage = () => {
 
   const onSubmit = (data: AddProfileSchemaType) => {
     startTransition(async () => {
-      console.log(data);
+      const res = await updateAddProfile(data);
+
+      if (!res.success) {
+        if (res.redirectUrl) {
+          router.push(res.redirectUrl);
+          return;
+        }
+
+        toast.error(res.message);
+        return;
+      }
+
+      toast.success("Profile created 🎉");
+      router.push("/profile");
     });
   };
 
