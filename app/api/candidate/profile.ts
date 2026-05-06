@@ -2,6 +2,7 @@
 
 import { createResponse, ApiResponse } from "@/helpers/createResponse";
 import { UserProfileType } from "@/helpers/PrismaTypes";
+import { uploadImage } from "@/helpers/UploadImage";
 import { auth } from "@/lib/auth";
 import prismaDb from "@/lib/db";
 import { AddProfileSchemaType } from "@/schemas/CandidateSchemas";
@@ -135,22 +136,23 @@ export async function updateAddProfile(
   try {
     const userId = await getUserIdOrThrow();
 
-    // 🧠 Extract links safely
     const githubUrl = data.links?.[0]?.url;
     const portfolioUrl = data.links?.[1]?.url;
     const linkedinUrl = data.links?.[2]?.url;
     const resumeUrl = data.links?.[3]?.url;
 
-    // ⚠️ TODO: upload image to storage (S3 / uploadthing etc)
     let imageUrl: string | undefined = undefined;
 
     if (data.avatarImage) {
-      // 👉 replace this with real upload logic
-      imageUrl = "https://your-cdn.com/fake-upload-url";
+      const res = await uploadImage({
+        file: data.avatarImage,
+        imageTypes: "avatarImage",
+        userId,
+      });
+      imageUrl = res.url;
     }
 
     await prismaDb.$transaction(async (tx) => {
-      // 1️⃣ Update User (image)
       if (imageUrl) {
         await tx.user.update({
           where: { id: userId },
@@ -160,7 +162,6 @@ export async function updateAddProfile(
         });
       }
 
-      // 2️⃣ Upsert CandidateProfile
       await tx.candidateProfile.upsert({
         where: { userId },
         update: clean({
@@ -197,3 +198,36 @@ export async function updateAddProfile(
 }
 
 // update for profile header
+
+// delete profile education and experience
+export async function deleteTimelineEntry(
+  id: string | undefined,
+  type: "Education" | "WorkExperience",
+): Promise<ApiResponse> {
+  try {
+    if (!id) {
+      return createResponse(false, "Id is required");
+    }
+
+    if (type === "Education") {
+      await prismaDb.education.delete({
+        where: { id },
+      });
+    } else if (type === "WorkExperience") {
+      await prismaDb.workExperience.delete({
+        where: { id },
+      });
+    }
+
+    return createResponse(true, `${type} deleted`);
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return createResponse(false, "Unauthorized", undefined, {
+        redirectUrl: "/signin",
+      });
+    }
+
+    console.error("deleteProfileEntry error:", error);
+    throw new Error("Failed to delete entry");
+  }
+}

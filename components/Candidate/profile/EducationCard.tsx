@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { deleteProfileEducation } from "@/app/api/candidate/profile";
+import { deleteTimelineEntry } from "@/app/api/candidate/profile";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ export default function EducationCard({ education }: EducationCardProps) {
   const handleDelete = async (educationId: string) => {
     console.log("Delete:", educationId);
     startTransition(async () => {
-      const res = await deleteProfileEducation(educationId);
+      const res = await deleteTimelineEntry(educationId, "Education");
 
       if (!res.success) {
         toast.error(res.message, { description: formatDate() });

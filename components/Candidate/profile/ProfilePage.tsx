@@ -7,7 +7,7 @@ import EducationCard from "./EducationCard";
 import ProfileSidebar from "./ProfileSidebar";
 import { UserProfileType } from "@/helpers/PrismaTypes";
 import AboutSkeleton from "./ProfileSkeleton/AboutSkeleton";
-import ExperienceCard from "@/components/ui/ExperienceCard";
+import ExperienceCard from "@/components/Candidate/profile/ExperienceCard";
 import ExperienceSkeleton from "./ProfileSkeleton/ExperienceSkeleton";
 import ProfileHeaderSkeleton from "./ProfileSkeleton/ProfileHeaderSkeleton";
 

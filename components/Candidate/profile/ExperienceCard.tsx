@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
-import { deleteProfileExperience } from "@/app/api/candidate/profile";
+import { deleteTimelineEntry } from "@/app/api/candidate/profile";
 
 interface ExperienceCardProps {
   experiences?: WorkExperience[];
@@ -68,7 +68,7 @@ export default function ExperienceCard({ experiences }: ExperienceCardProps) {
   const handleDelete = (id: string) => {
     startTransition(async () => {
       try {
-        const res = await deleteProfileExperience(id);
+        const res = await deleteTimelineEntry(id, "WorkExperience");
 
         if (!res.success) {
           toast.error(res.message, {
