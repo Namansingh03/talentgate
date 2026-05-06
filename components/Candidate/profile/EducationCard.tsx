@@ -1,11 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { EllipsisVertical } from "lucide-react";
-import { Education } from "@/app/generated/prisma/client";
-import { EducationSchemaType } from "@/schemas/CandidateSchemas";
-import { CardWrapper } from "../../ui/CardWrapper";
-import EducationEditDialog from "./EditDialogs/EducationEditDialog";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,12 +8,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import { deleteTimelineEntry } from "@/app/api/candidate/profile";
-import { toast } from "sonner";
-import { formatDate } from "@/helpers/formatDate";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { EllipsisVertical } from "lucide-react";
+import { useState, useTransition } from "react";
+import { formatDate } from "@/helpers/formatDate";
+import { CardWrapper } from "../../ui/CardWrapper";
+import { Separator } from "@/components/ui/separator";
+import { Education } from "@/app/generated/prisma/client";
+import { EducationSchemaType } from "@/schemas/CandidateSchemas";
+import { deleteTimelineEntry } from "@/app/api/candidate/profile";
+import EducationEditDialog from "./EditDialogs/EducationEditDialog";
 interface EducationCardProps {
   education?: Education[];
 }

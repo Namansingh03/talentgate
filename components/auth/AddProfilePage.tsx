@@ -71,6 +71,7 @@ const AddProfilePage = () => {
         { label: "Resume", url: "" },
       ],
     },
+    mode: "onSubmit",
   });
 
   const skills = watch("skills");
@@ -94,7 +95,9 @@ const AddProfilePage = () => {
       const file = watch("avatarImage");
 
       if (!file) {
-        toast.message("You can add a profile picture later 👍");
+        toast.message("You can add a profile picture later ", {
+          description: formatDate(),
+        });
       }
     }
 
@@ -121,12 +124,13 @@ const AddProfilePage = () => {
           return;
         }
 
-        toast.error(res.message);
+        toast.error(res.message, { description: formatDate() });
         return;
       }
 
-      toast.success("Profile created 🎉");
-      router.push("/profile");
+      const username = res.data;
+      toast.success("Profile created ", { description: formatDate() });
+      router.push(`${username}/profile`);
     });
   };
 
@@ -189,13 +193,13 @@ const AddProfilePage = () => {
                   <Image
                     alt="avatar"
                     src={avatarImagePrev}
-                    width={300}
-                    height={300}
-                    className="rounded-full my-3"
+                    width={150}
+                    height={150}
+                    className="rounded-full w-50 h-50 object-cover my-3"
                   />
                 ) : (
-                  <div className="w-40 h-40 rounded-full border-4 border-gray-800 my-3 flex items-center justify-center">
-                    <User2 className="w-16 h-16 text-gray-800" />
+                  <div className="w-40 h-40 rounded-full border-4 border-gray-800 my-3 flex items-center p-5 justify-center">
+                    <User2 className="w-full h-full text-gray-800" />
                   </div>
                 )}
                 <Input

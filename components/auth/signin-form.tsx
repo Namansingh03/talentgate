@@ -34,6 +34,7 @@ export function SignInForm({
   } = useForm<SignInFormValues>({
     resolver: zodResolver(SignInSchema),
     defaultValues: { email: "", password: "" },
+    mode: "onSubmit",
   });
 
   const onResetPassword = () => {

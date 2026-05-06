@@ -1,12 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { EllipsisVertical } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { WorkExperience } from "@/app/generated/prisma/client";
-import { ExperienceSchemaType } from "@/schemas/CandidateSchemas";
-import { CardWrapper } from "../../ui/CardWrapper";
-import ExperienceEditDialog from "./EditDialogs/ExperienceEditDialog";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +8,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
+import { EllipsisVertical } from "lucide-react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
+import { CardWrapper } from "../../ui/CardWrapper";
+import { Separator } from "@/components/ui/separator";
+import { WorkExperience } from "@/app/generated/prisma/client";
+import { ExperienceSchemaType } from "@/schemas/CandidateSchemas";
 import { deleteTimelineEntry } from "@/app/api/candidate/profile";
+import ExperienceEditDialog from "./EditDialogs/ExperienceEditDialog";
 
 interface ExperienceCardProps {
   experiences?: WorkExperience[];

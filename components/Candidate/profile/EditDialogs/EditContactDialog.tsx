@@ -9,17 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
-
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-import { UpdateProfile } from "@/app/api/candidate/profile";
+import { UpdateProfileContacts } from "@/app/api/candidate/profile";
 import { formatDate } from "@/helpers/formatDate";
 
 interface Props {
@@ -102,9 +98,7 @@ const EditContactDialog = ({
 
   const handleSubmit = () => {
     startTransition(async () => {
-      const res = await UpdateProfile({
-        candidateProfile: formData,
-      });
+      const res = await UpdateProfileContacts({ candidateProfile: formData });
 
       if (!res.success && !res.redirectUrl) {
         toast.error(res.message, {

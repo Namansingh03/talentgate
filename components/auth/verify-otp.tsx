@@ -22,7 +22,6 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { useEffect, useState, useCallback } from "react";
-import VerifyEmailForm from "./verifyEmail-form";
 
 export default function VerifyOtp() {
   const [isPending, startTransition] = React.useTransition();

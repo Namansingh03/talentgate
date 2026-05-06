@@ -6,6 +6,7 @@ type UserProfileType = Prisma.UserGetPayload<{
     bio: true;
     email: true;
     image: true;
+    name: true;
     headline: true;
     username: true;
     location: true;

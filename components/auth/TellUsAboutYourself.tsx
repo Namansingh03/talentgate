@@ -65,6 +65,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
       location: "",
       bio: "",
     },
+    mode: "onSubmit",
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library

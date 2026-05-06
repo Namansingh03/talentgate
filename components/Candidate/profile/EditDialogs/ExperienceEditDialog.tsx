@@ -82,17 +82,15 @@ export default function ExperienceEditDialog({
 
   const onSubmit = async (values: ExperienceSchemaType) => {
     startTransition(async () => {
-      console.log("experienceId:", experienceId);
-      console.log(values);
-
       const res = await UpdateProfileExperience({
         experience: values,
-        experienceId,
+        experienceId: experienceId || undefined,
       });
 
       if (!res.success && res.redirectUrl) {
         toast.error(res.message, { description: formatDate() });
         router.push(res.redirectUrl);
+        return;
       }
 
       if (!res.success) {
@@ -102,7 +100,6 @@ export default function ExperienceEditDialog({
 
       toast.success(res.message, { description: formatDate() });
       router.refresh();
-
       onOpenChange(false);
     });
   };

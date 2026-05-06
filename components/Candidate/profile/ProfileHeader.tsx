@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Avatar } from "../../ui/avatar";
-import { Edit } from "lucide-react";
-import EditProfileHeaderDialog from "./EditDialogs/EditProfileHeaderDialog";
-import ProfileHeaderBackground from "../../ui/ImageHeaderBackground";
 import { useState } from "react";
+import { Edit } from "lucide-react";
+import { Avatar } from "../../ui/avatar";
+import ProfileHeaderBackground from "../../ui/ImageHeaderBackground";
+import EditProfileHeaderDialog from "./EditDialogs/EditProfileHeaderDialog";
 
 interface ProfileHeaderProps {
   displayName?: string | null;

@@ -38,6 +38,7 @@ export function SignupForm({
       password: "",
       confirmPassword: "",
     },
+    mode: "onSubmit",
   });
 
   const onSubmit: SubmitHandler<SignUpFormValues> = (data) => {

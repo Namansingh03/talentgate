@@ -1,18 +1,7 @@
-// EducationEditDialog.tsx
 "use client";
 
-import { useTransition } from "react";
+import { toast } from "sonner";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2Icon } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import {
-  educationSchema,
-  EducationSchemaType,
-} from "@/schemas/CandidateSchemas";
-
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
 import {
   Field,
   FieldContent,
@@ -30,22 +18,27 @@ import {
   FieldLabel,
   FieldSet,
 } from "@/components/ui/field";
-
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { UpdateProfileEducation } from "@/app/api/candidate/profile";
-import { toast } from "sonner";
-import { formatDate } from "@/helpers/formatDate";
+import {
+  educationSchema,
+  EducationSchemaType,
+} from "@/schemas/CandidateSchemas";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/helpers/formatDate";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calendar } from "@/components/ui/calendar";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CalendarIcon, Loader2Icon } from "lucide-react";
+import { UpdateProfileEducation } from "@/app/api/candidate/profile";
 
 interface EducationEditDialogProps {
   open: boolean;
@@ -87,17 +80,15 @@ export default function EducationEditDialog({
 
   const onSubmit = async (values: EducationSchemaType) => {
     startTransition(async () => {
-      console.log("educationId:", educationId);
-      console.log(values);
-
       const res = await UpdateProfileEducation({
         education: values,
-        educationId,
+        educationId: educationId || undefined,
       });
 
       if (!res.success && res.redirectUrl) {
         toast.error(res.message, { description: formatDate() });
         router.push(res.redirectUrl);
+        return;
       }
 
       if (!res.success) {
@@ -107,7 +98,6 @@ export default function EducationEditDialog({
 
       toast.success(res.message, { description: formatDate() });
       router.refresh();
-
       onOpenChange(false);
     });
   };

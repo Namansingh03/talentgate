@@ -81,15 +81,35 @@ const educationSchema = z.object({
   isCurrent: z.boolean(),
 });
 
-const experienceSchema = z.object({
-  company: z.string().min(2),
-  title: z.string().min(2),
-  location: z.string().min(2),
-  startDate: z.date(),
-  endDate: z.date().optional().nullable(),
-  isCurrent: z.boolean(),
-  description: z.string().max(200, "maximum 200 characters"),
-});
+const experienceSchema = z
+  .object({
+    company: z.string().min(2, "Company is required"),
+    title: z.string().min(2, "Title is required"),
+
+    location: z.string().optional().or(z.literal("")),
+
+    startDate: z.date(),
+
+    endDate: z.date().optional().nullable(),
+
+    isCurrent: z.boolean(),
+
+    description: z
+      .string()
+      .max(200, "Maximum 200 characters")
+      .optional()
+      .or(z.literal("")),
+  })
+  .refine(
+    (data) => {
+      if (!data.isCurrent && !data.endDate) return false;
+      return true;
+    },
+    {
+      message: "End date is required if not currently working",
+      path: ["endDate"],
+    },
+  );
 
 export {
   profileHeaderSchema,

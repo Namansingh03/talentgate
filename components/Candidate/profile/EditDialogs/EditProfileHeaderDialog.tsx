@@ -1,13 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
-
 import {
   Dialog,
   DialogContent,
@@ -16,20 +10,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
 import {
   profileHeaderSchema,
   ProfileHeaderInput,
 } from "@/schemas/CandidateSchemas";
-
-import { UpdateProfile } from "@/app/api/candidate/profile";
-import { uploadImage } from "@/helpers/UploadImage";
+import { useForm } from "react-hook-form";
+import { Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import AvatarCropDialog from "@/components/ui/ImageCropDialog";
+import { UpdateProfileHeader } from "@/app/api/candidate/profile";
+import React, { useEffect, useState, useTransition } from "react";
 
 interface Props {
   avatarImageUrl?: string;
@@ -86,66 +80,23 @@ export default function EditProfileHeaderDialog({
       location,
       isAvailable,
     },
+    mode: "onSubmit",
   });
 
   // submit form
   const onSubmit = (data: ProfileHeaderInput) => {
     startTransition(async () => {
-      let avatarUrl = avatarPreview;
-      let bannerUrl = bannerPreview;
-
-      // upload avatar
-      if (data.avatar) {
-        const res = await uploadImage({
-          file: data.avatar,
-          imageTypes: "avatarImage",
-          username,
-        });
-
-        avatarUrl = res.url;
-      }
-
-      // upload banner
-      if (data.banner) {
-        const res = await uploadImage({
-          file: data.banner,
-          imageTypes: "bannerImage",
-          username,
-        });
-
-        bannerUrl = res.url;
-      }
-
-      // db update
-      const res = await UpdateProfile({
-        user: {
-          image: avatarUrl?.toString(),
-          displayUsername: data.displayName,
-        },
-        candidateProfile: {
-          headline: data.headline,
-          bannerImage: bannerUrl?.toString(),
-          isOpenToWork: data.isAvailable,
-          location: data.location,
-        },
-      });
+      const res = await UpdateProfileHeader(data);
 
       if (!res.success) {
-        toast.error(res.message, {
-          description: formatDate(),
-        });
-
-        return res.redirectUrl
-          ? router.push(res.redirectUrl)
-          : router.refresh();
+        toast.error(res.message, { description: formatDate() });
+        if (res.redirectUrl) {
+          router.push(res.redirectUrl);
+        }
       }
 
-      toast.success(res.message, {
-        description: formatDate(),
-      });
-
+      toast.success(res.message, { description: formatDate() });
       router.refresh();
-      handleOpenChange(false);
     });
   };
 
@@ -172,6 +123,7 @@ export default function EditProfileHeaderDialog({
   const handleCropSave = (file: File) => {
     setValue("avatar", file);
     setAvatarPreview(URL.createObjectURL(file));
+    setCropOpen(!cropOpen);
   };
 
   return (

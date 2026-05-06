@@ -1,7 +1,5 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,12 +8,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import SelectedSkills from "@/components/ui/SelectedSkills";
 import { toast } from "sonner";
-import { formatDate } from "@/helpers/formatDate";
-import { UpdateProfile } from "@/app/api/candidate/profile";
-import { useRouter } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useState, useTransition } from "react";
+import { formatDate } from "@/helpers/formatDate";
+import SelectedSkills from "@/components/ui/SelectedSkills";
+import { UpdateProfileSkills } from "@/app/api/candidate/profile";
 
 interface SkillsEditProps {
   skills?: string[];
@@ -35,26 +35,16 @@ const EditSkillsDialog = ({
     console.log(selectedSkills);
 
     startTransition(async () => {
-      const res = await UpdateProfile({
-        candidateProfile: {
-          skills: selectedSkills,
-        },
-      });
+      const res = await UpdateProfileSkills(selectedSkills);
 
       if (!res.success) {
-        toast.error(res.message, {
-          description: formatDate(),
-        });
-
-        return res.redirectUrl
-          ? router.push(res.redirectUrl)
-          : router.refresh();
+        toast.error(res.message, { description: formatDate() });
+        if (res.redirectUrl) {
+          router.push(res.redirectUrl);
+        }
       }
 
-      toast.success(res.message, {
-        description: formatDate(),
-      });
-
+      toast.success(res.message, { description: formatDate() });
       router.refresh();
     });
 
@@ -72,9 +62,9 @@ const EditSkillsDialog = ({
         <SelectedSkills skills={selectedSkills} onChange={setSelectedSkills} />
 
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button onClick={() => onOpenChange(false)} variant={"secondary"}>Cancel</Button>
 
-          <Button variant="secondary" onClick={handleSave} disabled={isPending}>
+          <Button variant="default" onClick={handleSave} disabled={isPending}>
             {isPending ? <Loader2Icon className="animate-spin" /> : "save"}
           </Button>
         </DialogFooter>

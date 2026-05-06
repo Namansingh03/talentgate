@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,14 +8,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { UpdateProfileText } from "@/app/api/candidate/profile";
+import { useRouter } from "next/navigation";
 
 interface TextEditDialogProps {
-  label: string; // e.g. "About", "Bio"
+  label: "about" | "bio";
   initialText: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (value: string) => Promise<boolean>;
   maxLength?: number;
 }
 
@@ -25,12 +26,20 @@ export default function TextEditDialog({
   initialText,
   open,
   onOpenChange,
-  onSubmit,
   maxLength = 200,
 }: TextEditDialogProps) {
   const [value, setValue] = useState(initialText);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      setValue(initialText);
+      setError("");
+    }
+    onOpenChange(nextOpen);
+  };
 
   const handleChange = (val: string) => {
     setValue(val);
@@ -39,26 +48,26 @@ export default function TextEditDialog({
     );
   };
 
-  const handleSubmit = async () => {
-    if (value.length > maxLength) {
-      setError(`Maximum ${maxLength} characters allowed`);
-      return;
-    }
-    try {
-      setLoading(true);
-      const success = await onSubmit(value);
-      if (success) onOpenChange(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleSubmit = () => {
+    if (value.length > maxLength) return;
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      setValue(initialText); // reset on close
-      setError("");
-    }
-    onOpenChange(open);
+    startTransition(async () => {
+      const res = await UpdateProfileText({
+        text: value,
+        textType: label,
+      });
+
+      if (!res.success) {
+        if (res.redirectUrl) {
+          router.push(res.redirectUrl);
+          return;
+        }
+        return;
+      }
+
+      router.refresh();
+      onOpenChange(false);
+    });
   };
 
   return (
@@ -95,13 +104,13 @@ export default function TextEditDialog({
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => handleOpenChange(false)}
-            disabled={loading}
+            onClick={() => onOpenChange(false)}
+            disabled={isPending}
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={loading || !!error}>
-            {loading ? "Saving..." : "Save changes"}
+          <Button onClick={handleSubmit} disabled={isPending || !!error}>
+            {isPending ? "Saving..." : "Save changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

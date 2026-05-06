@@ -7,8 +7,8 @@ import EducationCard from "./EducationCard";
 import ProfileSidebar from "./ProfileSidebar";
 import { UserProfileType } from "@/helpers/PrismaTypes";
 import AboutSkeleton from "./ProfileSkeleton/AboutSkeleton";
-import ExperienceCard from "@/components/Candidate/profile/ExperienceCard";
 import ExperienceSkeleton from "./ProfileSkeleton/ExperienceSkeleton";
+import ExperienceCard from "@/components/Candidate/profile/ExperienceCard";
 import ProfileHeaderSkeleton from "./ProfileSkeleton/ProfileHeaderSkeleton";
 
 export default function ProfilePage({ user }: { user: UserProfileType }) {
@@ -18,7 +18,7 @@ export default function ProfilePage({ user }: { user: UserProfileType }) {
         <ProfileHeader
           AvatarImageUrl={user.image}
           bannerImageUrl={user.candidateProfile?.bannerImage}
-          displayName={user.displayUsername}
+          displayName={user.name}
           headline={user.headline}
           isAvailable={user.candidateProfile?.isOpenToWork}
           location={user.location}
