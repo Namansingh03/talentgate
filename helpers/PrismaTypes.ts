@@ -53,4 +53,4 @@ type ProfileHeader = Prisma.UserGetPayload<{
   };
 }>;
 
-export type { UserProfileType };
+export type { UserProfileType, ProfileHeader };

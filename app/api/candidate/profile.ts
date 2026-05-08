@@ -8,13 +8,12 @@ import prismaDb from "@/lib/db";
 import {
   AddProfileSchemaType,
   educationSchema,
-  EducationSchemaType,
   experienceSchema,
-  ExperienceSchemaType,
   ProfileHeaderInput,
 } from "@/schemas/CandidateSchemas";
 import { headers } from "next/headers";
 import { Prisma } from "@/app/generated/prisma/client";
+import redis from "@/lib/redis";
 
 export async function getUserIdOrThrow(): Promise<User> {
   const session = await auth.api.getSession({
@@ -35,91 +34,98 @@ function clean<T extends object>(obj: T) {
 }
 
 interface userVals {
+  userId?: string;
   data: {
     headline: string;
     bio: string;
     location: string;
   };
 }
-
 export async function getUserProfile() {
-  try {
-    const user = await getUserIdOrThrow();
+  const user = await getUserIdOrThrow();
 
-    const existingUser = await prismaDb.user.findUnique({
-      where: { id: user.id },
-      select: {
-        displayUsername: true,
-        bio: true,
-        email: true,
-        image: true,
-        name: true,
-        headline: true,
-        username: true,
-        location: true,
-        candidateProfile: {
-          select: {
-            isOpenToWork: true,
-            about: true,
-            bannerImage: true,
-            skills: true,
-            portfolioUrl: true,
-            resumeUrl: true,
-            linkedinUrl: true,
-            githubUrl: true,
-            experience: {
-              orderBy: { startDate: "desc" },
-              take: 5,
-            },
-            education: {
-              orderBy: { startDate: "desc" },
-              take: 5,
-            },
+  const cacheKey = `user:${user.id}:profile`;
+
+  const cached = await redis.get(cacheKey);
+
+  if (cacheKey) {
+    return createResponse(true, "user profile fetched", cached);
+  }
+
+  const existingUser = await prismaDb.user.findUnique({
+    where: { id: user.id },
+    select: {
+      displayUsername: true,
+      bio: true,
+      email: true,
+      image: true,
+      name: true,
+      headline: true,
+      username: true,
+      location: true,
+      candidateProfile: {
+        select: {
+          isOpenToWork: true,
+          about: true,
+          bannerImage: true,
+          skills: true,
+          portfolioUrl: true,
+          resumeUrl: true,
+          linkedinUrl: true,
+          githubUrl: true,
+          experience: {
+            orderBy: { startDate: "desc" },
+            take: 5,
+          },
+          education: {
+            orderBy: { startDate: "desc" },
+            take: 5,
           },
         },
       },
+    },
+  });
+
+  if (!existingUser) {
+    return createResponse(false, "User not found", undefined, {
+      redirectUrl: "/signup",
     });
-
-    if (!existingUser) {
-      return createResponse(false, "User not found", undefined, {
-        redirectUrl: "/signup",
-      });
-    }
-
-    return createResponse(true, "User profile fetched!", existingUser);
-  } catch (error) {
-    if (error instanceof Error && error.message === "UNAUTHORIZED") {
-      return createResponse(false, "Unauthorized", undefined, {
-        redirectUrl: "/signin",
-      });
-    }
-
-    console.error("getUserProfile error:", error);
-    throw new Error("Failed to fetch user profile");
   }
+
+  await redis.set(cacheKey, JSON.stringify(existingUser), "EX", 1800);
+
+  return createResponse(true, "User profile fetched!", existingUser);
 }
 
 export async function UpdateUser(vals: userVals) {
   try {
-    const user = await getUserIdOrThrow();
+    const { userId, data } = vals;
+
+    if (!userId) {
+      return createResponse(false, "userId not found", {
+        redirectUrl: "/signin",
+      });
+    }
+
+    const existingUser = await prismaDb.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      return createResponse(false, "user not found with this id");
+    }
 
     await prismaDb.user.update({
-      where: { id: user.id },
+      where: { id: userId },
       data: clean({
-        headline: vals.data.headline,
-        bio: vals.data.bio,
-        location: vals.data.location,
+        headline: data.headline,
+        bio: data.bio,
+        location: data.location,
       }),
     });
 
     return createResponse(true, "User updated successfully");
   } catch (error) {
-    if (error instanceof Error && error.message === "UNAUTHORIZED") {
-      return createResponse(false, "Unauthorized", {
-        redirectUrl: "/signin",
-      });
-    }
-
     console.error("UpdateUser error:", error);
     throw new Error("Failed to update user");
   }

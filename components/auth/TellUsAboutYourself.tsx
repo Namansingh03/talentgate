@@ -30,14 +30,6 @@ const STEPS = [
   { label: "Bio", index: 3 },
 ];
 
-type Role = "candidate" | "recruiter" | "admin";
-
-const intentRouting: Record<Role, string> = {
-  admin: "/addCompany",
-  recruiter: "/addMembership",
-  candidate: "/addProfile",
-};
-
 const intentVals = ["candidate", "recruiter", "admin"] as const;
 
 interface TellUsMore {
@@ -100,10 +92,8 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
         toast.error(res.message, { description: formatDate() });
         return;
       }
-
-      const route = intentRouting[data.intent as Role];
       toast.success(res.message, { description: formatDate() });
-      router.push(route);
+      router.push("/addProfile");
     });
   };
 
