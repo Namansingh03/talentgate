@@ -10,7 +10,6 @@ datasource db {
 enum CompanyRole {
   ADMIN
   RECRUITER
-  EMPLOYEE
 }
 
 enum CompanySize {

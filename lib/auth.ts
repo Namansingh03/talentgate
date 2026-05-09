@@ -6,6 +6,9 @@ import CustomEmail from "@/emails/CustomEmailSend";
 import VerificationEmail from "@/emails/VerificationEmail";
 import { emailOTP, username } from "better-auth/plugins";
 import SendVerificationOtp from "@/emails/SendVerificationOtp";
+import redis from "./redis";
+
+const prefix = "auth:";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -103,7 +106,25 @@ export const auth = betterAuth({
       },
     }),
   ],
+  secondaryStorage: {
+    async get(key) {
+      const data = await redis.get(prefix + key);
+      return data ? JSON.parse(data) : null;
+    },
+    async set(key, value, ttl) {
+      const data = JSON.stringify(value);
+
+      if (typeof ttl === "number" && ttl > 0) {
+        await redis.set(key, data, "EX", ttl);
+      } else {
+        await redis.set(key, data);
+      }
+    },
+    async delete(key) {
+      await redis.del(prefix + key);
+    },
+  },
   session: {
-    expiresIn: 60 * 60 * 24 * 7,
+    expiresIn: 60 * 60 * 24 * 1,
   },
 });

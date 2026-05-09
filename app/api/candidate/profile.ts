@@ -48,8 +48,8 @@ export async function getUserProfile() {
 
   const cached = await redis.get(cacheKey);
 
-  if (cacheKey) {
-    return createResponse(true, "user profile fetched", cached);
+  if (cached) {
+    return createResponse(true, "user profile fetched", JSON.parse(cached));
   }
 
   const existingUser = await prismaDb.user.findUnique({
@@ -264,6 +264,7 @@ export async function UpdateProfileHeader(data: ProfileHeaderInput) {
         },
       }),
     ]);
+    await redis.del(`user:${user.id}:profile`);
 
     return createResponse(true, "Profile updated successfully");
   } catch (error) {
@@ -299,6 +300,7 @@ export async function UpdateProfileSkills(skills: string[]) {
       },
     });
 
+    await redis.del(`user:${user.id}:profile`);
     return createResponse(true, "Profile updated successfully");
   } catch (error) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
@@ -349,6 +351,7 @@ export async function UpdateProfileText({ text, textType }: Input) {
             about: value,
           },
         });
+        await redis.del(`user:${user.id}:profile`);
 
         return createResponse(true, "About added");
       }
@@ -357,6 +360,7 @@ export async function UpdateProfileText({ text, textType }: Input) {
         where: { userId: user.id },
         data: { about: value },
       });
+      await redis.del(`user:${user.id}:profile`);
 
       return createResponse(true, "About updated");
     }
@@ -432,6 +436,7 @@ export async function UpdateProfileExperience({
         profileId: profile.id,
       },
     });
+    await redis.del(`user:${user.id}:profile`);
 
     return createResponse(true, "Experience added");
   } catch (err) {
@@ -493,6 +498,7 @@ export async function UpdateProfileEducation({
       if (result.count === 0) {
         return createResponse(false, "Education not found");
       }
+      await redis.del(`user:${user.id}:profile`);
 
       return createResponse(true, "Education updated");
     }
@@ -503,6 +509,7 @@ export async function UpdateProfileEducation({
         profileId: profile.id,
       },
     });
+    await redis.del(`user:${user.id}:profile`);
 
     return createResponse(true, "Education added");
   } catch (err) {
@@ -547,6 +554,7 @@ export async function UpdateProfileContacts(data: UpdateProfileInput) {
         resumeUrl: links.resumeUrl?.trim() || null,
       },
     });
+    await redis.del(`user:${user.id}:profile`);
 
     return createResponse(true, "Links updated successfully");
   } catch (error) {
@@ -561,6 +569,8 @@ export async function deleteTimelineEntry(
   type: "Education" | "WorkExperience",
 ) {
   try {
+    const user = await getUserIdOrThrow();
+
     if (!id) {
       return createResponse(false, "Id is required");
     }
@@ -574,6 +584,7 @@ export async function deleteTimelineEntry(
         where: { id },
       });
     }
+    await redis.del(`user:${user.id}:profile`);
 
     return createResponse(true, `${type} deleted`);
   } catch (error) {
