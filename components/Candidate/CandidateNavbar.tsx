@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { useProfileStore } from "@/utils/store";
+import { useSessionStore } from "@/utils/store";
 
 const navLinks = [
   { labels: "dashboard", href: "/dashboard" },
@@ -23,6 +23,8 @@ const navLinks = [
 
 const UserNavbar = () => {
   const pathname = usePathname();
+
+  const { image: imageUrl, username } = useSessionStore();
 
   return (
     <header className="bg-white/80 backdrop-blur-xl shadow-md">

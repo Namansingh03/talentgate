@@ -1,12 +1,10 @@
 "use client";
 
-import { useProfileStore } from "@/utils/store";
 import Link from "next/link";
+import { Loader2Icon } from "lucide-react";
+import { Button } from "../ui/button";
 
 export default function HomeNavbar() {
-  const { username } = useProfileStore();
-  console.log("home page username : ", username);
-
   return (
     <header className="bg-white/80 shadow-md">
       <nav className="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
@@ -18,21 +16,12 @@ export default function HomeNavbar() {
         </Link>
 
         <div>
-          {username ? (
-            <Link
-              href={`/${username}`}
-              className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <Link
-              href="/signin"
-              className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20"
-            >
-              Sign In
-            </Link>
-          )}
+          <Link
+            href="/signin"
+            className="bg-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-80 transition-all duration-300 scale-95 active:scale-90 shadow-lg shadow-primary-container/20"
+          >
+            Sign In
+          </Link>
         </div>
       </nav>
     </header>

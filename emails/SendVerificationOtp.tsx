@@ -10,7 +10,7 @@ import {
 } from "@react-email/components";
 
 interface SendVerificationOtpProps {
-  type?: "email-verification" | "forgot-password";
+  type?: "email-verification" | "forget-password";
   otp?: string;
 }
 

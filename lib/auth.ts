@@ -1,14 +1,15 @@
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { betterAuth } from "better-auth";
-import resend from "./resend";
-import prismaDb from "./db";
-import CustomEmail from "@/emails/CustomEmailSend";
-import VerificationEmail from "@/emails/VerificationEmail";
-import { emailOTP, username } from "better-auth/plugins";
-import SendVerificationOtp from "@/emails/SendVerificationOtp";
 import redis from "./redis";
+import prismaDb from "./db";
+import resend from "./resend";
+import { betterAuth } from "better-auth";
+import CustomEmail from "@/emails/CustomEmailSend";
+import { emailOTP, username } from "better-auth/plugins";
+import VerificationEmail from "@/emails/VerificationEmail";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import SendVerificationOtp from "@/emails/SendVerificationOtp";
 
-const prefix = "auth:";
+const SESSION_PREFIX = "session:";
+const ONE_DAY = 60 * 60 * 24;
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -93,7 +94,7 @@ export const auth = betterAuth({
             from: "talentgate <onboarding@resend.dev>",
             to: email,
             subject: "Hello world",
-            react: SendVerificationOtp({ otp, type: "forgot-password" }),
+            react: SendVerificationOtp({ otp, type: "forget-password" }),
           });
         }
       },
@@ -106,25 +107,39 @@ export const auth = betterAuth({
       },
     }),
   ],
-  secondaryStorage: {
-    async get(key) {
-      const data = await redis.get(prefix + key);
-      return data ? JSON.parse(data) : null;
-    },
-    async set(key, value, ttl) {
-      const data = JSON.stringify(value);
-
-      if (typeof ttl === "number" && ttl > 0) {
-        await redis.set(key, data, "EX", ttl);
-      } else {
-        await redis.set(key, data);
-      }
-    },
-    async delete(key) {
-      await redis.del(prefix + key);
-    },
-  },
   session: {
     expiresIn: 60 * 60 * 24 * 1,
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+    storeSessionInDatabase: true,
+  },
+  secondaryStorage: {
+    async get(key: string) {
+      const redisKey = SESSION_PREFIX + key;
+      const cached = await redis.get(redisKey);
+      if (cached) {
+        console.log("SESSION HIT -> REDIS");
+        return JSON.parse(cached);
+      }
+      console.log("SESSION MISS -> DATABASE");
+      const session = await prismaDb.session.findFirst({
+        where: {
+          token: key,
+        },
+      });
+      if (!session) return null;
+      await redis.set(redisKey, JSON.stringify(session), "EX", ONE_DAY);
+      return session;
+    },
+    async set(key: string, value, ttl?: number) {
+      const redisKey = SESSION_PREFIX + key;
+      await redis.set(redisKey, JSON.stringify(value), "EX", ttl || ONE_DAY);
+    },
+    async delete(key: string) {
+      const redisKey = SESSION_PREFIX + key;
+      await redis.del(redisKey);
+    },
   },
 });
