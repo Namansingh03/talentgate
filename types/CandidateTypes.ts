@@ -1,5 +1,6 @@
 import { Prisma } from "@/app/generated/prisma/client";
 
+type Role = "USER" | "ADMIN" | "RECRUITER";
 type UserProfileType = Prisma.UserGetPayload<{
   select: {
     displayUsername: true;
@@ -53,4 +54,4 @@ type ProfileHeader = Prisma.UserGetPayload<{
   };
 }>;
 
-export type { UserProfileType, ProfileHeader };
+export type { UserProfileType, ProfileHeader, Role };

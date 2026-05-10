@@ -1,6 +1,6 @@
 "use client";
 
-import UserProfileSkeleton from "@/components/Candidate/profile/ProfileSkeleton/UserProfileSkeleton";
+import UserProfileSkeleton from "@/components/Skeletons/ProfileSkeleton/UserProfileSkeleton";
 import React from "react";
 
 const loading = () => {

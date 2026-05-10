@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { Input } from "../ui/input";
 import { usePathname } from "next/navigation";
 import { User2Icon } from "lucide-react";
@@ -14,6 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { Role } from "@/types/CandidateTypes";
 
 const navLinks = [
   { labels: "dashboard", href: "/dashboard" },
@@ -21,9 +21,14 @@ const navLinks = [
   { labels: "messages", href: "/messages" },
 ];
 
-const CandidateNavbar = () => {
+interface UserNavbarProps {
+  imageUrl?: string;
+  username: string;
+  role: Role;
+}
+
+const UserNavbar = ({ role, username, imageUrl }: UserNavbarProps) => {
   const pathname = usePathname();
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   return (
     <header className="bg-white/80 backdrop-blur-xl shadow-md">
@@ -75,6 +80,8 @@ const CandidateNavbar = () => {
               )}
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              <DropdownMenuItem>{username}</DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Link href={"/${username}/profile"}>Profile</Link>
               </DropdownMenuItem>
@@ -95,4 +102,4 @@ const CandidateNavbar = () => {
   );
 };
 
-export default CandidateNavbar;
+export default UserNavbar;

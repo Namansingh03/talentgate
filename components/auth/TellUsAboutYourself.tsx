@@ -24,13 +24,10 @@ import { UpdateUser } from "@/app/api/candidate/profile";
 import { formatDate } from "@/helpers/formatDate";
 
 const STEPS = [
-  { label: "I am", index: 0 },
-  { label: "specialization", index: 1 },
-  { label: "location", index: 2 },
-  { label: "Bio", index: 3 },
+  { label: "specialization", index: 0 },
+  { label: "location", index: 1 },
+  { label: "Bio", index: 2 },
 ];
-
-const intentVals = ["candidate", "recruiter", "admin"] as const;
 
 interface TellUsMore {
   userId?: string;
@@ -46,22 +43,16 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
     register,
     handleSubmit,
     trigger,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
-      intent: "candidate",
       headline: "",
       location: "",
       bio: "",
     },
     mode: "onSubmit",
   });
-
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const intent = watch("intent");
 
   const next = async (fields: (keyof TellUsMoreSchemaInput)[]) => {
     const valid = await trigger(fields);
@@ -142,41 +133,6 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
       <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6">
         <Carousel setApi={setApi} opts={{ watchDrag: false }}>
           <CarouselContent>
-            {/* STEP 0: I AM */}
-            <CarouselItem>
-              {/* ✅ Explicit div wrapper with min-height so carousel measures it correctly */}
-              <div className="flex flex-col gap-4 min-h-50 p-1">
-                <div className="grid grid-cols-3 space-x-5 space-y-5 last:grid-start-2">
-                  {intentVals.map((item, index) => (
-                    <Button
-                      key={index}
-                      type="button"
-                      onClick={() => {
-                        setValue("intent", item, {
-                          shouldValidate: true,
-                        });
-                      }}
-                      variant={intent === item ? "default" : "outline"}
-                    >
-                      {item}
-                    </Button>
-                  ))}
-                </div>
-
-                {errors.intent && (
-                  <p className="text-red-500 text-xs">
-                    {errors.intent.message}
-                  </p>
-                )}
-
-                <div className="flex justify-end pt-4">
-                  <Button type="button" onClick={() => next(["intent"])}>
-                    Next →
-                  </Button>
-                </div>
-              </div>
-            </CarouselItem>
-
             {/* STEP 1: HEADLINE */}
             <CarouselItem className="flex flex-col gap-y-4">
               <div className="flex flex-col gap-y-1">

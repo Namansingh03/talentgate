@@ -6,7 +6,7 @@ import { Suspense, useState } from "react";
 import { Separator } from "../../ui/separator";
 import { CardWrapper } from "../../ui/CardWrapper";
 import TextEditDialog from "./EditDialogs/TextEditDialogs";
-import SkillsSkeleton from "./ProfileSkeleton/SkillsSkeleton";
+import SkillsSkeleton from "../../Skeletons/ProfileSkeleton/SkillsSkeleton";
 
 interface ProfileSidebarProps {
   bio?: string | null;
