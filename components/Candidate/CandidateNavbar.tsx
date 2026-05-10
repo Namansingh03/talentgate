@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { Role } from "@/types/CandidateTypes";
+import { useProfileStore } from "@/utils/store";
 
 const navLinks = [
   { labels: "dashboard", href: "/dashboard" },
@@ -21,13 +21,7 @@ const navLinks = [
   { labels: "messages", href: "/messages" },
 ];
 
-interface UserNavbarProps {
-  imageUrl?: string;
-  username: string;
-  role: Role;
-}
-
-const UserNavbar = ({ role, username, imageUrl }: UserNavbarProps) => {
+const UserNavbar = () => {
   const pathname = usePathname();
 
   return (

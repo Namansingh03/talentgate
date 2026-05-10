@@ -69,7 +69,11 @@ export function SignInForm({
       toast.success("Signed in successfully", {
         description: formatDate(),
       });
-      router.push("/dashboard");
+      if (signInData.user.username) {
+        router.push(`/${signInData.user.username}`);
+      } else {
+        router.push(`/setUsername`);
+      }
     });
   };
 

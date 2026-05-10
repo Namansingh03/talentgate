@@ -2,7 +2,7 @@
 
 export default function FeaturesSection() {
   return (
-    <section className="py-20 bg-surface-container-low">
+    <section className="py-20 bg-blue-50">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-14">

@@ -10,7 +10,7 @@ export default function Socials() {
   const handleClick = async (provider: "google" | "github") => {
     await authClient.signIn.social({
       provider,
-      newUserCallbackURL: "/tell-us-more",
+      newUserCallbackURL: "/setUsername",
       callbackURL: "/redirect",
     });
   };

@@ -1,27 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-white border-b border-gray-100 overflow-hidden z-10">
-      {/* Background blobs */}
-      <Image
-        alt="blob"
-        src="/blob.png"
-        width={500}
-        height={500}
-        className="absolute -top-50 -left-32 blur-3xl opacity-40 z-0"
-      />
-      <Image
-        alt="blob"
-        src="/blob.png"
-        width={500}
-        height={500}
-        className="absolute -bottom-32 -right-32 blur-3xl opacity-40 z-0"
-      />
-
+    <section className="">
       {/* Content */}
-      <div className="relative z-10 max-w-2xl mx-auto px-4 py-20 text-center">
+      <div className="relative max-w-2xl mx-auto px-4 py-20 text-center">
         {/* Badge */}
         <div
           className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full 
