@@ -5,15 +5,11 @@ import type { UploadApiResponse } from "cloudinary";
 
 interface CloudinaryProps {
   file: File;
-  imageTypes: "avatarImage" | "bannerImage";
-  userId?: string | null;
+  slug: string;
+  id?: string | null;
 }
 
-export async function uploadImage({
-  file,
-  imageTypes,
-  userId,
-}: CloudinaryProps) {
+export async function uploadImage({ file, slug, id }: CloudinaryProps) {
   if (!file || file.size === 0) {
     throw new Error("No file uploaded");
   }
@@ -29,7 +25,7 @@ export async function uploadImage({
           resource_type: "image",
           quality: "auto",
           fetch_format: "auto",
-          public_id: `${imageTypes}/${userId}`,
+          public_id: `${slug}/${id}`,
           overwrite: true,
         },
         (error, result) => {

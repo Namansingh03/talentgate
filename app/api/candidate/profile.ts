@@ -146,8 +146,8 @@ export async function updateAddProfile(data: AddProfileSchemaType) {
     if (data.avatarImage) {
       const res = await uploadImage({
         file: data.avatarImage,
-        imageTypes: "avatarImage",
-        userId: user.id,
+        slug: "avatarImage",
+        id: user.id,
       });
 
       if (!res.url) {
@@ -219,8 +219,8 @@ export async function UpdateProfileHeader(data: ProfileHeaderInput) {
     if (data.avatar) {
       const res = await uploadImage({
         file: data.avatar,
-        imageTypes: "avatarImage",
-        userId: user.id,
+        slug: "avatarImage",
+        id: user.id,
       });
 
       if (!res.url) {
@@ -233,8 +233,8 @@ export async function UpdateProfileHeader(data: ProfileHeaderInput) {
     if (data.banner) {
       const res = await uploadImage({
         file: data.banner,
-        imageTypes: "bannerImage",
-        userId: user.id,
+        slug: "bannerImage",
+        id: user.id,
       });
 
       if (!res.url) {

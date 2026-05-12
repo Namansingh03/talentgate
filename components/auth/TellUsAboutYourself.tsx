@@ -23,10 +23,13 @@ import { Input } from "../ui/input";
 import { UpdateUser } from "@/app/api/candidate/profile";
 import { formatDate } from "@/helpers/formatDate";
 
+const rolesVals = ["admin", "candidate"] as const;
+
 const STEPS = [
-  { label: "specialization", index: 0 },
-  { label: "location", index: 1 },
-  { label: "Bio", index: 2 },
+  { label: "i am", index: 0 },
+  { label: "specialization", index: 1 },
+  { label: "location", index: 2 },
+  { label: "Bio", index: 3 },
 ];
 
 interface TellUsMore {
@@ -43,16 +46,22 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
     register,
     handleSubmit,
     trigger,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
+      intent: "candidate",
       headline: "",
       location: "",
       bio: "",
     },
     mode: "onSubmit",
   });
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const intent = watch("intent");
 
   const next = async (fields: (keyof TellUsMoreSchemaInput)[]) => {
     const valid = await trigger(fields);
@@ -83,8 +92,13 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
         toast.error(res.message, { description: formatDate() });
         return;
       }
-      toast.success(res.message, { description: formatDate() });
-      router.push("/addProfile");
+      if (intent === "admin") {
+        toast.success(res.message, { description: formatDate() });
+        router.push("/addCompany");
+      } else {
+        toast.success(res.message, { description: "now create a company" });
+        router.push("/addProfile");
+      }
     });
   };
 
@@ -133,6 +147,28 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
       <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6">
         <Carousel setApi={setApi} opts={{ watchDrag: false }}>
           <CarouselContent>
+            <CarouselItem>
+              <div className="flex flex-col gap-y-1">
+                <label className="text-sm font-medium text-zinc-700">
+                  I am
+                </label>
+                <p className="text-xs text-zinc-400">
+                  tell us what are you here for
+                </p>
+              </div>
+              <div className="w-full grid grid-cols-2">
+                {rolesVals.map((role, index) => (
+                  <Button
+                    key={index}
+                    variant={intent === role ? "default" : "secondary"}
+                    onClick={() => setValue("intent", role)}
+                  >
+                    {role}
+                  </Button>
+                ))}
+              </div>
+            </CarouselItem>
+
             {/* STEP 1: HEADLINE */}
             <CarouselItem className="flex flex-col gap-y-4">
               <div className="flex flex-col gap-y-1">

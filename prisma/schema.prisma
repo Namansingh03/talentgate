@@ -168,7 +168,7 @@ model Company {
   slug String @unique
 
   logo        String?
-  banner      String
+  banner      String?
   website     String?
   linkedin    String?
   description String? @db.Text
