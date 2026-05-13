@@ -28,18 +28,14 @@ async function createCompany(data: CompanyFormValues) {
   try {
     const user = await getUserOrThrow();
 
-    const formattedData = clean(data);
-
-    const { banner, logo, ...companyData } = formattedData;
-
     let bannerImageUrl: string | undefined;
     let logoImageUrl: string | undefined;
 
-    if (banner) {
+    if (data.banner) {
       const res = await uploadImage({
-        file: banner,
+        file: data.banner,
         slug: "companyBannerImage",
-        id: companyData.slug!,
+        id: data.slug!,
       });
 
       if (!res.url) {
@@ -49,11 +45,11 @@ async function createCompany(data: CompanyFormValues) {
       bannerImageUrl = res.url;
     }
 
-    if (logo) {
+    if (data.logo) {
       const res = await uploadImage({
-        file: logo,
+        file: data.logo,
         slug: "companyLogoImage",
-        id: companyData.slug!,
+        id: data.slug!,
       });
 
       if (!res.url) {
@@ -65,7 +61,7 @@ async function createCompany(data: CompanyFormValues) {
 
     await prismaDb.company.create({
       data: {
-        ...companyData,
+        ...data,
 
         banner: bannerImageUrl,
         logo: logoImageUrl,
@@ -99,4 +95,48 @@ async function createCompany(data: CompanyFormValues) {
   }
 }
 
-export { createCompany };
+async function getCompanyDetails(slug: string) {
+  try {
+    if (!slug) {
+      return createResponse(false, "company not found", undefined, {
+        redirectUrl: "/signup",
+      });
+    }
+
+    const res = await prismaDb.company.findUnique({
+      where: {
+        slug,
+      },
+      select: {
+        banner: true,
+        createdAt: true,
+        description: true,
+        industry: true,
+        isVerified: true,
+        linkedin: true,
+        location: true,
+        logo: true,
+        members: true,
+        name: true,
+        size: true,
+        website: true,
+      },
+    });
+
+    if (!res) {
+      return createResponse(false, "company not found", undefined);
+    }
+
+    return createResponse(true, "company details found", res);
+  } catch (error) {
+    console.log(error);
+
+    return createResponse(
+      false,
+      "something went wrong while fetching company details",
+      undefined,
+    );
+  }
+}
+
+export { createCompany, getCompanyDetails };

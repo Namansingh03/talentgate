@@ -1,6 +1,6 @@
 "use client";
 
-import React, { HtmlHTMLAttributes, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import {
   companySchema,
   CompanyFormValues,
@@ -21,7 +21,7 @@ import {
 import { Button } from "../ui/button";
 import { EditorRoot, EditorContent } from "novel";
 import { ImageIcon, Loader2Icon } from "lucide-react";
-import { createCompany } from "@/app/api/admin/admin";
+import { createCompany } from "@/app/api/company/company";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { useRouter } from "next/navigation";
