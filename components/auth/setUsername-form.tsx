@@ -1,14 +1,14 @@
 "use client";
 
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { generateUsernameSuggestions } from "@/helpers/getUsernameSuggestions";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
-import { Loader2 } from "lucide-react";
+import { generateUsernameSuggestions } from "@/helpers/getUsernameSuggestions";
 
 const SetUsernameForm = () => {
   const { data: session, isPending } = authClient.useSession();

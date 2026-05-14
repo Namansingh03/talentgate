@@ -1,27 +1,27 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import z from "zod";
+import { toast } from "sonner";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselApi,
 } from "@/components/ui/carousel";
-import z from "zod";
+import { Input } from "../ui/input";
 import {
   TellUsMoreSchema,
   TellUsMoreSchemaInput,
 } from "@/schemas/CandidateSchemas";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import { Loader2, MoveLeftIcon, MoveRightIcon } from "lucide-react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Input } from "../ui/input";
-import { createUser } from "@/actions/profile";
+import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createUser } from "@/app/api/candidate/profile";
+import { Loader2, MoveLeftIcon, MoveRightIcon } from "lucide-react";
 
 const rolesVals = ["admin", "candidate"] as const;
 

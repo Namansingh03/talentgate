@@ -1,31 +1,31 @@
 /* eslint-disable react-hooks/incompatible-library */
 "use client";
 
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselApi,
 } from "@/components/ui/carousel";
+import { Input } from "../ui/input";
 import {
   AddProfileSchema,
   AddProfileSchemaType,
 } from "@/schemas/CandidateSchemas";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import { Loader2, MoveLeftIcon, MoveRightIcon, User2 } from "lucide-react";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Input } from "../ui/input";
+import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
-import Image from "next/image";
-import AvatarCropDialog from "../ui/ImageCropDialog";
 import SelectedSkills from "../ui/SelectedSkills";
+import AvatarCropDialog from "../ui/ImageCropDialog";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateAddProfile } from "@/app/api/candidate/profile";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
-import { updateAddProfile } from "@/actions/profile";
+import { Loader2, MoveLeftIcon, MoveRightIcon, User2 } from "lucide-react";
 
 const LINKS = [
   { label: "Github", icon: <FaGithub /> },

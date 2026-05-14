@@ -1,3 +1,4 @@
+"use server";
 import prismaDb from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { User } from "better-auth";

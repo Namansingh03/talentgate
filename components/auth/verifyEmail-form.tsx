@@ -1,7 +1,5 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
-import { useParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -10,12 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate } from "@/helpers/formatDate";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/helpers/formatDate";
+import React, { useState, useTransition } from "react";
 
 const VerifyEmailForm = () => {
   const router = useRouter();

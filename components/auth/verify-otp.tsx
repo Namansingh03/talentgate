@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   InputOTP,
   InputOTPGroup,
@@ -17,10 +17,10 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 
 export default function VerifyOtp() {

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { FaLinkedin, FaGithub, FaGlobe, FaUser } from "react-icons/fa";
 import EditContactDialog from "./EditDialogs/EditContactDialog";
+import { FaLinkedin, FaGithub, FaGlobe, FaUser } from "react-icons/fa";
 
 interface ContactCardProps {
   githubUrl?: string | null;

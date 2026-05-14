@@ -8,10 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { UpdateProfileText } from "@/actions/profile";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useState, useTransition } from "react";
+import { UpdateProfileText } from "@/app/api/candidate/profile";
 
 interface TextEditDialogProps {
   label: "about" | "bio";

@@ -3,8 +3,8 @@
 import React from "react";
 import { Field } from "../ui/field";
 import { Button } from "../ui/button";
-import { FaGoogle, FaGithub } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 
 export default function Socials() {
   const handleClick = async (provider: "google" | "github") => {

@@ -38,7 +38,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Loader2Icon } from "lucide-react";
-import { UpdateProfileEducation } from "@/actions/profile";
+import { UpdateProfileEducation } from "@/app/api/candidate/profile";
 
 interface EducationEditDialogProps {
   open: boolean;

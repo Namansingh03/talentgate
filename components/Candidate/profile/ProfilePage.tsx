@@ -2,14 +2,14 @@
 
 import { Suspense } from "react";
 import AboutCard from "./AboutCard";
-import ProfileHeader from "./ProfileHeader";
 import EducationCard from "./EducationCard";
+import ProfileHeader from "./ProfileHeader";
 import ProfileSidebar from "./ProfileSidebar";
 import { UserProfileType } from "@/types/CandidateTypes";
-import AboutSkeleton from "../../Skeletons/ProfileSkeleton/AboutSkeleton";
 import ExperienceSkeleton from "../../Skeletons/ProfileSkeleton/ExperienceSkeleton";
-import ExperienceCard from "@/components/Candidate/profile/ExperienceCard";
 import ProfileHeaderSkeleton from "../../Skeletons/ProfileSkeleton/ProfileHeaderSkeleton";
+import AboutSkeleton from "../../Skeletons/ProfileSkeleton/AboutSkeleton";
+import ExperienceCard from "@/components/Candidate/profile/ExperienceCard";
 
 export default function ProfilePage({ user }: { user: UserProfileType }) {
   return (

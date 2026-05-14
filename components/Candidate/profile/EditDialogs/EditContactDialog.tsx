@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -9,14 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { UpdateProfileContacts } from "@/actions/profile";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
+import React, { useState, useTransition } from "react";
+import { UpdateProfileContacts } from "@/app/api/candidate/profile";
+import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
 
 interface Props {
   githubUrl?: string | null;

@@ -1,20 +1,20 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SignUpSchema } from "@/schemas/authSchema";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { authClient } from "@/lib/auth-client";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
-import { formatDate } from "@/helpers/formatDate";
-import { Loader2 } from "lucide-react";
-import Socials from "./Socials";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
+import Socials from "./Socials";
+import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
+import { useState, useTransition } from "react";
+import { formatDate } from "@/helpers/formatDate";
+import { SignUpSchema } from "@/schemas/authSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 type SignUpFormValues = z.infer<typeof SignUpSchema>;
 
