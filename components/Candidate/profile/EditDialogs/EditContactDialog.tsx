@@ -15,7 +15,7 @@ import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { UpdateProfileContacts } from "@/app/api/candidate/profile";
+import { UpdateProfileContacts } from "@/actions/profile";
 import { formatDate } from "@/helpers/formatDate";
 
 interface Props {

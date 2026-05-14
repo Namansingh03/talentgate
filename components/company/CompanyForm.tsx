@@ -21,7 +21,7 @@ import {
 import { Button } from "../ui/button";
 import { EditorRoot, EditorContent } from "novel";
 import { ImageIcon, Loader2Icon } from "lucide-react";
-import { createCompany } from "@/app/api/company/company";
+import { createCompany } from "@/actions/company";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { useRouter } from "next/navigation";
@@ -94,7 +94,7 @@ const CompanyForm = () => {
       }
 
       toast.success(res.message, { description: formatDate() });
-      router.push(`/${data.name}/admin`);
+      router.push(`/company/${data.slug}/`);
     });
   };
 

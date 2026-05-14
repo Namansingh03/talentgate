@@ -29,7 +29,10 @@ export default function HomePageSkeleton() {
       <section className="container mx-auto px-4 py-16">
         <div className="grid gap-6 md:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border p-6 space-y-4">
+            <div
+              key={i}
+              className="rounded-2xl border border-bg-neutral-500 p-6 space-y-4"
+            >
               <SectionSkeleton className="h-12 w-12 rounded-xl" />
               <SectionSkeleton className="h-6 w-1/2" />
               <SectionSkeleton className="h-4 w-full" />
@@ -48,7 +51,10 @@ export default function HomePageSkeleton() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border p-6 space-y-4">
+            <div
+              key={i}
+              className="rounded-2xl border border-bg-neutral-500 p-6 space-y-4"
+            >
               <div className="flex items-center gap-4">
                 <SectionSkeleton className="h-14 w-14 rounded-xl" />
 
@@ -72,7 +78,7 @@ export default function HomePageSkeleton() {
 
       {/* CTA Skeleton */}
       <section className="container mx-auto px-4 py-20">
-        <div className="rounded-3xl border p-10 text-center space-y-6">
+        <div className="rounded-3xl border-neutral-500 border p-10 text-center space-y-6">
           <SectionSkeleton className="h-12 w-1/2 mx-auto" />
           <SectionSkeleton className="h-5 w-2/3 mx-auto" />
 

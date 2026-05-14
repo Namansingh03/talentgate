@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { UpdateProfileExperience } from "@/app/api/candidate/profile";
+import { UpdateProfileExperience } from "@/actions/profile";
 import { formatDate } from "@/helpers/formatDate";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

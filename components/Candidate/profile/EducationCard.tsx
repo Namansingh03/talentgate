@@ -17,7 +17,7 @@ import { CardWrapper } from "../../ui/CardWrapper";
 import { Separator } from "@/components/ui/separator";
 import { Education } from "@/app/generated/prisma/client";
 import { EducationSchemaType } from "@/schemas/CandidateSchemas";
-import { deleteTimelineEntry } from "@/app/api/candidate/profile";
+import { deleteTimelineEntry } from "@/actions/profile";
 import EducationEditDialog from "./EditDialogs/EducationEditDialog";
 interface EducationCardProps {
   education?: Education[];

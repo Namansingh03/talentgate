@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import Footer from "@/components/home/Footer";
 import { authClient } from "@/lib/auth-client";
-import { useSessionStore } from "@/utils/store";
 import HomeNavbar from "@/components/home/HomeNavbar";
 import CTASection from "@/components/home/CtaSection";
 import HeroSection from "@/components/home/HeroSection";
@@ -16,18 +15,13 @@ import HomePageSkeleton from "@/components/Skeletons/HomePageSkeleton";
 export default function Home() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const { setUser } = useSessionStore();
 
   useEffect(() => {
     if (isPending) return;
     if (session?.user?.username) {
-      setUser({
-        username: session.user.username,
-        image: session.user.image ?? null,
-      });
       router.replace(`/${session.user.username}`);
     }
-  }, [session, isPending, router, setUser]);
+  }, [session, isPending, router]);
   if (isPending) {
     return <HomePageSkeleton />;
   }

@@ -25,7 +25,7 @@ import Image from "next/image";
 import AvatarCropDialog from "../ui/ImageCropDialog";
 import SelectedSkills from "../ui/SelectedSkills";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
-import { updateAddProfile } from "@/app/api/candidate/profile";
+import { updateAddProfile } from "@/actions/profile";
 
 const LINKS = [
   { label: "Github", icon: <FaGithub /> },

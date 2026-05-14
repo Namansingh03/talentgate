@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import SelectedSkills from "@/components/ui/SelectedSkills";
-import { UpdateProfileSkills } from "@/app/api/candidate/profile";
+import { UpdateProfileSkills } from "@/actions/profile";
 
 interface SkillsEditProps {
   skills?: string[];
@@ -62,7 +62,9 @@ const EditSkillsDialog = ({
         <SelectedSkills skills={selectedSkills} onChange={setSelectedSkills} />
 
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)} variant={"secondary"}>Cancel</Button>
+          <Button onClick={() => onOpenChange(false)} variant={"secondary"}>
+            Cancel
+          </Button>
 
           <Button variant="default" onClick={handleSave} disabled={isPending}>
             {isPending ? <Loader2Icon className="animate-spin" /> : "save"}

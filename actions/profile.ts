@@ -97,7 +97,7 @@ export async function getUserProfile() {
   return createResponse(true, "User profile fetched!", existingUser);
 }
 
-export async function UpdateUser(vals: userVals) {
+export async function createUser(vals: userVals) {
   try {
     const { userId, data } = vals;
 

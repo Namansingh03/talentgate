@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { UpdateProfileText } from "@/app/api/candidate/profile";
+import { UpdateProfileText } from "@/actions/profile";
 import { useRouter } from "next/navigation";
 
 interface TextEditDialogProps {

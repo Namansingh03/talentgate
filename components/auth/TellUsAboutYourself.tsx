@@ -20,7 +20,7 @@ import { Loader2, MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Input } from "../ui/input";
-import { UpdateUser } from "@/app/api/candidate/profile";
+import { createUser } from "@/actions/profile";
 import { formatDate } from "@/helpers/formatDate";
 
 const rolesVals = ["admin", "candidate"] as const;
@@ -79,7 +79,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const onSubmit = (data: z.infer<typeof TellUsMoreSchema>) => {
     startTransition(async () => {
       console.log(data);
-      const res = await UpdateUser({
+      const res = await createUser({
         userId,
         data,
       });
@@ -94,7 +94,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
       }
       if (intent === "admin") {
         toast.success(res.message, { description: formatDate() });
-        router.push("/addCompany");
+        router.push("/createCompany");
       } else {
         toast.success(res.message, { description: "now create a company" });
         router.push("/addProfile");
@@ -220,17 +220,11 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                 </p>
               )}
               <div className="flex flex-row justify-between w-full mt-4">
-                <Button type="button" onClick={prev}>
-                  {" "}
-                  {/* ✅ Bug 3 fix */}
-                  <MoveLeftIcon />
-                  prev
+                <Button type="button" variant="ghost" onClick={prev}>
+                  {/* ✅ Bug 3 fix */}← Back
                 </Button>
-                <Button type="button" onClick={() => next(["location"])}>
-                  {" "}
-                  {/* ✅ Bug 3 fix */}
+                <Button type="button" variant="ghost" onClick={prev}>
                   next
-                  <MoveRightIcon />
                 </Button>
               </div>
             </CarouselItem>

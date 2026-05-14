@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AvatarCropDialog from "@/components/ui/ImageCropDialog";
-import { UpdateProfileHeader } from "@/app/api/candidate/profile";
+import { UpdateProfileHeader } from "@/actions/profile";
 import React, { useEffect, useState, useTransition } from "react";
 
 interface Props {

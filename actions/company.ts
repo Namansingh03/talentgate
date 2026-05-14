@@ -24,16 +24,16 @@ function clean<T extends object>(obj: T) {
   ) as Partial<T>;
 }
 
-async function createCompany(data: CompanyFormValues) {
+export async function createCompany(data: CompanyFormValues) {
   try {
     const user = await getUserOrThrow();
-
+    const { banner, logo, ...companyData } = data;
     let bannerImageUrl: string | undefined;
     let logoImageUrl: string | undefined;
 
-    if (data.banner) {
+    if (banner) {
       const res = await uploadImage({
-        file: data.banner,
+        file: banner,
         slug: "companyBannerImage",
         id: data.slug!,
       });
@@ -45,9 +45,9 @@ async function createCompany(data: CompanyFormValues) {
       bannerImageUrl = res.url;
     }
 
-    if (data.logo) {
+    if (logo) {
       const res = await uploadImage({
-        file: data.logo,
+        file: logo,
         slug: "companyLogoImage",
         id: data.slug!,
       });
@@ -61,7 +61,7 @@ async function createCompany(data: CompanyFormValues) {
 
     await prismaDb.company.create({
       data: {
-        ...data,
+        ...companyData,
 
         banner: bannerImageUrl,
         logo: logoImageUrl,
@@ -95,7 +95,7 @@ async function createCompany(data: CompanyFormValues) {
   }
 }
 
-async function getCompanyDetails(slug: string) {
+export async function getCompanyDetails(slug: string) {
   try {
     if (!slug) {
       return createResponse(false, "company not found", undefined, {
@@ -138,5 +138,3 @@ async function getCompanyDetails(slug: string) {
     );
   }
 }
-
-export { createCompany, getCompanyDetails };
