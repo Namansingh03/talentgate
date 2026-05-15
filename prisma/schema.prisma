@@ -171,7 +171,7 @@ model Company {
   banner      String?
   website     String?
   linkedin    String?
-  description String? @db.Text
+  description Json?
 
   industry String?
   size     CompanySize @default(SMALL)

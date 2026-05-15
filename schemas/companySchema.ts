@@ -7,6 +7,8 @@ export const CompanySizeEnum = z.enum([
   "ENTERPRISE",
 ]);
 
+export const tiptapJsonSchema = z.record(z.string(), z.any()).nullable();
+
 export const companySchema = z.object({
   name: z
     .string()
@@ -30,10 +32,7 @@ export const companySchema = z.object({
 
   linkedin: z.string().url("LinkedIn URL must be valid"),
 
-  description: z
-    .string()
-    .min(10, "Description must be at least 10 characters")
-    .max(5000),
+  description: tiptapJsonSchema,
 
   industry: z.string().min(2, "Industry is required").max(100),
 

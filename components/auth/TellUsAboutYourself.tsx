@@ -21,7 +21,13 @@ import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createUser } from "@/app/api/candidate/profile";
-import { Loader2, MoveLeftIcon, MoveRightIcon } from "lucide-react";
+import {
+  Loader2,
+  MoveLeft,
+  MoveLeftIcon,
+  MoveRight,
+  MoveRightIcon,
+} from "lucide-react";
 
 const rolesVals = ["admin", "candidate"] as const;
 
@@ -167,6 +173,17 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                   </Button>
                 ))}
               </div>
+              <div className="w-full flex items-end justify-end mt-10">
+                <Button
+                  className="hover:bg-neutral-200"
+                  onClick={() => next(["intent"])}
+                >
+                  next{" "}
+                  <span>
+                    <MoveRight />
+                  </span>
+                </Button>
+              </div>
             </CarouselItem>
 
             {/* STEP 1: HEADLINE */}
@@ -190,17 +207,19 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                 </p>
               )}
               <div className="flex flex-row justify-between w-full">
-                <Button type="button" onClick={prev}>
+                <Button onClick={prev}>
                   {" "}
-                  {/* ✅ Bug 3 fix */}
-                  <MoveLeftIcon />
+                  <span>
+                    <MoveLeft />
+                  </span>
                   prev
                 </Button>
-                <Button type="button" onClick={() => next(["headline"])}>
+                <Button onClick={() => next(["headline"])}>
                   {" "}
-                  {/* ✅ Bug 3 fix */}
                   next
-                  <MoveRightIcon />
+                  <span>
+                    <MoveRight />
+                  </span>
                 </Button>
               </div>
             </CarouselItem>
@@ -220,11 +239,17 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                 </p>
               )}
               <div className="flex flex-row justify-between w-full mt-4">
-                <Button type="button" variant="ghost" onClick={prev}>
-                  {/* ✅ Bug 3 fix */}← Back
+                <Button onClick={prev}>
+                  <span>
+                    <MoveLeft />
+                  </span>{" "}
+                  prev
                 </Button>
-                <Button type="button" variant="ghost" onClick={prev}>
+                <Button onClick={() => next(["location"])}>
                   next
+                  <span>
+                    <MoveRight />
+                  </span>
                 </Button>
               </div>
             </CarouselItem>
@@ -252,8 +277,11 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
               )}
 
               <div className="flex justify-between pt-2">
-                <Button type="button" variant="ghost" onClick={prev}>
-                  {/* ✅ Bug 3 fix */}← Back
+                <Button onClick={prev}>
+                  <span>
+                    <MoveLeft />
+                  </span>
+                  prev
                 </Button>
                 <Button
                   type="submit"

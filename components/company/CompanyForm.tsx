@@ -19,12 +19,13 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EditorRoot, EditorContent } from "novel";
 import { ImageIcon, Loader2Icon } from "lucide-react";
 import { createCompany } from "@/app/api/company/company";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { useRouter } from "next/navigation";
+import { Separator } from "../ui/separator";
+import TiptapEditor from "../ui/TipTap";
 
 const CompanyForm = () => {
   const [logoImage, setLogoImage] = useState<string>("");
@@ -49,7 +50,7 @@ const CompanyForm = () => {
       slug: "",
       website: "",
       companyEmail: "",
-      description: "",
+      description: undefined,
       logo: undefined,
       banner: undefined,
     },
@@ -99,25 +100,27 @@ const CompanyForm = () => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col gap-y-8">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <section
+    <div className="w-full">
+      <form onSubmit={handleSubmit(onSubmit)} className="">
+        <div
           id="uploadImages"
-          className="flex flex-row items-center justify-center"
+          className="w-full flex flex-row items-start justify-between"
         >
-          <div className="flex flex-col items-center justify-center w-lg h-40 rounded-md">
-            <Label>Company Logo</Label>
+          <div className="flex flex-col items-start justify-center w-lg h-auto rounded-md gap-y-5">
+            <Label className="text-neutral-500 font-semibold font-sans text-lg">
+              Company Logo
+            </Label>
             {logoImage ? (
               <Image
                 alt="logoImage"
                 src={logoImage}
                 width={100}
                 height={100}
-                className="rounded-full"
+                className="rounded-full w-40 h-40"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full border border-dashed flex items-center justify-center bg-muted">
-                <ImageIcon className="w-8 h-8 text-muted-foreground" />
+              <div className="w-40 h-40 rounded-full border border-dashed flex items-center justify-center bg-muted p-5">
+                <ImageIcon className="w-40 h-40 text-muted-foreground" />
               </div>
             )}
             <Input
@@ -131,15 +134,17 @@ const CompanyForm = () => {
               <p className="text-red-500 text-xs">{errors.logo.message}</p>
             )}
           </div>
-          <div className="w-xl h-40 rounded-md flex flex-col items-center justify-center">
-            <Label>Company banner</Label>
+          <div className="flex flex-col items-start justify-center w-lg h-auto rounded-md gap-y-5">
+            <Label className="text-neutral-500 font-semibold font-sans text-lg">
+              Company banner
+            </Label>
             {bannerImage ? (
               <Image
                 alt="bannerImage"
                 src={bannerImage ?? ""}
                 width={1000}
                 height={100}
-                className=""
+                className="w-md contain-content h-40"
               />
             ) : (
               <div className="w-full h-40 border border-dashed rounded-md flex items-center justify-center bg-muted">
@@ -156,8 +161,9 @@ const CompanyForm = () => {
               <p className="text-red-500 text-xs">{errors.banner.message}</p>
             )}
           </div>
-        </section>
-        <div id="values" className="grid grid-cols-2 grid-rows-3">
+        </div>
+        <Separator />
+        <div id="values" className="grid grid-cols-2 grid-rows-3 gap-7">
           {/* company name */}
           <div className="flex flex-col gap-y-3">
             <Label>name</Label>
@@ -234,7 +240,7 @@ const CompanyForm = () => {
           <div className="flex flex-col gap-y-3">
             <Label>size</Label>
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Button variant={"outline"}>select company size</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -251,15 +257,12 @@ const CompanyForm = () => {
           </div>
         </div>
 
-        {/* text editor */}
-        <EditorRoot>
-          <EditorContent
-            autofocus
-            onUpdate={({ editor }) => {
-              setValue("description", editor.getHTML());
-            }}
-          />
-        </EditorRoot>
+        <Separator />
+
+        <div className="w-full h-auto flex flex-col items-start justify-center gap-y-3">
+          <Label>Description</Label>
+          <TiptapEditor />
+        </div>
 
         <Button type="submit" disabled={isPending} className="self-end-safe">
           {isPending ? (
@@ -268,14 +271,13 @@ const CompanyForm = () => {
             "create company"
           )}
         </Button>
+        <AvatarCropDialog
+          open={cropOpen}
+          image={cropImage}
+          onClose={() => setCropOpen(!cropOpen)}
+          onSave={handleCropSave}
+        />
       </form>
-
-      <AvatarCropDialog
-        open={cropOpen}
-        image={cropImage}
-        onClose={() => setCropOpen(!cropOpen)}
-        onSave={handleCropSave}
-      />
     </div>
   );
 };
