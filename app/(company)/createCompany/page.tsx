@@ -2,10 +2,8 @@ import CompanyForm from "@/components/company/CompanyForm";
 
 export default function SignupPage() {
   return (
-    <div className="w-full h-screen bg-amber-50 flex items-center justify-center p-5">
-      <div className="w-6xl h-auto bg-white border p-8 border-neutral-500 rounded-xl">
-        <CompanyForm />
-      </div>
+    <div className="w-full min-h-screen bg-linear-to-br from-[#0f172a] via-[#1e1a78] to-[#0f172a] flex items-start justify-center py-12 px-4">
+      <CompanyForm />
     </div>
   );
 }

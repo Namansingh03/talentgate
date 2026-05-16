@@ -86,13 +86,13 @@ export async function createCompany(data: CompanyFormValues) {
 
     return createResponse(true, "Company created");
   } catch (error) {
-    console.log(error);
-    if (error instanceof Error && error.message === "UNAUTHORIZED") {
-      return createResponse(false, "Unauthorized", undefined, {
-        redirectUrl: "/signin",
-      });
+    console.error(error);
+
+    if (error instanceof Error) {
+      return createResponse(false, error.message);
     }
-    throw new Error("Failed to create company");
+
+    return createResponse(false, "Failed to create company");
   }
 }
 

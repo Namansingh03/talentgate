@@ -7,8 +7,6 @@ export const CompanySizeEnum = z.enum([
   "ENTERPRISE",
 ]);
 
-export const tiptapJsonSchema = z.record(z.string(), z.any()).nullable();
-
 export const companySchema = z.object({
   name: z
     .string()
@@ -24,15 +22,19 @@ export const companySchema = z.object({
       "Slug can only contain lowercase letters, numbers, and hyphens",
     ),
 
-  logo: z.file().mime(["image/jpeg", "image/png", "image/webp"]).nullable(),
+  logo: z.file().nullable(),
 
-  banner: z.file().mime(["image/jpeg", "image/png", "image/webp"]).nullable(),
+  banner: z.file().nullable(),
 
   website: z.string().url("Website must be a valid URL"),
 
   linkedin: z.string().url("LinkedIn URL must be valid"),
 
-  description: tiptapJsonSchema,
+  description: z
+    .string()
+    .min(20, "Description is too short")
+    .max(10000, "Description is too long")
+    .optional(),
 
   industry: z.string().min(2, "Industry is required").max(100),
 
