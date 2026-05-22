@@ -117,6 +117,11 @@ export async function getCompanyDetails(slug: string) {
         name: true,
         size: true,
         website: true,
+        slug: true,
+        jobs: {
+          orderBy: { createdAt: "desc" },
+          take: 6,
+        },
       },
     });
 
