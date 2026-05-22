@@ -113,7 +113,7 @@ const CompanyForm = () => {
       slug: "",
       website: "",
       companyEmail: "",
-      description: undefined,
+      description: {},
       logo: undefined,
       banner: undefined,
     },
@@ -399,9 +399,13 @@ const CompanyForm = () => {
           />
           <TiptapEditor
             onChange={(html) =>
-              setValue("description", html, {
-                shouldValidate: true,
-              })
+              setValue(
+                "description",
+                { type: "html", content: [html] },
+                {
+                  shouldValidate: true,
+                },
+              )
             }
           />
         </div>

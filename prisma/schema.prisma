@@ -167,15 +167,15 @@ model Company {
   name String
   slug String @unique
 
-  logo        String?
-  banner      String?
-  website     String?
-  linkedin    String?
-  description String? @db.Text
-
-  industry String?
-  size     CompanySize @default(SMALL)
-  location String?
+  logo         String?
+  banner       String?
+  website      String?
+  linkedin     String?
+  description  Json?
+  companyEmail String?
+  industry     String?
+  size         CompanySize @default(SMALL)
+  location     String?
 
   isVerified Boolean @default(false)
 

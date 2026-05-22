@@ -30,11 +30,10 @@ export const companySchema = z.object({
 
   linkedin: z.string().url("LinkedIn URL must be valid"),
 
-  description: z
-    .string()
-    .min(20, "Description is too short")
-    .max(10000, "Description is too long")
-    .optional(),
+  description: z.object({
+    type: z.string(),
+    content: z.array(z.any()),
+  }),
 
   industry: z.string().min(2, "Industry is required").max(100),
 

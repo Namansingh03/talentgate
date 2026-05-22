@@ -28,7 +28,7 @@ function clean<T extends object>(obj: T) {
 export async function createCompany(data: CompanyFormValues) {
   try {
     const user = await getUserOrThrow();
-    const { banner, logo, ...companyData } = data;
+    const { banner, logo, description, ...companyData } = data;
     let bannerImageUrl: string | undefined;
     let logoImageUrl: string | undefined;
 
@@ -66,6 +66,7 @@ export async function createCompany(data: CompanyFormValues) {
 
         banner: bannerImageUrl,
         logo: logoImageUrl,
+        description,
 
         members: {
           create: {
@@ -87,11 +88,6 @@ export async function createCompany(data: CompanyFormValues) {
     return createResponse(true, "Company created");
   } catch (error) {
     console.error(error);
-
-    if (error instanceof Error) {
-      return createResponse(false, error.message);
-    }
-
     return createResponse(false, "Failed to create company");
   }
 }
