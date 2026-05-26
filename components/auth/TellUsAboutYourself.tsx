@@ -21,22 +21,10 @@ import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createUser } from "@/app/api/candidate/profile";
-import {
-  Loader2,
-  MoveLeft,
-  MoveLeftIcon,
-  MoveRight,
-  MoveRightIcon,
-} from "lucide-react";
+import { Loader2, MoveLeft, MoveRight } from "lucide-react";
+import React from "react";
 
 const rolesVals = ["admin", "candidate"] as const;
-
-const STEPS = [
-  { label: "i am", index: 0 },
-  { label: "specialization", index: 1 },
-  { label: "location", index: 2 },
-  { label: "Bio", index: 3 },
-];
 
 interface TellUsMore {
   userId?: string;
@@ -44,14 +32,15 @@ interface TellUsMore {
 
 const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const [api, setApi] = useState<CarouselApi>();
-  const [currentStep, setCurrentStep] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const {
     register,
-    handleSubmit,
     trigger,
+    handleSubmit,
     watch,
     setValue,
     formState: { errors },
@@ -66,29 +55,35 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
     mode: "onSubmit",
   });
 
+  React.useEffect(() => {
+    if (!api) return;
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const intent = watch("intent");
 
-  const next = async (fields: (keyof TellUsMoreSchemaInput)[]) => {
-    const valid = await trigger(fields);
-    if (valid) {
-      api?.scrollNext();
-      setCurrentStep((s) => Math.min(s + 1, STEPS.length - 1));
+  const next = async (fields?: (keyof TellUsMoreSchemaInput)[]) => {
+    if (fields) {
+      const isValid = await trigger(fields);
+      if (!isValid) return;
     }
+    api?.scrollNext();
   };
 
   const prev = () => {
     api?.scrollPrev();
-    setCurrentStep((s) => Math.max(s - 1, 0));
   };
 
   const onSubmit = (data: z.infer<typeof TellUsMoreSchema>) => {
     startTransition(async () => {
-      console.log(data);
-      const res = await createUser({
-        userId,
-        data,
-      });
+      const res = await createUser({ userId, data });
 
       if (!res.success) {
         if (res.redirectUrl) {
@@ -108,6 +103,19 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
     });
   };
 
+  const StepIndicator = () => (
+    <div className="flex items-center justify-center gap-2 py-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className={`rounded-full transition-all duration-300 ${
+            i + 1 === current ? "w-6 h-2 bg-zinc-900" : "w-2 h-2 bg-zinc-300"
+          }`}
+        />
+      ))}
+    </div>
+  );
+
   return (
     <div className="w-full max-w-xl bg-white rounded-2xl shadow-lg border border-zinc-100 overflow-hidden">
       {/* Header */}
@@ -116,189 +124,148 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
           <h1 className="text-lg font-semibold tracking-tight text-zinc-900 font-serif">
             TalentGate
           </h1>
-          <span className="text-xs text-zinc-400 font-medium">
-            Step {currentStep + 1} of {STEPS.length}
+          {/* Step counter text */}
+          <span className="text-xs text-zinc-400">
+            Step {current} of {count}
           </span>
         </div>
         <p className="text-sm text-zinc-500 mb-5">
           Tell us about yourself to personalize your experience.
         </p>
 
-        {/* Step progress dots */}
-        <div className="flex items-center gap-2">
-          {STEPS.map((step, i) => (
-            <div key={step.index} className="flex items-center gap-2">
-              <div
-                className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                  i < currentStep
-                    ? "bg-zinc-800 scale-100"
-                    : i === currentStep
-                      ? "bg-zinc-800 scale-125"
-                      : "bg-zinc-200"
-                }`}
-              />
-              {i < STEPS.length - 1 && (
-                <div
-                  className={`h-px w-8 transition-all duration-500 ${
-                    i < currentStep ? "bg-zinc-800" : "bg-zinc-200"
-                  }`}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+        <StepIndicator />
 
-      {/* Form body */}
-      <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6">
-        <Carousel setApi={setApi} opts={{ watchDrag: false }}>
-          <CarouselContent>
-            <CarouselItem>
-              <div className="flex flex-col gap-y-1">
-                <label className="text-sm font-medium text-zinc-700">
-                  I am
-                </label>
-                <p className="text-xs text-zinc-400">
-                  tell us what are you here for
-                </p>
-              </div>
-              <div className="w-full grid grid-cols-2">
-                {rolesVals.map((role, index) => (
-                  <Button
-                    key={index}
-                    variant={intent === role ? "default" : "secondary"}
-                    onClick={() => setValue("intent", role)}
-                  >
-                    {role}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-y-3"
+        >
+          <Carousel setApi={setApi} opts={{ watchDrag: false }}>
+            <CarouselContent>
+              {/* STEP 0: ROLE */}
+              <CarouselItem>
+                <div className="flex flex-col gap-y-1 mb-3">
+                  <label className="text-sm font-medium text-zinc-700">
+                    I am
+                  </label>
+                  <p className="text-xs text-zinc-400">
+                    Tell us what you are here for.
+                  </p>
+                </div>
+                <div className="w-full grid grid-cols-2 gap-2">
+                  {rolesVals.map((role, index) => (
+                    <Button
+                      key={index}
+                      type="button"
+                      variant={intent === role ? "default" : "secondary"}
+                      onClick={() => setValue("intent", role)}
+                    >
+                      {role}
+                    </Button>
+                  ))}
+                </div>
+                <div className="w-full flex items-end justify-end mt-10">
+                  <Button type="button" onClick={() => next()}>
+                    next <MoveRight className="ml-1" />
                   </Button>
-                ))}
-              </div>
-              <div className="w-full flex items-end justify-end mt-10">
-                <Button
-                  className="hover:bg-neutral-200"
-                  onClick={() => next(["intent"])}
-                >
-                  next{" "}
-                  <span>
-                    <MoveRight />
-                  </span>
-                </Button>
-              </div>
-            </CarouselItem>
+                </div>
+              </CarouselItem>
 
-            {/* STEP 1: HEADLINE */}
-            <CarouselItem className="flex flex-col gap-y-4">
-              <div className="flex flex-col gap-y-1">
-                <label className="text-sm font-medium text-zinc-700">
-                  What are your specializations? {/* ✅ Bug 4 fix: typo */}
-                </label>
-                <p className="text-xs text-zinc-400">What defines you best.</p>
-              </div>
-              <Input
-                className="p-5"
-                placeholder="Web developer , admin , ceo"
-                required
-                {...register("headline")}
-              />
+              {/* STEP 1: HEADLINE */}
+              <CarouselItem className="flex flex-col gap-y-4">
+                <div className="flex flex-col gap-y-1">
+                  <label className="text-sm font-medium text-zinc-700">
+                    What are your specializations?
+                  </label>
+                  <p className="text-xs text-zinc-400">
+                    What defines you best.
+                  </p>
+                </div>
+                <Input
+                  className="p-5"
+                  placeholder="Web developer, admin, CEO"
+                  {...register("headline")}
+                />
+                {errors.headline && (
+                  <p className="text-red-500 text-xs">
+                    {errors.headline.message}
+                  </p>
+                )}
+                <div className="flex flex-row justify-between w-full">
+                  <Button type="button" onClick={prev}>
+                    <MoveLeft className="mr-1" /> prev
+                  </Button>
+                  <Button type="button" onClick={() => next(["headline"])}>
+                    next <MoveRight className="ml-1" />
+                  </Button>
+                </div>
+              </CarouselItem>
 
-              {errors.headline && (
-                <p className="text-red-500 text-xs">
-                  {errors.headline.message}
-                </p>
-              )}
-              <div className="flex flex-row justify-between w-full">
-                <Button onClick={prev}>
-                  {" "}
-                  <span>
-                    <MoveLeft />
-                  </span>
-                  prev
-                </Button>
-                <Button onClick={() => next(["headline"])}>
-                  {" "}
-                  next
-                  <span>
-                    <MoveRight />
-                  </span>
-                </Button>
-              </div>
-            </CarouselItem>
+              {/* STEP 2: LOCATION */}
+              <CarouselItem className="flex flex-col gap-y-4">
+                <div className="flex flex-col gap-y-1">
+                  <label className="text-sm font-medium text-zinc-700">
+                    Location
+                  </label>
+                  <p className="text-xs text-zinc-400">Your office location.</p>
+                </div>
+                <Input placeholder="city, country" {...register("location")} />
+                {errors.location && (
+                  <p className="text-red-500 text-xs">
+                    {errors.location.message}
+                  </p>
+                )}
+                <div className="flex flex-row justify-between w-full mt-4">
+                  <Button type="button" onClick={prev}>
+                    <MoveLeft className="mr-1" /> prev
+                  </Button>
+                  {/* ✅ Fix 7: validates "location" before proceeding */}
+                  <Button type="button" onClick={() => next(["location"])}>
+                    next <MoveRight className="ml-1" />
+                  </Button>
+                </div>
+              </CarouselItem>
 
-            {/* STEP 2: LOCATION */}
-            <CarouselItem>
-              <div className="flex flex-col gap-y-1">
-                <label className="text-sm font-medium text-zinc-700">
-                  Location
-                </label>
-                <p className="text-xs text-zinc-400">Your office location.</p>
-              </div>
-              <Input placeholder="city, country" {...register("location")} />
-              {errors.location && (
-                <p className="text-red-500 text-xs">
-                  {errors.location.message}
-                </p>
-              )}
-              <div className="flex flex-row justify-between w-full mt-4">
-                <Button onClick={prev}>
-                  <span>
-                    <MoveLeft />
-                  </span>{" "}
-                  prev
-                </Button>
-                <Button onClick={() => next(["location"])}>
-                  next
-                  <span>
-                    <MoveRight />
-                  </span>
-                </Button>
-              </div>
-            </CarouselItem>
-
-            {/* STEP 3: BIO */}
-            <CarouselItem className="flex flex-col gap-y-4">
-              <div className="flex flex-col gap-y-1">
-                <label className="text-sm font-medium text-zinc-700">
-                  Your short bio
-                </label>
-                <p className="text-xs text-zinc-400">
-                  A one-liner that captures who you are professionally.
-                </p>
-              </div>
-
-              <Textarea
-                rows={3}
-                placeholder="Full-stack engineer who loves building products people care about."
-                className="bg-zinc-50 border-zinc-200 focus:bg-white resize-none transition-colors text-sm"
-                {...register("bio")}
-              />
-
-              {errors.bio && (
-                <p className="text-red-500 text-xs">{errors.bio.message}</p>
-              )}
-
-              <div className="flex justify-between pt-2">
-                <Button onClick={prev}>
-                  <span>
-                    <MoveLeft />
-                  </span>
-                  prev
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isPending}
-                  className="px-6 bg-zinc-900 hover:bg-zinc-700"
-                >
-                  {isPending ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    "Finish setup"
-                  )}
-                </Button>
-              </div>
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
-      </form>
+              {/* STEP 3: BIO */}
+              <CarouselItem className="flex flex-col gap-y-4">
+                <div className="flex flex-col gap-y-1">
+                  <label className="text-sm font-medium text-zinc-700">
+                    Your short bio
+                  </label>
+                  <p className="text-xs text-zinc-400">
+                    A one-liner that captures who you are professionally.
+                  </p>
+                </div>
+                <Textarea
+                  rows={3}
+                  placeholder="Full-stack engineer who loves building products people care about."
+                  className="bg-zinc-50 border-zinc-200 focus:bg-white resize-none transition-colors text-sm"
+                  {...register("bio")}
+                />
+                {errors.bio && (
+                  <p className="text-red-500 text-xs">{errors.bio.message}</p>
+                )}
+                <div className="flex justify-between pt-2">
+                  <Button type="button" onClick={prev}>
+                    <MoveLeft className="mr-1" /> prev
+                  </Button>
+                  {/* ✅ Fix 8: only slide 4 has the submit button */}
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="px-6 bg-zinc-900 hover:bg-zinc-700"
+                  >
+                    {isPending ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      "Finish setup"
+                    )}
+                  </Button>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+          </Carousel>
+        </form>
+      </div>
     </div>
   );
 };

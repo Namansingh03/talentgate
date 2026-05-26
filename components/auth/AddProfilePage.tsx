@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import SelectedSkills from "../ui/SelectedSkills";
-import AvatarCropDialog from "../ui/ImageCropDialog";
+import { ImageCropDialog } from "../ui/ImageCropDialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateAddProfile } from "@/app/api/candidate/profile";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
@@ -85,9 +85,10 @@ const AddProfilePage = () => {
     setCropOpen(true);
   };
 
-  const handleCropSave = (file: File) => {
+  const handleCropSave = (url: string, blob: Blob) => {
+    const file = new File([blob], "logo.jpg", { type: blob.type });
     setValue("avatarImage", file, { shouldValidate: true });
-    setAvatarImagePrev(URL.createObjectURL(file));
+    setAvatarImagePrev(url);
   };
 
   const next = async (fields: (keyof AddProfileSchemaType)[]) => {
@@ -340,11 +341,14 @@ const AddProfilePage = () => {
           </CarouselContent>
         </Carousel>
       </form>
-      <AvatarCropDialog
+      <ImageCropDialog
         open={cropOpen}
-        image={cropImage}
-        onClose={() => setCropOpen(!cropOpen)}
-        onSave={handleCropSave}
+        onOpenChange={setCropOpen}
+        imageSrc={cropImage ?? ""}
+        onCropComplete={handleCropSave}
+        title="Crop your avatar"
+        outputType="image/jpeg"
+        quality={0.92}
       />
     </div>
   );

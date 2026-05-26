@@ -119,8 +119,12 @@ export async function getCompanyDetails(slug: string) {
         website: true,
         slug: true,
         jobs: {
-          orderBy: { createdAt: "desc" },
-          take: 6,
+          where: {
+            status: "ACTIVE",
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
         },
       },
     });

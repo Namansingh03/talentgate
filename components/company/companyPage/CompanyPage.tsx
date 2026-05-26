@@ -2,16 +2,22 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEditor } from "@tiptap/react";
 import { SlCalender } from "react-icons/sl";
-import StarterKit from "@tiptap/starter-kit";
 import { MdOutlineWork } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import { FaLocationDot } from "react-icons/fa6";
 import { CompanyType } from "@/types/CompanyTypes";
 import { CiGlobe, CiShare2 } from "react-icons/ci";
 import { FaShapes, FaUsers, FaRegIdBadge } from "react-icons/fa";
-import { EditorContent } from "@tiptap/react";
+import { FiCheckCircle } from "react-icons/fi";
+
+const sizeLabels: Record<string, string> = {
+  STARTUP: "10-20 employees",
+  SMALL: "21-50 employees",
+  MEDIUM: "51-500 employees",
+  LARGE: "500-1000 employees",
+  ENTERPRISE: "1K+ employees",
+};
 
 const CompanyPage = ({ data }: { data: CompanyType }) => {
   const {
@@ -31,15 +37,21 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
     website,
   } = data;
 
+  const output = Array.isArray(description)
+    ? String(description[0] ?? "")
+    : typeof description === "string"
+      ? description
+      : "";
+
   return (
     <div className="min-h-screen bg-neutral-100">
       <div className="max-w-8xl mx-auto p-10">
         <section className="mb-12 relative">
-          <div className="h-48 w-full rounded-lg bg-surface-container-low overflow-hidden relative">
+          <div className="h-48 w-full rounded-lg  overflow-hidden relative">
             <Image
               alt="TechFlow Office Interior"
-              width={100}
-              height={100}
+              width={1200}
+              height={1200}
               className="w-full h-full object-cover"
               src={banner ?? ""}
             />
@@ -60,15 +72,19 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
             <div className="flex-1 pb-2">
               <div className="flex items-center gap-2 mb-1">
                 <h1 className="text-3xl font-bold tracking-tight text-on-surface">
-                  TechFlow
+                  {name ?? "name"}
                 </h1>
-                <span className="material-symbols-outlined text-primary text-xl">
-                  verified
+                <span className="text-md font-semibold text-blue-500">
+                  {isVerified ? <FiCheckCircle /> : "not verified yet"}
                 </span>
               </div>
-              <p className="text-on-surface-variant font-medium">
-                Fintech • 50-200 employees • London, UK
-              </p>
+              <ul className="flex items-centre justify-start flex-row gap-x-3 text-gray-700 font-medium capitalize">
+                <li>{industry ?? "industry"}</li>
+                <span>-</span>
+                <li>{sizeLabels[size] ?? "size"}</li>
+                <span>-</span>
+                <li>{location ?? "location"}</li>
+              </ul>
             </div>
             <div className="flex gap-3 pb-2">
               <Button className="w-40 h-10 rounded-lg">
@@ -83,20 +99,21 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-8">
             <div className="bg-surface-container-lowest rounded-lg p-8 shadow-[0px_20px_40px_rgba(77,68,227,0.06)]">
-              <h2 className="text-xl font-bold mb-6 text-on-surface">
-                {slug ?? "Talentgate"}
+              <h2 className="text-xl font-bold capitalize mb-6 text-on-surface">
+                {slug ?? "company slug"}
               </h2>
-              <div className="space-y-4 text-on-surface-variant leading-relaxed">
-                <EditorContent editor={} />
-              </div>
+              <div
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: output }}
+              />
             </div>
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center px-2">
                 <h2 className="text-xl font-bold text-on-surface">
-                  Open Roles at {slug ?? "talentgate"}
+                  Open Roles at {slug ?? "company slug"}
                 </h2>
                 <span className="text-sm font-medium text-primary">
-                  3 positions available
+                  {jobs.length} positions available
                 </span>
               </div>
             </div>
@@ -119,7 +136,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                       className="text-sm font-medium text-primary hover:underline"
                       href="#"
                     >
-                      {website ?? "talentGate.com"}
+                      {website ?? "company website url"}
                     </a>
                   </div>
                 </div>
@@ -135,7 +152,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                       className="text-sm font-medium text-primary hover:underline"
                       href="#"
                     >
-                      {linkedin ?? "linkedin.com"}
+                      {linkedin ?? "company linkedin url"}
                     </a>
                   </div>
                 </div>
@@ -148,7 +165,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                       Industry
                     </p>
                     <p className="text-sm font-medium text-on-surface">
-                      {industry ?? "fintech"}
+                      {industry ?? "industry"}
                     </p>
                   </div>
                 </div>
@@ -160,9 +177,11 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
                       Company Size
                     </p>
-                    <p className="text-sm font-medium text-on-surface">
-                      {size ?? "medium"}
-                    </p>
+                    <div className="text-sm flex flex-row items-center justify-center gap-x-3 font-medium text-on-surface">
+                      <span>{size ?? "company size"}</span>
+                      <span>,</span>
+                      <span>{sizeLabels[size]}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -187,7 +206,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                       Joined
                     </p>
                     <p className="text-sm font-medium text-on-surface">
-                      {"createdAt"}
+                      {createdAt.toString()}
                     </p>
                   </div>
                 </div>
@@ -206,10 +225,10 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                   </div>
                   <div>
                     <p className="text-2xl font-black text-on-surface leading-none">
-                      12
+                      number of jobs available
                     </p>
-                    <p className="text-xs font-medium text-on-surface-variant">
-                      Open Jobs
+                    <p className="text-md font-medium text-on-surface-variant">
+                      {jobs.length}
                     </p>
                   </div>
                 </div>
@@ -221,10 +240,10 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                   </div>
                   <div>
                     <p className="text-2xl font-black text-on-surface leading-none">
-                      156
+                      employees
                     </p>
-                    <p className="text-xs font-medium text-on-surface-variant">
-                      Employees
+                    <p className="text-md font-medium text-on-surface-variant">
+                      {members.length}
                     </p>
                   </div>
                 </div>

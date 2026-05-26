@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import Image from "next/image";
-import AvatarCropDialog from "../ui/ImageCropDialog";
+import { ImageCropDialog } from "../ui/ImageCropDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -90,9 +90,9 @@ function SectionHeading({
 /* ─── Main component ──────────────────────────────────────────────────── */
 const CompanyForm = () => {
   const [logoImage, setLogoImage] = useState<string>("");
-  const [bannerImage, setBannerImage] = useState<string>("");
   const [cropOpen, setCropOpen] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
+  const [bannerImage, setBannerImage] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("SMALL");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -125,8 +125,8 @@ const CompanyForm = () => {
     if (!file) return;
     const preview = URL.createObjectURL(file);
     setCropImage(preview);
-    setLogoImage(preview);
     setCropOpen(true);
+    e.target.value = "";
   };
 
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,11 +138,12 @@ const CompanyForm = () => {
     setBannerImage(URL.createObjectURL(file));
   };
 
-  const handleCropSave = (file: File) => {
+  const handleCropSave = (url: string, blob: Blob) => {
+    const file = new File([blob], "logo.jpg", { type: blob.type });
     setValue("logo", file, { shouldValidate: true });
-    setLogoImage(URL.createObjectURL(file));
+    setLogoImage(url);
+    setCropImage(url);
   };
-
   const onSubmit = (data: CompanyFormValues) => {
     startTransition(async () => {
       const res = await createCompany(data);
@@ -157,11 +158,12 @@ const CompanyForm = () => {
   };
 
   const sizeLabels: Record<string, string> = {
-    SMALL: "Small  ·  1–50 employees",
+    STARTUP: "StartUp · 10-20 employees",
+    SMALL: "Small  · 21–50 employees",
     MEDIUM: "Medium  ·  51–500 employees",
-    LARGE: "Large  ·  500+ employees",
+    LARGE: "Large  ·  500-1000 employees",
+    ENTERPRISE: "Enterprise · 1k+ employees",
   };
-
   return (
     <div className="w-5xl max-w-6xl p-8 rounded-lg bg-white  ">
       {/* Page title */}
@@ -399,13 +401,9 @@ const CompanyForm = () => {
           />
           <TiptapEditor
             onChange={(html) =>
-              setValue(
-                "description",
-                { type: "html", content: [html] },
-                {
-                  shouldValidate: true,
-                },
-              )
+              setValue("description", [html], {
+                shouldValidate: true,
+              })
             }
           />
         </div>
@@ -436,11 +434,14 @@ const CompanyForm = () => {
           </Button>
         </div>
       </form>
-      <AvatarCropDialog
+      <ImageCropDialog
         open={cropOpen}
-        image={cropImage}
-        onClose={() => setCropOpen(false)}
-        onSave={handleCropSave}
+        onOpenChange={setCropOpen}
+        imageSrc={cropImage ?? ""}
+        onCropComplete={handleCropSave}
+        title="Crop your avatar"
+        outputType="image/jpeg"
+        quality={0.92}
       />
     </div>
   );

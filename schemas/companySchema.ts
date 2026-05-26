@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const CompanySizeEnum = z.enum([
+  "STARTUP",
   "SMALL",
   "MEDIUM",
   "LARGE",
@@ -30,10 +31,7 @@ export const companySchema = z.object({
 
   linkedin: z.string().url("LinkedIn URL must be valid"),
 
-  description: z.object({
-    type: z.string(),
-    content: z.array(z.any()),
-  }),
+  description: z.any().optional(),
 
   industry: z.string().min(2, "Industry is required").max(100),
 

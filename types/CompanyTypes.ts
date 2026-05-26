@@ -16,8 +16,10 @@ type CompanyType = Prisma.CompanyGetPayload<{
     website: true;
     slug: true;
     jobs: {
+      where: {
+        status: "ACTIVE";
+      };
       orderBy: { createdAt: "desc" };
-      take: 6;
     };
   };
 }>;

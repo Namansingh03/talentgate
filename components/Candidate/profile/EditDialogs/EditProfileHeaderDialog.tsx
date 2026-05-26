@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
 import { zodResolver } from "@hookform/resolvers/zod";
-import AvatarCropDialog from "@/components/ui/ImageCropDialog";
+import { ImageCropDialog } from "@/components/ui/ImageCropDialog";
 import { UpdateProfileHeader } from "@/app/api/candidate/profile";
 import React, { useEffect, useState, useTransition } from "react";
 
@@ -59,7 +59,6 @@ export default function EditProfileHeaderDialog({
     bannerImageUrl,
   );
 
-  // crop dialog state
   const [cropOpen, setCropOpen] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
 
@@ -79,6 +78,8 @@ export default function EditProfileHeaderDialog({
       headline,
       location,
       isAvailable,
+      avatar: undefined,
+      banner: undefined,
     },
     mode: "onSubmit",
   });
@@ -119,11 +120,10 @@ export default function EditProfileHeaderDialog({
     }
   };
 
-  // receive cropped avatar
-  const handleCropSave = (file: File) => {
-    setValue("avatar", file);
-    setAvatarPreview(URL.createObjectURL(file));
-    setCropOpen(!cropOpen);
+  const handleCropSave = (url: string, blob: Blob) => {
+    const file = new File([blob], "logo.jpg", { type: blob.type });
+    setValue("avatar", file, { shouldValidate: true });
+    setAvatarPreview(url);
   };
 
   return (
@@ -247,12 +247,14 @@ export default function EditProfileHeaderDialog({
         </DialogContent>
       </Dialog>
 
-      {/* Separate Crop Dialog */}
-      <AvatarCropDialog
+      <ImageCropDialog
         open={cropOpen}
-        image={cropImage}
-        onClose={() => setCropOpen(false)}
-        onSave={handleCropSave}
+        onOpenChange={setCropOpen}
+        imageSrc={cropImage ?? ""}
+        onCropComplete={handleCropSave}
+        title="Crop your avatar"
+        outputType="image/jpeg"
+        quality={0.92}
       />
     </>
   );
