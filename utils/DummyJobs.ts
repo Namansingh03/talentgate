@@ -1,5 +1,3 @@
-// lib/dummyJobs.ts
-
 export type JobType =
   | "FULL_TIME"
   | "PART_TIME"

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { format } from "date-fns";
 import { SlCalender } from "react-icons/sl";
 import { MdOutlineWork } from "react-icons/md";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,10 @@ import { CompanyType } from "@/types/CompanyTypes";
 import { CiGlobe, CiShare2 } from "react-icons/ci";
 import { FaShapes, FaUsers, FaRegIdBadge } from "react-icons/fa";
 import { FiCheckCircle } from "react-icons/fi";
+import JobsList from "@/components/ui/JobsCard";
+import { CardJobs } from "@/utils/values";
+import { Suspense } from "react";
+import LatestJobsSkeleton from "@/components/home/LatestJobSkeleton";
 
 const sizeLabels: Record<string, string> = {
   STARTUP: "10-20 employees",
@@ -36,6 +41,8 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
     slug,
     website,
   } = data;
+
+  const formattedCreatedAt = format(createdAt, "dd MMM yyyy");
 
   const output = Array.isArray(description)
     ? String(description[0] ?? "")
@@ -116,6 +123,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                   {jobs.length} positions available
                 </span>
               </div>
+              <div>jobs</div>
             </div>
           </div>
           <div className="flex flex-col gap-8">
@@ -206,7 +214,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                       Joined
                     </p>
                     <p className="text-sm font-medium text-on-surface">
-                      {createdAt.toString()}
+                      {formattedCreatedAt}
                     </p>
                   </div>
                 </div>
