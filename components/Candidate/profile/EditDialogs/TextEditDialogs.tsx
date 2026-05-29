@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
-import { UpdateProfileText } from "@/app/api/candidate/profile";
+import { UpdateProfileText } from "@/actions/User/profile";
 
 interface TextEditDialogProps {
   label: "about" | "bio";

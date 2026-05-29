@@ -25,8 +25,9 @@ export default function Home() {
       setUser({
         username: session.user.username,
         image: session.user.image,
+        role: "candidate",
       });
-      router.replace(`/${session.user.username}`);
+      router.push("/");
     }
   }, [session, isPending, router, setUser, clearUserStore]);
   if (isPending) {

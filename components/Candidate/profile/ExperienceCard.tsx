@@ -17,7 +17,7 @@ import { CardWrapper } from "../../ui/CardWrapper";
 import { Separator } from "@/components/ui/separator";
 import { WorkExperience } from "@/app/generated/prisma/client";
 import { ExperienceSchemaType } from "@/schemas/CandidateSchemas";
-import { deleteTimelineEntry } from "@/app/api/candidate/profile";
+import { deleteTimelineEntry } from "@/actions/User/profile";
 import ExperienceEditDialog from "./EditDialogs/ExperienceEditDialog";
 
 interface ExperienceCardProps {

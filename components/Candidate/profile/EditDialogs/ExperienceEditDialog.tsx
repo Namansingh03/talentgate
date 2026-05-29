@@ -39,7 +39,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Loader2Icon } from "lucide-react";
-import { UpdateProfileExperience } from "@/app/api/candidate/profile";
+import { UpdateProfileExperience } from "@/actions/User/profile";
 
 interface ExperienceEditDialogProps {
   open: boolean;

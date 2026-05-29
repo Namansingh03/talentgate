@@ -31,7 +31,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
-import { createCompany } from "@/app/api/company/company";
+import { createCompany } from "@/actions/company/company";
 import { toast } from "sonner";
 import { formatDate } from "@/helpers/formatDate";
 import { useRouter } from "next/navigation";

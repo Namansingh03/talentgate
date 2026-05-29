@@ -11,10 +11,6 @@ import { CompanyType } from "@/types/CompanyTypes";
 import { CiGlobe, CiShare2 } from "react-icons/ci";
 import { FaShapes, FaUsers, FaRegIdBadge } from "react-icons/fa";
 import { FiCheckCircle } from "react-icons/fi";
-import JobsList from "@/components/ui/JobsCard";
-import { CardJobs } from "@/utils/values";
-import { Suspense } from "react";
-import LatestJobsSkeleton from "@/components/home/LatestJobSkeleton";
 
 const sizeLabels: Record<string, string> = {
   STARTUP: "10-20 employees",

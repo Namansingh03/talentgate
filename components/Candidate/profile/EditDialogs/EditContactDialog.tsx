@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
 import React, { useState, useTransition } from "react";
-import { UpdateProfileContacts } from "@/app/api/candidate/profile";
+import { UpdateProfileContacts } from "@/actions/User/profile";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
 
 interface Props {

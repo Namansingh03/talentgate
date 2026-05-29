@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import SelectedSkills from "@/components/ui/SelectedSkills";
-import { UpdateProfileSkills } from "@/app/api/candidate/profile";
+import { UpdateProfileSkills } from "@/actions/User/profile";
 
 interface SkillsEditProps {
   skills?: string[];

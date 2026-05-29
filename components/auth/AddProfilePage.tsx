@@ -23,7 +23,7 @@ import { formatDate } from "@/helpers/formatDate";
 import SelectedSkills from "../ui/SelectedSkills";
 import { ImageCropDialog } from "../ui/ImageCropDialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateAddProfile } from "@/app/api/candidate/profile";
+import { updateAddProfile } from "@/actions/User/profile";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
 import { Loader2, MoveLeftIcon, MoveRightIcon, User2 } from "lucide-react";
 

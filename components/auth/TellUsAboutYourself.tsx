@@ -19,8 +19,8 @@ import { Textarea } from "../ui/textarea";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
+import { createUser } from "@/actions/User/profile";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createUser } from "@/app/api/candidate/profile";
 import { Loader2, MoveLeft, MoveRight } from "lucide-react";
 import React from "react";
 
