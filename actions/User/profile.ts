@@ -39,6 +39,7 @@ interface userVals {
     headline: string;
     bio: string;
     location: string;
+    role: string;
   };
 }
 export async function getUserProfile() {
@@ -121,6 +122,7 @@ export async function createUser(vals: userVals) {
         headline: data.headline,
         bio: data.bio,
         location: data.location,
+        role: data.role ?? "CANDIDATE",
       }),
     });
 

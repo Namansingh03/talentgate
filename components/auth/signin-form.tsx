@@ -54,6 +54,7 @@ export function SignInForm({
       const { data: signInData, error } = await authClient.signIn.email({
         email: data.email,
         password: data.password,
+        rememberMe: true,
       });
 
       if (error) {

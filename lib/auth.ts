@@ -8,6 +8,8 @@ import VerificationEmail from "@/emails/VerificationEmail";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import SendVerificationOtp from "@/emails/SendVerificationOtp";
 
+type RolesValues = "ADMIN" | "CANDIDATE" | "RECRUITER";
+
 const SESSION_PREFIX = "session:";
 const ONE_DAY = 60 * 60 * 24;
 
@@ -19,7 +21,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    rememberMe: true,
     onExistingUserSignUp: async ({ user }) => {
       void resend.emails.send({
         from: "talentgate <onboarding@resend.dev>",
@@ -69,6 +70,15 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "candidate",
+        required: true,
+      },
+    },
+  },
   plugins: [
     username({
       minUsernameLength: 5,
@@ -108,10 +118,11 @@ export const auth = betterAuth({
     }),
   ],
   session: {
-    expiresIn: 60 * 60 * 24 * 1,
+    expiresIn: 60 * 60 * 24 * 30,
+    updateAge: 60 * 60 * 24,
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60,
+      maxAge: 60 * 5,
     },
     storeSessionInDatabase: true,
   },

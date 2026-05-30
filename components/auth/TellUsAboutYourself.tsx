@@ -47,7 +47,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
-      intent: "candidate",
+      role: "candidate",
       headline: "",
       location: "",
       bio: "",
@@ -67,7 +67,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   }, [api]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
-  const intent = watch("intent");
+  const intent = watch("role");
 
   const next = async (fields?: (keyof TellUsMoreSchemaInput)[]) => {
     if (fields) {
@@ -157,7 +157,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                       key={index}
                       type="button"
                       variant={intent === role ? "default" : "secondary"}
-                      onClick={() => setValue("intent", role)}
+                      onClick={() => setValue("role", role)}
                     >
                       {role}
                     </Button>

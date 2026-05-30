@@ -1,7 +1,7 @@
 import z from "zod";
 
 const TellUsMoreSchema = z.object({
-  intent: z.enum(["candidate", "admin"]),
+  role: z.enum(["candidate", "admin"]),
   headline: z.string().max(20).min(1, "Specialization is required").trim(),
   location: z.string(),
   bio: z
