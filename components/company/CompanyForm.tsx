@@ -153,7 +153,7 @@ const CompanyForm = () => {
         return;
       }
       toast.success(res.message, { description: formatDate() });
-      router.push(`/company/${data.slug}/`);
+      router.push(`/admin`);
     });
   };
 

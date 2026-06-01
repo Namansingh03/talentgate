@@ -1,4 +1,4 @@
-"use session";
+"use client";
 
 import { Suspense } from "react";
 import Footer from "@/components/home/Footer";
@@ -8,17 +8,23 @@ import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeatureSection";
 import LatestJobsSection from "@/components/home/LatestJobSection";
 import LatestJobsSkeleton from "@/components/home/LatestJobSkeleton";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
-export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export default function Home() {
+  const router = useRouter();
+  const { data, isPending } = authClient.useSession();
 
-  if (session) {
-    redirect("/dashboard");
+  if (isPending) {
+    return (
+      <div className="w-full h-screen flex items-centre justify-center">
+        loading ...
+      </div>
+    );
+  }
+
+  if (data?.session) {
+    return router.push("/redirect");
   }
 
   return (

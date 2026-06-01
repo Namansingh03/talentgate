@@ -72,12 +72,11 @@ enum JobStatus {
 }
 
 model User {
-  id            String  @id
-  name          String
-  email         String  @unique
-  emailVerified Boolean @default(false)
-  image         String?
-
+  id              String  @id
+  name            String
+  email           String  @unique
+  emailVerified   Boolean @default(false)
+  image           String?
   username        String? @unique
   displayUsername String?
   role            Roles   @default(CANDIDATE)

@@ -15,7 +15,7 @@ import { useParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
-import React, { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 const VerifyEmailForm = () => {
   const router = useRouter();
@@ -26,7 +26,7 @@ const VerifyEmailForm = () => {
     ? params.email[0]
     : params?.email;
   const email = rawEmail ? decodeURIComponent(rawEmail) : "";
-  console.log(email);
+
   const sendOtp = () => {
     startTransition(async () => {
       setStatError("");

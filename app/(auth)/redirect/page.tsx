@@ -17,9 +17,12 @@ export default function RedirectPage() {
     }
 
     const user = session.user;
+    const role = session.user.role;
 
     if (!user.username) {
       router.replace("/setUsername");
+    } else if (role === "ADMIN") {
+      router.replace("/admin");
     } else {
       router.replace(`/${user.username}`);
     }

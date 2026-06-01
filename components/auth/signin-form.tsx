@@ -56,7 +56,7 @@ export function SignInForm({
         password: data.password,
         rememberMe: true,
         fetchOptions: {
-          onSuccess: () => router.replace("/dashboard"),
+          onSuccess: () => router.replace("/redirect"),
         },
       });
 
@@ -68,15 +68,6 @@ export function SignInForm({
       if (!signInData?.user) {
         setServerError("Invalid response from server");
         return;
-      }
-
-      toast.success("Signed in successfully", {
-        description: formatDate(),
-      });
-      if (signInData.user.username) {
-        router.push(`/${signInData.user.username}`);
-      } else {
-        router.push(`/setUsername`);
       }
     });
   };

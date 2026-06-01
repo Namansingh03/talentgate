@@ -1,17 +1,15 @@
 import { create } from "zustand";
 
-type Roles = "admin" | "candidate" | "recruiter";
-
 type userSession = {
   image?: string | null;
-  username: string | null;
-  role: Roles | null;
+  username?: string | null;
+  role?: string | null;
 };
 
 type UserStore = {
   image?: string | null;
-  username: string | null;
-  role: Roles | null;
+  username?: string | null;
+  role?: string | null;
 
   setUser: (data: userSession) => void;
   clearUserStore: () => void;
