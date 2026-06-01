@@ -8,8 +8,6 @@ import VerificationEmail from "@/emails/VerificationEmail";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import SendVerificationOtp from "@/emails/SendVerificationOtp";
 
-type RolesValues = "ADMIN" | "CANDIDATE" | "RECRUITER";
-
 const SESSION_PREFIX = "session:";
 const ONE_DAY = 60 * 60 * 24;
 
@@ -74,8 +72,8 @@ export const auth = betterAuth({
     additionalFields: {
       role: {
         type: "string",
-        defaultValue: "candidate",
-        required: true,
+        defaultValue: "CANDIDATE",
+        required: false,
       },
     },
   },

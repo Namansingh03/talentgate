@@ -1,4 +1,4 @@
-"use client";
+"use session";
 
 import { Suspense } from "react";
 import Footer from "@/components/home/Footer";
@@ -8,8 +8,19 @@ import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeatureSection";
 import LatestJobsSection from "@/components/home/LatestJobSection";
 import LatestJobsSkeleton from "@/components/home/LatestJobSkeleton";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <main>
       <HomeNavbar />

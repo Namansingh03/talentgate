@@ -55,6 +55,9 @@ export function SignInForm({
         email: data.email,
         password: data.password,
         rememberMe: true,
+        fetchOptions: {
+          onSuccess: () => router.replace("/dashboard"),
+        },
       });
 
       if (error) {

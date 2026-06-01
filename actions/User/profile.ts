@@ -122,7 +122,7 @@ export async function createUser(vals: userVals) {
         headline: data.headline,
         bio: data.bio,
         location: data.location,
-        role: data.role ?? "CANDIDATE",
+        role: data.role.toUpperCase(),
       }),
     });
 
