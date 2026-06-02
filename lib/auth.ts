@@ -1,4 +1,4 @@
-import redis from "./redis";
+// import redis from "./redis";
 import prismaDb from "./db";
 import resend from "./resend";
 import { betterAuth } from "better-auth";
@@ -8,8 +8,8 @@ import VerificationEmail from "@/emails/VerificationEmail";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import SendVerificationOtp from "@/emails/SendVerificationOtp";
 
-const SESSION_PREFIX = "session:";
-const ONE_DAY = 60 * 60 * 24;
+// const SESSION_PREFIX = "session:";
+// const ONE_DAY = 60 * 60 * 24;
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -117,35 +117,36 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
     cookieCache: {
       enabled: true,
+      strategy: "jwt",
       maxAge: 60 * 5,
-    },
-    storeSessionInDatabase: true,
-  },
-  secondaryStorage: {
-    async get(key: string) {
-      const redisKey = SESSION_PREFIX + key;
-      const cached = await redis.get(redisKey);
-      if (cached) {
-        console.log("SESSION HIT -> REDIS");
-        return JSON.parse(cached);
-      }
-      console.log("SESSION MISS -> DATABASE");
-      const session = await prismaDb.session.findFirst({
-        where: {
-          token: key,
-        },
-      });
-      if (!session) return null;
-      await redis.set(redisKey, JSON.stringify(session), "EX", ONE_DAY);
-      return session;
-    },
-    async set(key: string, value, ttl?: number) {
-      const redisKey = SESSION_PREFIX + key;
-      await redis.set(redisKey, JSON.stringify(value), "EX", ttl || ONE_DAY);
-    },
-    async delete(key: string) {
-      const redisKey = SESSION_PREFIX + key;
-      await redis.del(redisKey);
+      refreshCache: true,
     },
   },
+  // secondaryStorage: {
+  //   async get(key: string) {
+  //     const redisKey = SESSION_PREFIX + key;
+  //     const cached = await redis.get(redisKey);
+  //     if (cached) {
+  //       console.log("SESSION HIT -> REDIS");
+  //       return JSON.parse(cached);
+  //     }
+  //     console.log("SESSION MISS -> DATABASE");
+  //     const session = await prismaDb.session.findFirst({
+  //       where: {
+  //         token: key,
+  //       },
+  //     });
+  //     if (!session) return null;
+  //     await redis.set(redisKey, JSON.stringify(session), "EX", ONE_DAY);
+  //     return session;
+  //   },
+  //   async set(key: string, value, ttl?: number) {
+  //     const redisKey = SESSION_PREFIX + key;
+  //     await redis.set(redisKey, JSON.stringify(value), "EX", ttl || ONE_DAY);
+  //   },
+  //   async delete(key: string) {
+  //     const redisKey = SESSION_PREFIX + key;
+  //     await redis.del(redisKey);
+  //   },
+  // },
 });

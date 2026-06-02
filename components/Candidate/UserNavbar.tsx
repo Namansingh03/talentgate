@@ -13,11 +13,12 @@ import {
 import Image from "next/image";
 import { LogOutIcon, User2Icon, UserRound } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import UserNavbarSkeleton from "../Skeletons/UserNavbarSkeleton";
 
 const UserNavbar = () => {
   const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
   const pathname = usePathname();
 
   if (isPending) {
@@ -29,6 +30,8 @@ const UserNavbar = () => {
   }
 
   const { username, image, name } = session.user;
+
+  console.log("image : ", image);
 
   const navItems = [
     {
@@ -123,7 +126,13 @@ const UserNavbar = () => {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onClick={() => authClient.signOut()}
+              onClick={() =>
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => router.replace("/signin"),
+                  },
+                })
+              }
               className="text-red-700"
             >
               <LogOutIcon className="w-5 h-5" />

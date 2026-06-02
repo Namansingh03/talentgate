@@ -75,7 +75,6 @@ export async function createCompany(data: CompanyFormValues) {
                 id: user.id,
               },
             },
-            role: "ADMIN",
           },
         },
       },
