@@ -27,7 +27,7 @@ export default function ProfilePage({ user }: { user: UserProfileType }) {
       </Suspense>
 
       {/* Main Content Wrapper */}
-      <div className="w-full flex justify-center absolute top-60 px-10 gap-x-10 bg-neutral-10 ">
+      <div className="w-full flex justify-center absolute top-60 px-10 gap-x-10 bg-neutral-10 z-1">
         <ProfileSidebar
           skills={user.candidateProfile?.skills}
           bio={user.bio}

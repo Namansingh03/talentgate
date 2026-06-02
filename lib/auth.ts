@@ -81,9 +81,6 @@ export const auth = betterAuth({
     username({
       minUsernameLength: 5,
       maxUsernameLength: 50,
-      displayUsernameValidator: (displayUsername) => {
-        return /^[a-zA-Z0-9_-]+$/.test(displayUsername);
-      },
       usernameNormalization: false,
     }),
     emailOTP({

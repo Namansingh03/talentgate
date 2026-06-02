@@ -12,7 +12,7 @@ export default function RedirectPage() {
     if (isPending) return;
 
     if (!session?.user) {
-      router.replace("/signin");
+      router.replace("/");
       return;
     }
 
