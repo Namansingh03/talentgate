@@ -5,6 +5,16 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { usePathname, useRouter } from "next/navigation";
 import UserNavbarSkeleton from "../Skeletons/UserNavbarSkeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { FaGear } from "react-icons/fa6";
+import { Input } from "../ui/input";
+import { LogOut } from "lucide-react";
 
 const AdminNavbar = () => {
   const { data: session, isPending } = authClient.useSession();
@@ -70,6 +80,37 @@ const AdminNavbar = () => {
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="flex flex-row items-center justify-between gap-x-5">
+        <Input
+          placeholder="search"
+          className="rounded-lg w-xs border-neutral-600 shadow-sm"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <FaGear className="w-5 h-5 text-neutral-500 hover:text-neutral-900" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>hello</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>hello</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-red-500"
+              onClick={() =>
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => router.replace("/signin"),
+                  },
+                })
+              }
+            >
+              <LogOut />
+              logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   );

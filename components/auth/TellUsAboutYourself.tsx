@@ -1,6 +1,8 @@
 "use client";
 
 import z from "zod";
+import Image from "next/image";
+import React from "react";
 import { toast } from "sonner";
 import {
   Carousel,
@@ -21,8 +23,8 @@ import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import { createUser } from "@/actions/User/profile";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, MoveLeft, MoveRight } from "lucide-react";
-import React from "react";
+import { Loader2, MoveLeft, MoveRight, User2 } from "lucide-react";
+import { ImageCropDialog } from "../ui/ImageCropDialog";
 
 const rolesVals = ["admin", "candidate"] as const;
 
@@ -34,6 +36,9 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropImage, setCropImage] = useState<string | null>(null);
+  const [avatarImagePrev, setAvatarImagePrev] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -47,6 +52,7 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   } = useForm<TellUsMoreSchemaInput>({
     resolver: zodResolver(TellUsMoreSchema),
     defaultValues: {
+      image: undefined,
       role: "candidate",
       headline: "",
       location: "",
@@ -69,6 +75,21 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
   // eslint-disable-next-line react-hooks/incompatible-library
   const intent = watch("role");
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const preview = URL.createObjectURL(file);
+    setCropImage(preview);
+    setCropOpen(true);
+  };
+
+  const handleCropSave = (url: string, blob: Blob) => {
+    const file = new File([blob], "logo.jpg", { type: blob.type });
+    setValue("image", file, { shouldValidate: true });
+    setAvatarImagePrev(url);
+  };
+
   const next = async (fields?: (keyof TellUsMoreSchemaInput)[]) => {
     if (fields) {
       const isValid = await trigger(fields);
@@ -86,18 +107,19 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
       const res = await createUser({ userId, data });
 
       if (!res.success) {
+        toast.error(res.message, {
+          description: formatDate(),
+        });
         if (res.redirectUrl) {
-          toast.error(res.message, { description: formatDate() });
           router.push(res.redirectUrl);
         }
-        toast.error(res.message, { description: formatDate() });
         return;
       }
       if (intent === "admin") {
-        toast.success(res.message, { description: formatDate() });
+        toast.success(res.message, { description: "now create a company" });
         router.push("/createCompany");
       } else {
-        toast.success(res.message, { description: "now create a company" });
+        toast.success(res.message, { description: formatDate() });
         router.push("/addProfile");
       }
     });
@@ -165,6 +187,48 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
                 </div>
                 <div className="w-full flex items-end justify-end mt-10">
                   <Button type="button" onClick={() => next()}>
+                    next <MoveRight className="ml-1" />
+                  </Button>
+                </div>
+              </CarouselItem>
+
+              <CarouselItem>
+                <div className="flex flex-col gap-y-1 mb-3">
+                  <label className="text-sm font-medium text-zinc-700">
+                    Avatar image
+                  </label>
+                  <p className="text-xs text-zinc-400">
+                    Make you identity go unnoticed.
+                  </p>
+                </div>
+                <div className="w-full flex flex-col items-center justify-center gap-y-3">
+                  {avatarImagePrev ? (
+                    <Image
+                      alt="avatar"
+                      src={avatarImagePrev}
+                      width={150}
+                      height={150}
+                      className="rounded-full w-50 h-50 object-cover my-3"
+                    />
+                  ) : (
+                    <div className="w-40 h-40 rounded-full border-4 border-gray-800 my-3 flex items-center p-5 justify-center">
+                      <User2 className="w-full h-full text-gray-800" />
+                    </div>
+                  )}
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </div>
+                {errors.image && (
+                  <p className="text-red-400">{errors.image.message}</p>
+                )}
+                <div className="w-full flex items-end justify-between mt-10">
+                  <Button type="button" onClick={prev}>
+                    <MoveLeft className="mr-1" /> prev
+                  </Button>
+                  <Button type="button" onClick={() => next(["image"])}>
                     next <MoveRight className="ml-1" />
                   </Button>
                 </div>
@@ -266,6 +330,15 @@ const TellUsAboutYourself = ({ userId }: TellUsMore) => {
           </Carousel>
         </form>
       </div>
+      <ImageCropDialog
+        open={cropOpen}
+        onOpenChange={setCropOpen}
+        imageSrc={cropImage ?? ""}
+        onCropComplete={handleCropSave}
+        title="Crop your avatar"
+        outputType="image/jpeg"
+        quality={0.92}
+      />
     </div>
   );
 };

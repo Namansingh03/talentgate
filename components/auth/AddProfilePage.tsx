@@ -2,7 +2,6 @@
 "use client";
 
 import { toast } from "sonner";
-import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
@@ -21,11 +20,10 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { formatDate } from "@/helpers/formatDate";
 import SelectedSkills from "../ui/SelectedSkills";
-import { ImageCropDialog } from "../ui/ImageCropDialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateAddProfile } from "@/actions/User/profile";
 import { FaGithub, FaLinkedin, FaGlobe, FaUser } from "react-icons/fa";
-import { Loader2, MoveLeftIcon, MoveRightIcon, User2 } from "lucide-react";
+import { Loader2, MoveLeftIcon, MoveRightIcon } from "lucide-react";
 
 const LINKS = [
   { label: "Github", icon: <FaGithub /> },
@@ -43,12 +41,9 @@ const STEPS = [
 
 const AddProfilePage = () => {
   const [api, setApi] = useState<CarouselApi>();
-  const [cropOpen, setCropOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPending, startTransition] = useTransition();
-  const [cropImage, setCropImage] = useState<string | null>(null);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [avatarImagePrev, setAvatarImagePrev] = useState<string | undefined>();
   const router = useRouter();
 
   const {
@@ -76,32 +71,7 @@ const AddProfilePage = () => {
 
   const skills = watch("skills");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const preview = URL.createObjectURL(file);
-    setCropImage(preview);
-    setCropOpen(true);
-  };
-
-  const handleCropSave = (url: string, blob: Blob) => {
-    const file = new File([blob], "logo.jpg", { type: blob.type });
-    setValue("avatarImage", file, { shouldValidate: true });
-    setAvatarImagePrev(url);
-  };
-
   const next = async (fields: (keyof AddProfileSchemaType)[]) => {
-    if (fields.includes("avatarImage")) {
-      const file = watch("avatarImage");
-
-      if (!file) {
-        toast.message("You can add a profile picture later ", {
-          description: formatDate(),
-        });
-      }
-    }
-
     const valid = await trigger(fields);
 
     if (valid) {
@@ -178,47 +148,6 @@ const AddProfilePage = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6">
         <Carousel setApi={setApi} opts={{ watchDrag: false }}>
           <CarouselContent>
-            {/* STEP 0: Avatar image */}
-            <CarouselItem>
-              {/* ✅ Explicit div wrapper with min-height so carousel measures it correctly */}
-              <div className="flex flex-col gap-y-1">
-                <label className="text-sm font-medium text-zinc-700">
-                  Avatar Image
-                </label>
-                <p className="text-xs text-zinc-400">
-                  add a avatar image for your profile
-                </p>
-              </div>
-              <div className="w-full flex flex-col items-center justify-center gap-y-3">
-                {avatarImagePrev ? (
-                  <Image
-                    alt="avatar"
-                    src={avatarImagePrev}
-                    width={150}
-                    height={150}
-                    className="rounded-full w-50 h-50 object-cover my-3"
-                  />
-                ) : (
-                  <div className="w-40 h-40 rounded-full border-4 border-gray-800 my-3 flex items-center p-5 justify-center">
-                    <User2 className="w-full h-full text-gray-800" />
-                  </div>
-                )}
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-              </div>
-              {errors.avatarImage && (
-                <p className="text-red-400">{errors.avatarImage.message}</p>
-              )}
-              <div className="flex justify-end pt-4">
-                <Button type="button" onClick={() => next([])}>
-                  Next →
-                </Button>
-              </div>
-            </CarouselItem>
-
             {/* STEP 1: skills */}
             <CarouselItem className="flex flex-col gap-y-4">
               <div className="flex flex-col gap-y-1">
@@ -341,15 +270,6 @@ const AddProfilePage = () => {
           </CarouselContent>
         </Carousel>
       </form>
-      <ImageCropDialog
-        open={cropOpen}
-        onOpenChange={setCropOpen}
-        imageSrc={cropImage ?? ""}
-        onCropComplete={handleCropSave}
-        title="Crop your avatar"
-        outputType="image/jpeg"
-        quality={0.92}
-      />
     </div>
   );
 };

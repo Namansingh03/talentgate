@@ -378,7 +378,9 @@ const CompanyForm = () => {
                     <DropdownMenuItem
                       key={val}
                       onClick={() => {
-                        setValue("size", val);
+                        setValue("size", val, {
+                          shouldValidate: true,
+                        });
                         setSelectedSize(val);
                       }}
                       className="text-sm"

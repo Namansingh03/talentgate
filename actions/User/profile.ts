@@ -12,7 +12,7 @@ import {
   ProfileHeaderInput,
 } from "@/schemas/CandidateSchemas";
 import { headers } from "next/headers";
-import { Prisma } from "@/app/generated/prisma/client";
+import { Prisma, Roles } from "@/app/generated/prisma/client";
 import redis from "@/lib/redis";
 
 export async function getUserIdOrThrow(): Promise<User> {
@@ -33,15 +33,6 @@ function clean<T extends object>(obj: T) {
   );
 }
 
-interface userVals {
-  userId?: string;
-  data: {
-    headline: string;
-    bio: string;
-    location: string;
-    role: string;
-  };
-}
 export async function getUserProfile() {
   const user = await getUserIdOrThrow();
 
@@ -98,6 +89,17 @@ export async function getUserProfile() {
   return createResponse(true, "User profile fetched!", existingUser);
 }
 
+interface userVals {
+  userId?: string;
+  data: {
+    image?: File | undefined;
+    headline: string;
+    bio: string;
+    location: string;
+    role: string;
+  };
+}
+
 export async function createUser(vals: userVals) {
   try {
     const { userId, data } = vals;
@@ -110,26 +112,47 @@ export async function createUser(vals: userVals) {
 
     const existingUser = await prismaDb.user.findUnique({
       where: { id: userId },
+      select: {
+        image: true,
+      },
     });
 
     if (!existingUser) {
-      return createResponse(false, "user not found with this id");
+      return createResponse(false, "User not found");
+    }
+
+    let imageUrl: string | undefined;
+
+    if (data.image) {
+      const upload = await uploadImage({
+        file: data.image,
+        slug: "avatarImage",
+        id: userId,
+      });
+
+      if (!upload.url) {
+        return createResponse(false, "Image upload failed");
+      }
+
+      imageUrl = upload.url;
     }
 
     await prismaDb.user.update({
       where: { id: userId },
-      data: clean({
+      data: {
         headline: data.headline,
         bio: data.bio,
         location: data.location,
-        role: data.role.toUpperCase(),
-      }),
+        image: imageUrl,
+        role: data.role.toUpperCase() as Roles,
+      },
     });
 
     return createResponse(true, "User updated successfully");
   } catch (error) {
     console.error("UpdateUser error:", error);
-    throw new Error("Failed to update user");
+
+    return createResponse(false, "Failed to update user");
   }
 }
 
@@ -144,19 +167,6 @@ export async function updateAddProfile(data: AddProfileSchemaType) {
     const resumeUrl = data.links?.[3]?.url;
 
     let imageUrl: string | undefined;
-
-    if (data.avatarImage) {
-      const res = await uploadImage({
-        file: data.avatarImage,
-        slug: "avatarImage",
-        id: user.id,
-      });
-
-      if (!res.url) {
-        return createResponse(false, "image uploading unsuccessful");
-      }
-      imageUrl = res.url;
-    }
 
     await prismaDb.$transaction(async (tx) => {
       if (imageUrl) {
@@ -188,6 +198,15 @@ export async function updateAddProfile(data: AddProfileSchemaType) {
           resumeUrl,
         },
       });
+    });
+
+    await auth.api.updateSession({
+      body: {
+        data: {
+          imageUrl,
+        },
+      },
+      headers: await headers(),
     });
 
     return createResponse(true, "Profile setup completed", user.name);

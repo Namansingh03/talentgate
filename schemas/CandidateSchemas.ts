@@ -1,6 +1,7 @@
 import z from "zod";
 
 const TellUsMoreSchema = z.object({
+  image: z.instanceof(File).optional(),
   role: z.enum(["candidate", "admin"]),
   headline: z.string().max(20).min(1, "Specialization is required").trim(),
   location: z.string(),
