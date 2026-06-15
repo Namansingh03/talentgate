@@ -32,6 +32,16 @@ export async function createCompany(data: CompanyFormValues) {
     let bannerImageUrl: string | undefined;
     let logoImageUrl: string | undefined;
 
+    const existingSlug = await prismaDb.company.findUnique({
+      where: {
+        slug: data.slug,
+      },
+    });
+
+    if (existingSlug) {
+      return createResponse(false, "Company already exist with same slug");
+    }
+
     if (banner) {
       const res = await uploadImage({
         file: banner,

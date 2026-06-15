@@ -1,112 +1,66 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { usePathname, useRouter } from "next/navigation";
-import UserNavbarSkeleton from "../Skeletons/UserNavbarSkeleton";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Input } from "../ui/input";
+import { BellIcon, User2Icon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { FaGear } from "react-icons/fa6";
-import { Input } from "../ui/input";
-import { LogOut } from "lucide-react";
 
-const AdminNavbar = () => {
-  const { data: session, isPending } = authClient.useSession();
+interface AdminNavbarProps {
+  name?: string;
+  image?: string | null;
+  role?: string | null;
+}
+
+const AdminNavbar = ({ image, name, role }: AdminNavbarProps) => {
   const router = useRouter();
-  const pathname = usePathname();
-
-  if (isPending) {
-    return <UserNavbarSkeleton />;
-  }
-
-  if (!session) {
-    throw new Error("session not found");
-  }
-
-  const { username, name } = session.user;
-
-  const navItems = [
-    {
-      label: "Dashboard",
-      href: `/${username}`,
-      exact: true,
-    },
-    {
-      label: "MyJobs",
-      href: `/${username}/myJobs`,
-    },
-    {
-      label: "Messages",
-      href: `/${username}/messages`,
-    },
-    {
-      label: "Insights",
-      href: `/${username}/insights`,
-    },
-  ];
-
-  const isActive = (href: string, exact = false) => {
-    if (exact) {
-      return pathname === href;
-    }
-
-    return pathname.startsWith(href);
-  };
 
   return (
-    <nav className="w-full px-10 py-3 flex items-center justify-between shadow-md">
+    <nav className="w-full px-10 py-2 flex items-center justify-between shadow-md">
       <div className="flex items-center gap-x-24">
-        <h1 className="text-2xl font-bold text-blue-800">Talentgate</h1>
-
-        <ul className="flex gap-x-10 text-md">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`transition-colors duration-200 ${
-                  isActive(item.href, item.exact)
-                    ? "text-blue-600 font-semibold border-b-2 border-blue-600 pb-1"
-                    : "text-neutral-500 hover:text-blue-400"
-                }`}
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="flex flex-row items-center justify-between gap-x-5">
         <Input
-          placeholder="search"
-          className="rounded-lg w-xs border-neutral-600 shadow-sm"
+          placeholder="search for jobs , applications ..."
+          className="w-120 border-bg-slate-800 rounded-lg bg-grey-50"
         />
+      </div>
+      <div className="flex flex-row items-center justify-center gap-x-5">
+        <BellIcon className="text-blue-800 hover:text-blue-600" />
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <FaGear className="w-5 h-5 text-neutral-500 hover:text-neutral-900" />
+            {image ? (
+              <Image
+                src={image}
+                alt="avatarImage"
+                width={50}
+                height={50}
+                className="border-2 hover:border-3 border-blue-950 rounded-full p-1"
+              />
+            ) : (
+              <User2Icon />
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>hello</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>hello</DropdownMenuItem>
+            <DropdownMenuLabel className="flex flex-row items-center justify-between">
+              <h1>{name}</h1>
+              <span className="lowercase text-xs text-gray-400">{role}</span>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-red-500"
-              onClick={() =>
-                authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => router.replace("/signin"),
-                  },
-                })
-              }
+              className="text-red-600"
+              onClick={() => {
+                authClient.signOut();
+                router.replace("signin");
+              }}
             >
-              <LogOut />
               logout
             </DropdownMenuItem>
           </DropdownMenuContent>
