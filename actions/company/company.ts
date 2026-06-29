@@ -153,3 +153,46 @@ export async function getCompanyDetails(slug: string) {
     );
   }
 }
+
+export async function getCompanyFromUser() {
+  const user = await getUserOrThrow();
+
+  const isExisting = await prismaDb.company.findFirst({
+    where: {
+      members: {
+        every: {
+          userId: user.id,
+        },
+      },
+    },
+    select: {
+      banner: true,
+      createdAt: true,
+      description: true,
+      industry: true,
+      isVerified: true,
+      linkedin: true,
+      location: true,
+      logo: true,
+      members: true,
+      name: true,
+      size: true,
+      website: true,
+      slug: true,
+      jobs: {
+        where: {
+          status: "ACTIVE",
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+    },
+  });
+
+  if (!isExisting) {
+    return createResponse(false, "company not found");
+  }
+
+  return createResponse(true, "company details fetched", isExisting);
+}

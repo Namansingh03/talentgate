@@ -1,3 +1,4 @@
+import { role } from "better-auth/plugins";
 import { create } from "zustand";
 
 type userSession = {

@@ -21,10 +21,10 @@ export default function RedirectPage() {
 
     if (!user.username) {
       router.replace("/setUsername");
-    } else if (role === "ADMIN") {
-      router.replace("/admin");
-    } else {
+    } else if (role === "CANDIDATE") {
       router.replace(`/${user.username}`);
+    } else {
+      router.push(`/${role?.toLowerCase()}`);
     }
   }, [session, isPending, router]);
 

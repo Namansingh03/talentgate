@@ -12,58 +12,61 @@ import {
   LogOutIcon,
   Logs,
   Settings,
-  User2Icon,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { usePathname, useRouter } from "next/navigation";
+import clsx from "clsx";
 
 interface CompanySidebarProps {
   role?: string | null;
 }
 
-const sidebarLinks = [
-  {
-    label: "Dashboard",
-    icons: <Logs className="w-5 h-5" />,
-    links: "/",
-  },
-  {
-    label: "jobs",
-    icons: <BriefcaseBusiness className="w-5 h-5" />,
-    links: "/",
-  },
-  {
-    label: "applications",
-    icons: <FileText className="w-5 h-5" />,
-    links: "/",
-  },
-  {
-    label: "candidates",
-    icons: <Users className="w-5 h-5" />,
-    links: "/",
-  },
-  {
-    label: "company profile",
-    icons: <Building2 className="w-5 h-5" />,
-    links: "/",
-  },
-  {
-    label: "analytics",
-    icons: <ChartPie className="w-5 h-5" />,
-    links: "/",
-  },
-  {
-    label: "settings",
-    icons: <Settings className="w-5 h-5" />,
-    links: "/",
-  },
-];
-
 export function CompanySidebar({ role }: CompanySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const sidebarLinks = [
+    {
+      label: "Dashboard",
+      icons: <Logs className="w-5 h-5" />,
+      links: "/",
+    },
+    {
+      label: "jobs",
+      icons: <BriefcaseBusiness className="w-5 h-5" />,
+      links: "/",
+    },
+    {
+      label: "applications",
+      icons: <FileText className="w-5 h-5" />,
+      links: "/",
+    },
+    {
+      label: "candidates",
+      icons: <Users className="w-5 h-5" />,
+      links: "/",
+    },
+    {
+      label: "company profile",
+      icons: <Building2 className="w-5 h-5" />,
+      links: "/",
+    },
+    {
+      label: "analytics",
+      icons: <ChartPie className="w-5 h-5" />,
+      links: "/",
+    },
+    {
+      label: "settings",
+      icons: <Settings className="w-5 h-5" />,
+      links: "/",
+    },
+  ];
+
+  const isActive = (href: string, pathname: string) =>
+    pathname === href ? "bg-blue-800 " : "";
 
   return (
     <Sidebar className="p-5 bg-indigo-50">
@@ -80,7 +83,12 @@ export function CompanySidebar({ role }: CompanySidebarProps) {
           <Link
             key={item.label}
             href={item.links}
-            className="flex flex-row items-start gap-x-5 capitalize text-neutral-500 text-sm space-y-5"
+            className={clsx(
+              "flex items-center gap-x-5 px-3 py-2 rounded-lg text-sm capitalize transition-colors",
+              pathname === item.links
+                ? "bg-blue-600 text-white"
+                : "text-neutral-500 hover:bg-gray-200",
+            )}
           >
             {item.icons}
             <h1>{item.label}</h1>

@@ -25,7 +25,7 @@ const AdminNavbar = ({ image, name, role }: AdminNavbarProps) => {
   const router = useRouter();
 
   return (
-    <nav className="w-full px-10 py-2 flex items-center justify-between shadow-md">
+    <nav className="w-full sticky px-10 py-2 flex items-center justify-between shadow-md">
       <div className="flex items-center gap-x-24">
         <Input
           placeholder="search for jobs , applications ..."

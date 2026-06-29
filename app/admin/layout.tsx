@@ -1,14 +1,14 @@
 "use client";
 
-import AdminNavbar from "@/components/company/AdminNavbar";
 import React from "react";
-import { CompanySidebar } from "@/components/company/CompanySidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import AdminNavbar from "@/components/company/AdminNavbar";
+import { CompanySidebar } from "@/components/company/CompanySidebar";
 import { authClient } from "@/lib/auth-client";
 import UserNavbarSkeleton from "@/components/Skeletons/UserNavbarSkeleton";
 
 const layout = ({ children }: { children: React.ReactNode }) => {
-  const { data: session, isPending } = authClient.useSession();
+  const { isPending, data: session } = authClient.useSession();
 
   if (isPending) {
     return <UserNavbarSkeleton />;
@@ -18,13 +18,13 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     throw new Error("session not found");
   }
 
-  const { username, name, image, role } = session.user;
+  const { name, image } = session?.user;
 
   return (
     <SidebarProvider>
-      <CompanySidebar role={role} />
+      <CompanySidebar role={"admin"} />
       <div className="w-full h-screen flex flex-col ">
-        <AdminNavbar image={image} name={name} role={role} />
+        <AdminNavbar image={image} name={name} role={"admin"} />
         {children}
       </div>
     </SidebarProvider>
