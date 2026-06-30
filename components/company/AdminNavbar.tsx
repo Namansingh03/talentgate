@@ -29,7 +29,7 @@ const AdminNavbar = ({ image, name, role }: AdminNavbarProps) => {
       <div className="flex items-center gap-x-24">
         <Input
           placeholder="search for jobs , applications ..."
-          className="w-120 border-bg-slate-800 rounded-lg bg-grey-50"
+          className="w-100 border-bg-slate-800 rounded-lg bg-grey-50"
         />
       </div>
       <div className="flex flex-row items-center justify-center gap-x-5">

@@ -7,7 +7,6 @@ import {
 import {
   BriefcaseBusiness,
   Building2,
-  ChartPie,
   FileText,
   LogOutIcon,
   Logs,
@@ -21,9 +20,17 @@ import clsx from "clsx";
 
 interface CompanySidebarProps {
   role?: string | null;
+  email: string;
+  username?: string | null;
+  slug: string | null;
 }
 
-export function CompanySidebar({ role }: CompanySidebarProps) {
+export function CompanySidebar({
+  role,
+  email,
+  username,
+  slug,
+}: CompanySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -31,54 +38,54 @@ export function CompanySidebar({ role }: CompanySidebarProps) {
     {
       label: "Dashboard",
       icons: <Logs className="w-5 h-5" />,
-      links: "/",
+      links: "/admin",
     },
     {
       label: "jobs",
       icons: <BriefcaseBusiness className="w-5 h-5" />,
-      links: "/",
+      links: `/admin/${slug}/jobs`,
     },
     {
       label: "applications",
       icons: <FileText className="w-5 h-5" />,
-      links: "/",
+      links: `/admin/${slug}/applications`,
     },
     {
       label: "candidates",
       icons: <Users className="w-5 h-5" />,
-      links: "/",
+      links: `/admin/${slug}/candidates`,
     },
     {
       label: "company profile",
       icons: <Building2 className="w-5 h-5" />,
-      links: "/",
+      links: `/admin/${slug}`,
     },
-    {
-      label: "analytics",
-      icons: <ChartPie className="w-5 h-5" />,
-      links: "/",
-    },
+    // {
+    //   label: "analytics",
+    //   icons: <ChartPie className="w-5 h-5" />,
+    //   links: "/admin/slug/analy",
+    // },
     {
       label: "settings",
       icons: <Settings className="w-5 h-5" />,
-      links: "/",
+      links: `/admin/${slug}/settings`,
     },
   ];
 
-  const isActive = (href: string, pathname: string) =>
-    pathname === href ? "bg-blue-800 " : "";
+  console.log("slug : ", slug);
+  console.log(pathname);
 
   return (
-    <Sidebar className="p-5 bg-indigo-50">
-      <SidebarHeader className="">
-        <h1 className="font-sans text-lg font-bold capitalize gap-y-1">
+    <Sidebar className="p-5 bg-neutral-50">
+      <SidebarHeader className="bg-neutral-50">
+        <h1 className="font-sans tracking-tighter text-xl font-extrabold text-indigo-900 capitalize gap-y-1">
           Company Name
         </h1>
         <span className="font-semibold text-sm text-gray-400 lowercase">
           {role} console
         </span>
       </SidebarHeader>
-      <SidebarContent className="mt-10">
+      <SidebarContent className="mt-10 p-2">
         {sidebarLinks.map((item) => (
           <Link
             key={item.label}
@@ -86,7 +93,7 @@ export function CompanySidebar({ role }: CompanySidebarProps) {
             className={clsx(
               "flex items-center gap-x-5 px-3 py-2 rounded-lg text-sm capitalize transition-colors",
               pathname === item.links
-                ? "bg-blue-600 text-white"
+                ? "text-indigo-900 bg-blue-50 border border-r-4 border-r-indigo-800"
                 : "text-neutral-500 hover:bg-gray-200",
             )}
           >

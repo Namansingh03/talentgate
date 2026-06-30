@@ -25,6 +25,34 @@ function clean<T extends object>(obj: T) {
   ) as Partial<T>;
 }
 
+export async function getCompanySlug(username?: string | null) {
+  if (!username) {
+    return createResponse(false, "username not found");
+  }
+
+  const company = await prismaDb.company.findFirst({
+    where: {
+      members: {
+        every: {
+          user: {
+            username,
+            role: "ADMIN",
+          },
+        },
+      },
+    },
+    select: {
+      slug: true,
+    },
+  });
+
+  if (!company) {
+    return createResponse(false, "company not found");
+  }
+
+  return createResponse(true, " company found", company.slug);
+}
+
 export async function createCompany(data: CompanyFormValues) {
   try {
     const user = await getUserOrThrow();
@@ -196,3 +224,5 @@ export async function getCompanyFromUser() {
 
   return createResponse(true, "company details fetched", isExisting);
 }
+
+export async function getJobsData() {}

@@ -119,7 +119,7 @@ export const auth = betterAuth({
       enabled: true,
       strategy: "jwt",
       maxAge: 60 * 5,
-      refreshCache: true,
+      // refreshCache: true,
     },
   },
   // secondaryStorage: {
