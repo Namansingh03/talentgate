@@ -15,7 +15,7 @@ import { useParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/helpers/formatDate";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 const VerifyEmailForm = () => {
   const router = useRouter();

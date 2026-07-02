@@ -1,13 +1,13 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import Footer from "@/components/home/Footer";
 import HomeNavbar from "@/components/home/HomeNavbar";
 import CTASection from "@/components/home/CtaSection";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeatureSection";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth.api.getSession({

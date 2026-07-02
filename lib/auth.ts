@@ -118,9 +118,15 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       strategy: "jwt",
-      maxAge: 60 * 5,
-      // refreshCache: true,
+      maxAge: 7 * 24 * 60 * 60,
+      refreshCache: {
+        updateAge: 60,
+      },
     },
+  },
+  account: {
+    storeAccountCookie: true,
+    storeStateStrategy: "cookie",
   },
   // secondaryStorage: {
   //   async get(key: string) {

@@ -1,4 +1,10 @@
 import { z } from "zod";
+import {
+  JobType,
+  JobCategory,
+  ExperienceLevel,
+  JobStatus,
+} from "@/app/generated/prisma/client";
 
 export const CompanySizeEnum = z.enum([
   "STARTUP",
@@ -42,4 +48,25 @@ export const companySchema = z.object({
   companyEmail: z.email(),
 });
 
+export const JobSchema = z.object({
+  title: z.string(),
+  slug: z.string(),
+  description: z.string(),
+  requirements: z.string(), // this needs to be bullets
+  responsibilities: z.string(), // this needs to be bullets
+  benefits: z.string(), // this needs to be bullets
+  location: z.string(),
+  isRemote: z.boolean().default(false),
+  type: z.enum(JobType),
+  level: z.enum(ExperienceLevel),
+  category: z.enum(JobCategory),
+  skills: z.array(z.string()),
+  salaryMin: z.number(),
+  salaryMax: z.number(),
+  salaryCurrency: z.string(),
+  status: z.enum(JobStatus),
+  expiresAt: z.date(),
+});
+
 export type CompanyFormValues = z.infer<typeof companySchema>;
+export type jobFormValues = z.infer<typeof JobSchema>;
