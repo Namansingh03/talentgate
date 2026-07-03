@@ -8,6 +8,9 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
 import { Toggle } from "./toggle";
 import {
   BoldIcon,
@@ -38,6 +41,8 @@ import {
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react/menus";
 import { FloatingMenu as TiptapFloatingMenu } from "@tiptap/react/menus";
 
+import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
+
 const Tiptap = ({
   content,
   onChange,
@@ -46,7 +51,19 @@ const Tiptap = ({
   onChange?: (content: string) => void;
 }) => {
   const editor = useEditor({
-    extensions: [StarterKit, Highlight.configure({ multicolor: true })], // define your extension array
+    extensions: [
+      StarterKit,
+      Underline,
+      Highlight.configure({ multicolor: true }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+      }),
+      Image.configure({
+        inline: false,
+        allowBase64: false,
+      }),
+    ], // define your extension array
     editorProps: {
       attributes: {
         class:
@@ -69,7 +86,22 @@ const Tiptap = ({
           <FloatingMenu editor={editor} />
         </>
       )}
-      <EditorContent editor={editor} className="min-h-75 px-4 py-3" />
+      <EditorContent
+        editor={editor}
+        className=" prose
+    max-w-none
+    min-h-75
+    px-4
+    py-3
+
+    [&_ul]:list-disc
+    [&_ul]:ml-6
+
+    [&_ol]:list-decimal
+    [&_ol]:ml-6
+
+    [&_li]:my-1"
+      />
     </div>
   );
 };
@@ -144,7 +176,6 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         isItalic: ctx.editor.isActive("italic") ?? false,
         iamThapa: ctx.editor.isActive("underline") ?? false,
         isStrike: ctx.editor.isActive("strike") ?? false,
-        isCode: ctx.editor.isActive("code") ?? false,
         isHighlight: ctx.editor.isActive("highlight") ?? false,
         isBulletList: ctx.editor.isActive("bulletList") ?? false,
         isOrderedList: ctx.editor.isActive("orderedList") ?? false,
@@ -257,15 +288,6 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
         aria-label="Toggle highlight"
       >
         <HighlighterIcon className="h-4 w-4" />
-      </Toggle>
-
-      <Toggle
-        size="sm"
-        pressed={editorState.isCode}
-        onPressedChange={() => editor.chain().focus().toggleCode().run()}
-        aria-label="Toggle code"
-      >
-        <CodeIcon className="h-4 w-4" />
       </Toggle>
 
       <Toggle

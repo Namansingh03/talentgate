@@ -11,6 +11,8 @@ import { CompanyType } from "@/types/CompanyTypes";
 import { CiGlobe, CiShare2 } from "react-icons/ci";
 import { FaShapes, FaUsers, FaRegIdBadge } from "react-icons/fa";
 import { FiCheckCircle } from "react-icons/fi";
+import Tiptap from "@/components/ui/TipTap";
+import TipTapView from "@/components/ui/TipTapView";
 
 const sizeLabels: Record<string, string> = {
   STARTUP: "10-20 employees",
@@ -105,10 +107,8 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
               <h2 className="text-xl font-bold capitalize mb-6 text-on-surface">
                 {slug ?? "company slug"}
               </h2>
-              <div
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: output }}
-              />
+              {/* //! here tip tap */}
+              <TipTapView html={output} />
             </div>
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center px-2">

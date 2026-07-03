@@ -1,20 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import { getCompanySlug } from "@/actions/company/company";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminNavbar from "@/components/company/AdminNavbar";
 import { CompanySidebar } from "@/components/company/CompanySidebar";
-import { authClient } from "@/lib/auth-client";
 import UserNavbarSkeleton from "@/components/Skeletons/UserNavbarSkeleton";
-import { getCompanySlug } from "@/actions/company/company";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { isPending, data: session } = authClient.useSession();
   const [slug, setSlug] = useState<string | null>(null);
+  const router = useRouter();
 
-  if (!session) {
-    throw new Error("session not found");
-  }
+  useEffect(() => {
+    if (!isPending && !session) {
+      router.replace("/signin");
+    }
+  }, [isPending, session, router]);
 
   useEffect(() => {
     if (!session?.user.username) return;
@@ -30,22 +34,27 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     loadSlug();
   }, [session]);
 
-  if (isPending && !slug) {
+  if (isPending) {
     return <UserNavbarSkeleton />;
   }
 
-  const { name, image, username, email } = session?.user;
+  if (!session) {
+    return null;
+  }
+
+  const { name, image, username, email } = session.user;
 
   return (
     <SidebarProvider>
       <CompanySidebar
-        role={"admin"}
+        role="admin"
         email={email}
         username={username}
         slug={slug}
       />
-      <div className="w-full h-screen flex flex-col ">
-        <AdminNavbar image={image} name={name} role={"admin"} />
+
+      <div className="flex h-screen w-full flex-col">
+        <AdminNavbar image={image} name={name} role="admin" />
         {children}
       </div>
     </SidebarProvider>

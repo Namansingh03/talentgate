@@ -224,5 +224,3 @@ export async function getCompanyFromUser() {
 
   return createResponse(true, "company details fetched", isExisting);
 }
-
-export async function getJobsData() {}

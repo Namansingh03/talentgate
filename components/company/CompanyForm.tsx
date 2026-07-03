@@ -358,11 +358,7 @@ const CompanyForm = () => {
               />
             </Field>
 
-            <Field
-              label="Company size"
-              icon={Users}
-              error={errors.size?.message}
-            >
+            <Field label="Company size" error={errors.size?.message}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
