@@ -101,7 +101,7 @@ const AddProfilePage = () => {
 
       const username = res.data;
       toast.success("Profile created ", { description: formatDate() });
-      router.push(`/${username}`);
+      router.push(`/user/${username}`);
     });
   };
 

@@ -2,7 +2,6 @@
 
 import z from "zod";
 import Link from "next/link";
-import { toast } from "sonner";
 import Socials from "./Socials";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
@@ -11,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
-import { formatDate } from "@/helpers/formatDate";
 import { SignInSchema } from "@/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";

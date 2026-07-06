@@ -1,16 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { getCompanySlug } from "@/actions/company/company";
+import React, { useEffect, useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminNavbar from "@/components/company/AdminNavbar";
 import { CompanySidebar } from "@/components/company/CompanySidebar";
+import { getCompanyDetailByUsername } from "@/actions/company/company";
 import UserNavbarSkeleton from "@/components/Skeletons/UserNavbarSkeleton";
+import { useAdminStore } from "@/utils/store";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { isPending, data: session } = authClient.useSession();
+  const { setAdmin } = useAdminStore();
+  const [companyName, setCompanyName] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
   const router = useRouter();
 
@@ -24,10 +27,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     if (!session?.user.username) return;
 
     const loadSlug = async () => {
-      const res = await getCompanySlug(session.user.username);
+      const res = await getCompanyDetailByUsername(session.user.username);
 
       if (res.success && res.data) {
-        setSlug(res.data);
+        setSlug(res.data.slug);
+        setCompanyName(res.data.name);
       }
     };
 
@@ -43,6 +47,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }
 
   const { name, image, username, email } = session.user;
+
+  setAdmin({
+    companyName: companyName,
+    companySlug: slug,
+    username: username,
+    image: image,
+  });
 
   return (
     <SidebarProvider>

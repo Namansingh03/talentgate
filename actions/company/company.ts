@@ -25,7 +25,7 @@ function clean<T extends object>(obj: T) {
   ) as Partial<T>;
 }
 
-export async function getCompanySlug(username?: string | null) {
+export async function getCompanyDetailByUsername(username?: string | null) {
   if (!username) {
     return createResponse(false, "username not found");
   }
@@ -43,6 +43,7 @@ export async function getCompanySlug(username?: string | null) {
     },
     select: {
       slug: true,
+      name: true,
     },
   });
 
@@ -50,7 +51,7 @@ export async function getCompanySlug(username?: string | null) {
     return createResponse(false, "company not found");
   }
 
-  return createResponse(true, " company found", company.slug);
+  return createResponse(true, " company found", company);
 }
 
 export async function createCompany(data: CompanyFormValues) {

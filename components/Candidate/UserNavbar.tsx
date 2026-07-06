@@ -36,20 +36,20 @@ const UserNavbar = () => {
   const navItems = [
     {
       label: "Dashboard",
-      href: `/${username}`,
+      href: `/user/${username}`,
       exact: true,
     },
     {
       label: "MyJobs",
-      href: `/${username}/myJobs`,
+      href: `/user/${username}/myJobs`,
     },
     {
       label: "Messages",
-      href: `/${username}/messages`,
+      href: `/user/${username}/messages`,
     },
     {
       label: "Insights",
-      href: `/${username}/insights`,
+      href: `/user/${username}/insights`,
     },
   ];
 

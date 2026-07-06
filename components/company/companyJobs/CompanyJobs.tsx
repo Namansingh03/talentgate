@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 interface bannerCardsInterface {
   title: string;
@@ -32,6 +33,7 @@ const CompanyJobs = () => {
   const [selectedFilter, setSelectedFilter] = useState<Filters>(
     Filters.noFilter,
   );
+  const router = useRouter();
 
   const bannerCards: bannerCardsInterface[] = [
     {
