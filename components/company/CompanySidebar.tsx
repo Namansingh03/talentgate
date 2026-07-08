@@ -20,50 +20,45 @@ import clsx from "clsx";
 
 interface CompanySidebarProps {
   role?: string | null;
-  email: string;
-  username?: string | null;
   slug: string | null;
 }
 
-export function CompanySidebar({
-  role,
-  email,
-  username,
-  slug,
-}: CompanySidebarProps) {
+export function CompanySidebar({ role, slug }: CompanySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+
+  console.log(pathname);
 
   const sidebarLinks = [
     {
       label: "Dashboard",
       icons: <Logs className="w-5 h-5" />,
-      links: "/admin",
+      links: `/${slug}/admin`,
     },
     {
       label: "jobs",
       icons: <BriefcaseBusiness className="w-5 h-5" />,
-      links: `/admin/${slug}/jobs`,
+      links: `/${slug}/admin/jobs`,
     },
     {
       label: "applications",
       icons: <FileText className="w-5 h-5" />,
-      links: `/admin/${slug}/applications`,
+      links: `/${slug}/admin/application`,
     },
     {
       label: "candidates",
       icons: <Users className="w-5 h-5" />,
-      links: `/admin/${slug}/candidates`,
+      links: `/${slug}/admin/candidate`,
     },
     {
       label: "company profile",
       icons: <Building2 className="w-5 h-5" />,
-      links: `/admin/${slug}`,
+      links: `/${slug}/admin/companyProfile`,
     },
     // {
     //   label: "analytics",
     //   icons: <ChartPie className="w-5 h-5" />,
-    //   links: "/admin/slug/analy",
+    //   links: "/admin/slug/analytics",
     // },
     {
       label: "settings",
@@ -79,7 +74,7 @@ export function CompanySidebar({
     <Sidebar className="p-5 bg-neutral-50">
       <SidebarHeader className="bg-neutral-50">
         <h1 className="font-sans tracking-tighter text-xl font-extrabold text-indigo-900 capitalize gap-y-1">
-          Company Name
+          {slug}
         </h1>
         <span className="font-semibold text-sm text-gray-400 lowercase">
           {role} console

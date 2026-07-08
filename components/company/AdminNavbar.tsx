@@ -19,9 +19,10 @@ interface AdminNavbarProps {
   name?: string;
   image?: string | null;
   role?: string | null;
+  email?: string | null;
 }
 
-const AdminNavbar = ({ image, name, role }: AdminNavbarProps) => {
+const AdminNavbar = ({ image, name, role, email }: AdminNavbarProps) => {
   const router = useRouter();
 
   return (

@@ -1,4 +1,3 @@
-// import redis from "./redis";
 import prismaDb from "./db";
 import resend from "./resend";
 import { betterAuth } from "better-auth";
@@ -7,9 +6,6 @@ import { emailOTP, username } from "better-auth/plugins";
 import VerificationEmail from "@/emails/VerificationEmail";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import SendVerificationOtp from "@/emails/SendVerificationOtp";
-
-// const SESSION_PREFIX = "session:";
-// const ONE_DAY = 60 * 60 * 24;
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -68,15 +64,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        defaultValue: "CANDIDATE",
-        required: false,
-      },
-    },
-  },
   plugins: [
     username({
       minUsernameLength: 5,
@@ -125,31 +112,4 @@ export const auth = betterAuth({
     storeAccountCookie: true,
     storeStateStrategy: "cookie",
   },
-  // secondaryStorage: {
-  //   async get(key: string) {
-  //     const redisKey = SESSION_PREFIX + key;
-  //     const cached = await redis.get(redisKey);
-  //     if (cached) {
-  //       console.log("SESSION HIT -> REDIS");
-  //       return JSON.parse(cached);
-  //     }
-  //     console.log("SESSION MISS -> DATABASE");
-  //     const session = await prismaDb.session.findFirst({
-  //       where: {
-  //         token: key,
-  //       },
-  //     });
-  //     if (!session) return null;
-  //     await redis.set(redisKey, JSON.stringify(session), "EX", ONE_DAY);
-  //     return session;
-  //   },
-  //   async set(key: string, value, ttl?: number) {
-  //     const redisKey = SESSION_PREFIX + key;
-  //     await redis.set(redisKey, JSON.stringify(value), "EX", ttl || ONE_DAY);
-  //   },
-  //   async delete(key: string) {
-  //     const redisKey = SESSION_PREFIX + key;
-  //     await redis.del(redisKey);
-  //   },
-  // },
 });

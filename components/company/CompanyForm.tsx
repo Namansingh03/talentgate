@@ -27,7 +27,6 @@ import {
   Tag,
   Briefcase,
   MapPin,
-  Users,
   ChevronDown,
 } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
@@ -153,7 +152,7 @@ const CompanyForm = () => {
         return;
       }
       toast.success(res.message, { description: formatDate() });
-      router.push(`/admin`);
+      router.push(`/${data.slug}/admin`);
     });
   };
 

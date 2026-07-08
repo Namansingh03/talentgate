@@ -25,35 +25,6 @@ function clean<T extends object>(obj: T) {
   ) as Partial<T>;
 }
 
-export async function getCompanyDetailByUsername(username?: string | null) {
-  if (!username) {
-    return createResponse(false, "username not found");
-  }
-
-  const company = await prismaDb.company.findFirst({
-    where: {
-      members: {
-        every: {
-          user: {
-            username,
-            role: "ADMIN",
-          },
-        },
-      },
-    },
-    select: {
-      slug: true,
-      name: true,
-    },
-  });
-
-  if (!company) {
-    return createResponse(false, "company not found");
-  }
-
-  return createResponse(true, " company found", company);
-}
-
 export async function createCompany(data: CompanyFormValues) {
   try {
     const user = await getUserOrThrow();

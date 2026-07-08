@@ -137,6 +137,8 @@ export async function createUser(vals: userVals) {
       imageUrl = upload.url;
     }
 
+    await redis.del(`user:${userId}`);
+
     await prismaDb.user.update({
       where: { id: userId },
       data: {

@@ -1,7 +1,8 @@
 "use server";
 
-import { getCompanyDetailByUsername } from "@/actions/company/company";
+import { getUserDetailsByUserId } from "@/actions/company/company";
 import { auth } from "@/lib/auth";
+import { Loader2 } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -20,15 +21,26 @@ export default async function RedirectPage() {
     redirect("/setUsername");
   }
 
-  if (user.role === "CANDIDATE") {
-    redirect(`/user/${user.username}`);
+  const res = await getUserDetailsByUserId(user.id);
+
+  if (!res.success && !res.data) {
+    throw new Error(res.message);
   }
 
-  const res = await getCompanyDetailByUsername(user.username);
+  if (res.data) {
+    const { role, slug } = res.data;
 
-  if (!res.success) {
-    throw new Error("Company not found");
+    if (role === "CANDIDATE") {
+      redirect(`/user/${user.username}`);
+    }
+
+    redirect(`/${slug}/${role.toLowerCase()}`);
   }
 
-  redirect(`/${res.data?.slug}/${user.role}`);
+  return (
+    <div className="w-full h-screen flex items-centre justify-center">
+      <Loader2 className="animate-spin ml-2" />
+      Redirecting...
+    </div>
+  );
 }
