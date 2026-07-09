@@ -1,8 +1,7 @@
 "use server";
 
-import { getUserDetailsByUserId } from "@/actions/company/company";
+import GetCurrentUser from "@/helpers/get-currentUser";
 import { auth } from "@/lib/auth";
-import { Loader2 } from "lucide-react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -17,30 +16,22 @@ export default async function RedirectPage() {
 
   const { user } = session;
 
-  if (!user.username) {
-    redirect("/setUsername");
+  const cachedUser = await GetCurrentUser(user.id);
+
+  if (!cachedUser.success) {
+    console.log(cachedUser.message);
+    redirect("/signin");
   }
 
-  const res = await getUserDetailsByUserId(user.id);
+  const { role, memberships } = cachedUser.data;
 
-  if (!res.success && !res.data) {
-    throw new Error(res.message);
+  if (role === "CANDIDATE") {
+    redirect(`/user/${user.username}`);
   }
 
-  if (res.data) {
-    const { role, slug } = res.data;
-
-    if (role === "CANDIDATE") {
-      redirect(`/user/${user.username}`);
-    }
-
-    redirect(`/${slug}/${role.toLowerCase()}`);
+  if (!memberships.length) {
+    redirect("/");
   }
 
-  return (
-    <div className="w-full h-screen flex items-centre justify-center">
-      <Loader2 className="animate-spin ml-2" />
-      Redirecting...
-    </div>
-  );
+  redirect(`/${memberships[0].company.slug}/${role.toLowerCase()}`);
 }

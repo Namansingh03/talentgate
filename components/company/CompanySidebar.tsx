@@ -28,6 +28,7 @@ export function CompanySidebar({ role, slug }: CompanySidebarProps) {
   const pathname = usePathname();
 
   console.log(pathname);
+  console.log(slug);
 
   const sidebarLinks = [
     {

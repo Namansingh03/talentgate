@@ -19,10 +19,9 @@ interface AdminNavbarProps {
   name?: string;
   image?: string | null;
   role?: string | null;
-  email?: string | null;
 }
 
-const AdminNavbar = ({ image, name, role, email }: AdminNavbarProps) => {
+const AdminNavbar = ({ image, name, role }: AdminNavbarProps) => {
   const router = useRouter();
 
   return (
@@ -50,9 +49,9 @@ const AdminNavbar = ({ image, name, role, email }: AdminNavbarProps) => {
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuLabel className="flex flex-row items-center justify-between">
-              <h1>{name}</h1>
-              <span className="lowercase text-xs text-gray-400">{role}</span>
+            <DropdownMenuLabel className="flex flex-col items-start justify-between gap-y-2">
+              <span className="lowercase text-sm text-gray-400">{role}</span>
+              <h1 className="text-md">{name}</h1>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem

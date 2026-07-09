@@ -35,7 +35,6 @@ const CompanyLayoutShell = ({
           image={image}
           name={name}
           role={role.toLowerCase()}
-          email={email}
         />
         {children}
       </div>

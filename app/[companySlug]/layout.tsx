@@ -9,11 +9,13 @@ import GetCurrentUser from "@/helpers/get-currentUser";
 
 interface layoutProps {
   children: React.ReactNode;
-  params: Promise<{ slug: string }>;
+  params: {
+    companySlug: string;
+  };
 }
 
 export default async function Layout({ children, params }: layoutProps) {
-  const { slug } = await params;
+  const { companySlug } = await params;
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -23,19 +25,20 @@ export default async function Layout({ children, params }: layoutProps) {
     redirect("/signin");
   }
 
-  const user = await GetCurrentUser(session.user.id);
+  const res = await GetCurrentUser(session.user.id);
 
-  if (!user) {
+  if (!res.success) {
     redirect("/signin");
   }
 
+  const { image, name, role } = res.data;
+
   return (
     <CompanyLayoutShell
-      email={user.email}
-      image={user.image}
-      name={user.name}
-      role={user.role}
-      slug={slug}
+      image={image}
+      name={name}
+      role={role}
+      slug={companySlug}
     >
       {children}
     </CompanyLayoutShell>

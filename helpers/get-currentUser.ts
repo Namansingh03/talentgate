@@ -2,6 +2,7 @@
 
 import redis from "@/lib/redis";
 import prismaDb from "@/lib/db";
+import { createResponse } from "./createResponse";
 
 const USER_PREFIX = "user:";
 
@@ -11,7 +12,7 @@ export default async function GetCurrentUser(userId: string) {
   const cached = await redis.get(key);
 
   if (cached) {
-    return JSON.parse(cached);
+    return createResponse(true, "redis cached session", JSON.parse(cached));
   }
 
   const user = await prismaDb.user.findFirst({
@@ -23,14 +24,23 @@ export default async function GetCurrentUser(userId: string) {
       image: true,
       role: true,
       username: true,
+      memberships: {
+        select: {
+          company: {
+            select: {
+              slug: true,
+            },
+          },
+        },
+      },
     },
   });
 
   if (!user) {
-    return null;
+    return createResponse(false, "user not found");
   }
 
   await redis.set(key, JSON.stringify(user), "EX", 60 * 60);
 
-  return user;
+  return createResponse(true, "user found by db", user);
 }
