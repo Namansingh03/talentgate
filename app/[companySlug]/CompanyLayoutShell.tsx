@@ -10,32 +10,24 @@ interface CompanyLayoutShellProps {
   slug: string;
   image?: string | null;
   name: string;
-  email: string;
   children: React.ReactNode;
 }
 
 const CompanyLayoutShell = ({
   children,
-  email,
   image,
   name,
   role,
   slug,
 }: CompanyLayoutShellProps) => {
-  console.log(
-    `email : ${email} image : ${image} name : ${name} role : ${role} slug : ${slug}`,
-  );
+  console.log(` image : ${image} name : ${name} role : ${role} slug : ${slug}`);
 
   return (
     <SidebarProvider>
       <CompanySidebar role={role.toLocaleUpperCase()} slug={slug} />
 
       <div className="flex h-screen w-full flex-col">
-        <AdminNavbar
-          image={image}
-          name={name}
-          role={role.toLowerCase()}
-        />
+        <AdminNavbar image={image} name={name} role={role.toLowerCase()} />
         {children}
       </div>
     </SidebarProvider>

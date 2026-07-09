@@ -5,7 +5,7 @@ import {
   companySchema,
   CompanyFormValues,
   CompanySizeEnum,
-} from "@/schemas/companySchema";
+} from "@/schemas/CompanySchema/companySchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";

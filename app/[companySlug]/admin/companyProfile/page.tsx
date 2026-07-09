@@ -5,11 +5,11 @@ import CompanyPage from "@/components/company/companyPage/CompanyPage";
 async function CompanyProfile({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ companySlug: string }>;
 }) {
-  const { slug } = await params;
+  const { companySlug } = await params;
 
-  const res = await getCompanyDetails(slug);
+  const res = await getCompanyDetails(companySlug);
 
   if (!res.success && !res.data) {
     throw new Error(res.message);
