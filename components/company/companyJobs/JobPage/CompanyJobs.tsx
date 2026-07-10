@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface bannerCardsInterface {
   title: string;
@@ -34,6 +34,7 @@ const CompanyJobs = () => {
     Filters.noFilter,
   );
   const router = useRouter();
+  const pathname = usePathname();
 
   const bannerCards: bannerCardsInterface[] = [
     {
@@ -72,6 +73,7 @@ const CompanyJobs = () => {
         <Button
           size={"lg"}
           className="bg-indigo-700 text-white rounded-lg px-5 py-3"
+          onClick={() => router.push(`${pathname}/createJob`)}
         >
           <Plus />
           Post new job

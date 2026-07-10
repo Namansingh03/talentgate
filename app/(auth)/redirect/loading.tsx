@@ -3,7 +3,7 @@ import React from "react";
 
 const loading = () => {
   return (
-    <div className="w-full h-screen flex items-centre justify-centre">
+    <div className="w-full text-neutral-500 text-sm h-screen flex items-center justify-center">
       <Loader2 className="animate-spin" /> redirecting...
     </div>
   );

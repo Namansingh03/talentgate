@@ -1,9 +1,23 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import clsx from "clsx";
+import { usePathname, useRouter } from "next/navigation";
+
+import { authClient } from "@/lib/auth-client";
+
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  useSidebar,
 } from "@/components/ui/sidebar";
+
 import {
   BriefcaseBusiness,
   Building2,
@@ -11,104 +25,147 @@ import {
   LogOutIcon,
   Logs,
   Settings,
+  User2Icon,
   Users,
 } from "lucide-react";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-import { usePathname, useRouter } from "next/navigation";
-import clsx from "clsx";
 
 interface CompanySidebarProps {
-  role?: string | null;
   slug: string | null;
+  image?: string | null;
+  name?: string | null;
 }
 
-export function CompanySidebar({ role, slug }: CompanySidebarProps) {
+export function CompanySidebar({ slug, image, name }: CompanySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-
-  console.log(pathname);
-  console.log(slug);
+  const { toggleSidebar, state } = useSidebar();
 
   const sidebarLinks = [
     {
       label: "Dashboard",
-      icons: <Logs className="w-5 h-5" />,
-      links: `/${slug}/admin`,
+      icon: Logs,
+      href: `/${slug}/admin`,
     },
     {
-      label: "jobs",
-      icons: <BriefcaseBusiness className="w-5 h-5" />,
-      links: `/${slug}/admin/jobs`,
+      label: "Jobs",
+      icon: BriefcaseBusiness,
+      href: `/${slug}/admin/jobs`,
     },
     {
-      label: "applications",
-      icons: <FileText className="w-5 h-5" />,
-      links: `/${slug}/admin/application`,
+      label: "Applications",
+      icon: FileText,
+      href: `/${slug}/admin/application`,
     },
     {
-      label: "candidates",
-      icons: <Users className="w-5 h-5" />,
-      links: `/${slug}/admin/candidate`,
+      label: "Candidates",
+      icon: Users,
+      href: `/${slug}/admin/candidate`,
     },
     {
-      label: "company profile",
-      icons: <Building2 className="w-5 h-5" />,
-      links: `/${slug}/admin/companyProfile`,
+      label: "Company Profile",
+      icon: Building2,
+      href: `/${slug}/admin/companyProfile`,
     },
-    // {
-    //   label: "analytics",
-    //   icons: <ChartPie className="w-5 h-5" />,
-    //   links: "/admin/slug/analytics",
-    // },
     {
-      label: "settings",
-      icons: <Settings className="w-5 h-5" />,
-      links: `/admin/${slug}/settings`,
+      label: "Settings",
+      icon: Settings,
+      href: `/${slug}/admin/settings`,
     },
   ];
 
-  console.log("slug : ", slug);
-  console.log(pathname);
-
   return (
-    <Sidebar className="p-5 bg-neutral-50">
-      <SidebarHeader className="bg-neutral-50">
-        <h1 className="font-sans tracking-tighter text-xl font-extrabold text-indigo-900 capitalize gap-y-1">
-          {slug}
-        </h1>
-        <span className="font-semibold text-sm text-gray-400 lowercase">
-          {role} console
-        </span>
+    <Sidebar
+      variant="sidebar"
+      collapsible="icon"
+      className="top-20 h-[calc(100svh-5rem)]"
+    >
+      {/* Header */}
+      <SidebarHeader className="px-3 py-4">
+        <div className="flex items-center gap-3">
+          {image ? (
+            <Image
+              src={image}
+              alt={name ?? "Company"}
+              width={48}
+              height={48}
+              onClick={toggleSidebar}
+              className="rounded-full border-2 border-neutral-800 cursor-pointer shrink-0"
+            />
+          ) : (
+            <User2Icon
+              className="h-10 w-10 cursor-pointer"
+              onClick={toggleSidebar}
+            />
+          )}
+
+          {state !== "collapsed" && (
+            <div className="min-w-0">
+              <h2 className="font-semibold truncate capitalize">{slug}</h2>
+
+              <p className="text-sm text-muted-foreground truncate">{name}</p>
+            </div>
+          )}
+        </div>
       </SidebarHeader>
-      <SidebarContent className="mt-10 p-2">
-        {sidebarLinks.map((item) => (
-          <Link
-            key={item.label}
-            href={item.links}
-            className={clsx(
-              "flex items-center gap-x-5 px-3 py-2 rounded-lg text-sm capitalize transition-colors",
-              pathname === item.links
-                ? "text-indigo-900 bg-blue-50 border border-r-4 border-r-indigo-800"
-                : "text-neutral-500 hover:bg-gray-200",
-            )}
-          >
-            {item.icons}
-            <h1>{item.label}</h1>
-          </Link>
-        ))}
+
+      {/* Navigation */}
+      <SidebarContent className={clsx("px-2 mt-10")}>
+        <SidebarMenu>
+          {sidebarLinks.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <SidebarMenuItem
+                className={clsx(
+                  "flex flex-col",
+                  state === "collapsed" ? "items-centre" : "items-start",
+                )}
+                key={item.label}
+              >
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === item.href}
+                  className={clsx(
+                    "px-3 py-2",
+                    pathname === item.href
+                      ? "bg-blue-200 text-indigo-600 border-r-4 border-indigo-900 rounded-lg"
+                      : " text-neutral-700 text-md",
+                  )}
+                >
+                  <Link href={item.href}>
+                    <Icon
+                      className={clsx(
+                        "h-8 w-8",
+                        state === "collapsed" && pathname === item.href
+                          ? "border-none text-indigo-500"
+                          : "text-neutral-600",
+                      )}
+                    />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="flex flex-row items-center gap-x-3 capitalize hover:bg-gray-200 rounded-lg transition-colors px-3">
-        <LogOutIcon className="text-red-700 h-4 w-4" />
-        <p
-          className="text-red-700 text-sm"
-          onClick={() => {
-            authClient.signOut();
-            router.replace("/signin");
-          }}
-        >
-          logout{" "}
-        </p>
+
+      {/* Footer */}
+      <SidebarFooter className="px-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={async () => {
+                await authClient.signOut();
+                router.replace("/signin");
+              }}
+              className="text-red-600 hover:text-red-700"
+            >
+              <LogOutIcon className="h-5 w-5" />
+              <span>Logout</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

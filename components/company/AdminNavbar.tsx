@@ -19,14 +19,20 @@ interface AdminNavbarProps {
   name?: string;
   image?: string | null;
   role?: string | null;
+  slug: string | null;
 }
 
-const AdminNavbar = ({ image, name, role }: AdminNavbarProps) => {
+const AdminNavbar = ({ image, name, role, slug }: AdminNavbarProps) => {
   const router = useRouter();
 
   return (
-    <nav className="w-full sticky px-10 py-2 flex items-center justify-between shadow-md">
+    <nav className="w-full sticky h-20 top-0 z-50 flex items-center justify-between shadow-md p-5">
       <div className="flex items-center gap-x-24">
+        <h1 className="capitalize text-3xl font-extrabold text-indigo-900">
+          Talentgate
+        </h1>
+      </div>
+      <div>
         <Input
           placeholder="search for jobs , applications ..."
           className="w-100 border-bg-slate-800 rounded-lg bg-grey-50"

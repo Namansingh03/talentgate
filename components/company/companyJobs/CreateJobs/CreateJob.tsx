@@ -12,6 +12,7 @@ import {
   JobStatusEnum,
   JobTypeEnum,
 } from "@/schemas/CompanySchema/JobsSchema";
+import BasicDetails from "./BasicDetails";
 
 type AdminDetails = {
   username?: string | null;
@@ -64,9 +65,9 @@ const CreateJobPage = ({
   });
 
   return (
-    <div className="w-full flex flex-col items-center gap-y-5">
+    <div className="w-full flex flex-col items-center gap-y-5 p-8">
       {/* header */}
-      <div className="w-full flex flex-col p-5">
+      <div className="w-full flex flex-col bg-yellow-700">
         <h1 className="text-4xl font-bold font-sans">
           {newJob ? "Create New Job" : "Update Your Job"}
         </h1>
@@ -76,11 +77,13 @@ const CreateJobPage = ({
         </p>
       </div>
 
-      <div className="flex flex-row gap-x-5 items-center">
-        {/* right section */}
-        <section className="w-3xl flex flex-col items-centre"></section>
+      <div className="flex flex-row gap-x-5 items-center bg-teal-700 ">
+        {/* left section */}
+        <section className="w-3xl flex flex-col items-centre">
+          <BasicDetails />
+        </section>
 
-        {/* left section  */}
+        {/* right section  */}
         <section className="w-xl flex-col items-centre"></section>
       </div>
     </div>

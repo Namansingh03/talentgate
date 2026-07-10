@@ -1,4 +1,4 @@
-import CompanyJobs from "@/components/company/companyJobs/CompanyJobs";
+import CompanyJobs from "@/components/company/companyJobs/JobPage/CompanyJobs";
 import React from "react";
 
 const page = () => {

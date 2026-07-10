@@ -29,6 +29,7 @@ export default async function GetCurrentUser(userId: string) {
           company: {
             select: {
               slug: true,
+              logo: true,
             },
           },
         },

@@ -3,7 +3,11 @@
 import React from "react";
 import AdminNavbar from "@/components/company/AdminNavbar";
 import { CompanySidebar } from "@/components/company/CompanySidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  useSidebar,
+} from "@/components/ui/sidebar";
 
 interface CompanyLayoutShellProps {
   role: string;
@@ -20,15 +24,21 @@ const CompanyLayoutShell = ({
   role,
   slug,
 }: CompanyLayoutShellProps) => {
-  console.log(` image : ${image} name : ${name} role : ${role} slug : ${slug}`);
-
   return (
     <SidebarProvider>
-      <CompanySidebar role={role.toLocaleUpperCase()} slug={slug} />
-
-      <div className="flex h-screen w-full flex-col">
-        <AdminNavbar image={image} name={name} role={role.toLowerCase()} />
-        {children}
+      <div className="min-w-full h-screen flex flex-col">
+        <AdminNavbar
+          image={image}
+          name={name}
+          role={role.toLowerCase()}
+          slug={slug}
+        />
+        <div className="flex flex-1 overflow-hidden">
+          <CompanySidebar slug={slug} image={image} name={name} />
+          <SidebarInset>
+            <main className="h-full overflow-y-auto p-6">{children}</main>
+          </SidebarInset>
+        </div>
       </div>
     </SidebarProvider>
   );
