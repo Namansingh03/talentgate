@@ -48,7 +48,7 @@ export const JobSchema = z.object({
   skillsRequired: z.array(z.string()),
   slug: z.string(),
   jobStatus: JobStatusEnum,
-  tittle: z.string(),
+  title: z.string(),
   jobType: JobTypeEnum,
 });
 

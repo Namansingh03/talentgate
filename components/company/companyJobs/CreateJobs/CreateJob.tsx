@@ -3,7 +3,7 @@
 import React from "react";
 import { Company, Job } from "@/app/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import {
   JobSchema,
   JobCategoryEnum,
@@ -13,6 +13,10 @@ import {
   JobTypeEnum,
 } from "@/schemas/CompanySchema/JobsSchema";
 import BasicDetails from "./BasicDetails";
+import AuthorDetails from "./AuthorDetails";
+import { Button } from "@/components/ui/button";
+import clsx from "clsx";
+import { useSidebar } from "@/components/ui/sidebar";
 
 type AdminDetails = {
   username?: string | null;
@@ -40,19 +44,15 @@ const CreateJobPage = ({
   companyDetails,
   newJob = true,
 }: CreateJobPageProps) => {
-  const {} = useForm({
+  const methods = useForm({
     resolver: zodResolver(JobSchema),
     defaultValues: {
-      tittle: job ? job.title : "",
+      title: job ? job.title : "",
       slug: job ? job.slug : "",
       benefits: job ? job.benefits : "",
-      category: job ? job.category : "DATA",
       description: job ? job.description : "",
-      expiresAt: job ? job.expiresAt : new Date(),
+      expiresAt: job ? job.expiresAt : null,
       isRemote: job ? job.isRemote : false,
-      JobExperienceLevel: job ? job.level : "JUNIOR",
-      jobStatus: job ? job.status : "ACTIVE",
-      jobType: job ? job.type : "FULL_TIME",
       location: job ? job.location : "",
       requirements: job ? job.requirements : "",
       responsibilities: job ? job.responsibilities : "",
@@ -60,32 +60,53 @@ const CreateJobPage = ({
       salaryMax: job ? job.salaryMax : null,
       salaryMin: job ? job.salaryMin : null,
       skillsRequired: job ? job.skills : [],
+      category: job ? job.category : "DATA",
+      jobStatus: job ? job.status : "ACTIVE",
+      jobType: job ? job.type : "FULL_TIME",
+      JobExperienceLevel: job ? job.level : "JUNIOR",
     },
     mode: "onSubmit",
   });
+  const { state } = useSidebar();
+
+  const onSubmit = (data: JobFormValues) => {
+    console.log(data);
+  };
 
   return (
-    <div className="w-full flex flex-col items-center gap-y-5 p-8">
-      {/* header */}
-      <div className="w-full flex flex-col bg-yellow-700">
-        <h1 className="text-4xl font-bold font-sans">
-          {newJob ? "Create New Job" : "Update Your Job"}
+    <div className="w-full p-8 flex flex-col gap-y-10">
+      <div className="flex flex-col gap-y-2 font-sans">
+        <h1 className="capitalize text-3xl font-semibold text-neutral-800">
+          Create new job{" "}
         </h1>
-        <p className="text-md text-neutral-400 ">
+        <p className="text-muted-foreground lowercase text-sm">
           Publish a job posting for your company and start attracting top-tier
           talent.
         </p>
       </div>
 
-      <div className="flex flex-row gap-x-5 items-center bg-teal-700 ">
-        {/* left section */}
-        <section className="w-3xl flex flex-col items-centre">
-          <BasicDetails />
-        </section>
+      {/* left section */}
+      <FormProvider {...methods}>
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="w-full flex flex-row justify-between gap-x-10"
+        >
+          <section
+            className={clsx(
+              "flex flex-col",
+              state === "collapsed" ? "w-3xl" : "w-xl",
+            )}
+          >
+            <BasicDetails />
+          </section>
 
-        {/* right section  */}
-        <section className="w-xl flex-col items-centre"></section>
-      </div>
+          {/* right section */}
+          <section className="w-sm bg-yellow-800 flex flex-col">
+            <AuthorDetails />
+            <Button type="submit">Publish</Button>
+          </section>
+        </form>
+      </FormProvider>
     </div>
   );
 };
