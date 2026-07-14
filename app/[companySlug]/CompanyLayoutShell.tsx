@@ -1,13 +1,9 @@
 "use client";
 
 import React from "react";
-import AdminNavbar from "@/components/company/AdminNavbar";
-import { CompanySidebar } from "@/components/company/CompanySidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import AdminNavbar from "@/src/features/company/components/AdminNavbar";
+import { CompanySidebar } from "@/src/features/company/components/CompanySidebar";
+import { SidebarInset, SidebarProvider } from "@/src/shared/ui/sidebar";
 
 interface CompanyLayoutShellProps {
   role: string;

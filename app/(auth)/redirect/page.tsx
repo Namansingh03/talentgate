@@ -1,7 +1,7 @@
 "use server";
 
-import GetCurrentUser from "@/helpers/get-currentUser";
-import { auth } from "@/lib/auth";
+import GetCurrentUser from "@/src/shared/utils/get-currentUser";
+import { auth } from "@/src/config/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 

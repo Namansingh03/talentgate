@@ -1,11 +1,11 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/src/config/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import CompanyLayoutShell from "./CompanyLayoutShell";
-import GetCurrentUser from "@/helpers/get-currentUser";
+import GetCurrentUser from "@/src/shared/utils/get-currentUser";
 
 interface layoutProps {
   children: React.ReactNode;

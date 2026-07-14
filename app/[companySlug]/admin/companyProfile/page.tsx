@@ -1,6 +1,6 @@
 import React from "react";
-import { getCompanyDetails } from "@/actions/company/company";
-import CompanyPage from "@/components/company/companyPage/CompanyPage";
+import { getCompanyDetails } from "@/src/features/company/actions/getActions";
+import CompanyPage from "@/src/features/company/components/companyPage/CompanyPage";
 
 async function CompanyProfile({
   params,

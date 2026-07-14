@@ -1,7 +1,7 @@
 "use client";
 
-import UserNavbar from "@/components/Candidate/UserNavbar";
-import UserNavbarSkeleton from "@/components/Skeletons/UserNavbarSkeleton";
+import UserNavbar from "@/src/shared/components/UserNavbar";
+import UserNavbarSkeleton from "@/src/shared/components/UserNavbarSkeleton";
 import { Suspense } from "react";
 
 const UserLayout = ({ children }: { children: React.ReactNode }) => {

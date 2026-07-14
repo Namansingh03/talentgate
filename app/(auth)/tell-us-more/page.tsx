@@ -1,7 +1,7 @@
 "use client";
 
-import TellUsAboutYourself from "@/components/auth/TellUsAboutYourself";
-import { authClient } from "@/lib/auth-client";
+import TellUsAboutYourself from "@/src/features/candidate/components/TellUsAboutYourself";
+import { authClient } from "@/src/config/auth-client";
 
 export default function Page() {
   const { data: session, isPending } = authClient.useSession();

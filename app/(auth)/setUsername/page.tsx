@@ -1,4 +1,4 @@
-import SetUsernameForm from "@/components/auth/setUsername-form";
+import SetUsernameForm from "@/src/features/auth/components/setUsername-form";
 
 export default function Page() {
   return (

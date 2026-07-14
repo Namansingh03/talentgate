@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import CompanyForm from "@/components/company/CompanyForm";
+import CompanyForm from "@/src/features/company/components/CompanyForm";
 
 export default function page() {
   return (

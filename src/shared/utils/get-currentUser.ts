@@ -1,0 +1,47 @@
+"use server";
+
+import prismaDb from "@/src/server/db/db";
+import redis from "@/src/server/redis/redis";
+import { createResponse } from "./createResponse";
+
+const USER_PREFIX = "user:";
+
+export default async function GetCurrentUser(userId: string) {
+  const key = USER_PREFIX + userId;
+
+  const cached = await redis.get(key);
+
+  if (cached) {
+    return createResponse(true, "redis cached session", JSON.parse(cached));
+  }
+
+  const user = await prismaDb.user.findFirst({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      username: true,
+      memberships: {
+        select: {
+          company: {
+            select: {
+              slug: true,
+              logo: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    return createResponse(false, "user not found");
+  }
+
+  await redis.set(key, JSON.stringify(user), "EX", 60 * 60);
+
+  return createResponse(true, "user found by db", user);
+}

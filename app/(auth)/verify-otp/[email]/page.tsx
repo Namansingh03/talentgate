@@ -1,4 +1,4 @@
-import VerifyOtp from "@/components/auth/verify-otp";
+import VerifyOtp from "@/src/features/auth/components/verify-otp";
 
 export default function Page() {
   return (

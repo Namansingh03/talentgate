@@ -1,5 +1,5 @@
 import React from "react";
-import AddProfilePage from "@/components/auth/AddProfilePage";
+import AddProfilePage from "@/src/features/candidate/components/profile/AddProfilePage";
 
 export default function Page() {
   return (
