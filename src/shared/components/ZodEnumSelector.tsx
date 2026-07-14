@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./select";
+} from "@/src/shared/ui/select";
 
 type Props<T extends z.ZodEnum> = {
   name: string;

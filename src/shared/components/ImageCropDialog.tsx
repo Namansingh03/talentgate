@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
+} from "@/src/shared/ui/dialog";
+import { Button } from "@/src/shared/ui/button";
+import { Slider } from "@/src/shared/ui/slider";
+import { Label } from "@/src/shared/ui/label";
 import { ZoomIn, ZoomOut, RotateCw, Crop } from "lucide-react";
 
 export interface ImageCropDialogProps {

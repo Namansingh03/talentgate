@@ -12,9 +12,9 @@ import {
 } from "../ui/dropdown-menu";
 import Image from "next/image";
 import { LogOutIcon, User2Icon, UserRound } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/src/config/auth-client";
 import { usePathname, useRouter } from "next/navigation";
-import UserNavbarSkeleton from "../Skeletons/UserNavbarSkeleton";
+import UserNavbarSkeleton from "./UserNavbarSkeleton";
 
 const UserNavbar = () => {
   const { data: session, isPending } = authClient.useSession();

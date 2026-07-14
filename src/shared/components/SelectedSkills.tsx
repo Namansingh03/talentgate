@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { SKILLS } from "@/utils/values";
+import { SKILLS } from "@/src/shared/constants/values";
 
 interface SelectedSkillsProps {
   skills?: string[];

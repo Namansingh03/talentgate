@@ -1,5 +1,3 @@
-// components/UserNavbarSkeleton.tsx
-
 const UserNavbarSkeleton = () => {
   return (
     <header className="bg-white/80 backdrop-blur-xl shadow-md animate-pulse">

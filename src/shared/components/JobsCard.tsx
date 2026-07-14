@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { JobsCardType } from "@/types/CompanyTypes";
+import { JobsCardType } from "@/src/features/company/types/companyPrismaTypes";
 import { formatDistanceToNow, format } from "date-fns";
 import { MapPin, Briefcase, Clock3, Layers3, Wifi } from "lucide-react";
 

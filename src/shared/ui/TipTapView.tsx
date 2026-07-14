@@ -7,7 +7,7 @@ import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 
-import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
+import "@/src/shared/components/tiptap-node/blockquote-node/blockquote-node.scss";
 
 interface RichTextProps {
   html: string;

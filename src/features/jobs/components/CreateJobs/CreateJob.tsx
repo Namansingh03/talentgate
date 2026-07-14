@@ -97,7 +97,7 @@ const CreateJobPage = ({
         >
           <section
             className={clsx(
-              "flex flex-col",
+              "flex flex-col gap-y-5",
               state === "collapsed" ? "w-3xl" : "w-xl",
             )}
           >

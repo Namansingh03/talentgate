@@ -3,9 +3,6 @@
 import { Checkbox } from "@/src/shared/ui/checkbox";
 import {
   Field,
-  FieldSet,
-  FieldDescription,
-  FieldTitle,
   FieldGroup,
   FieldLabel,
   FieldError,
@@ -23,6 +20,7 @@ import {
 import { ArrowDownNarrowWide } from "lucide-react";
 import { format } from "date-fns";
 import { JobFormValues } from "@/src/features/jobs/schemas/JobsSchema";
+import JobFieldCard from "./JobFieldCard";
 
 const JobAbout = () => {
   const {
@@ -34,14 +32,10 @@ const JobAbout = () => {
   const [date, setDate] = useState<Date>();
 
   return (
-    <FieldSet className="w-full border-2 border-indigo-300 rounded-lg p-5 shadow-md">
-      <FieldTitle>
-        <h1 className="text-2xl font-semibold text-neutral-800">Job Details</h1>
-      </FieldTitle>
-      <FieldDescription className="mt-0 space-y-2">
-        provide more details about the job
-      </FieldDescription>
-
+    <JobFieldCard
+      description="provide more details about the job"
+      title="Job Details"
+    >
       <FieldGroup className="w-full grid grid-cols-3 space-x-2">
         <Field>
           <FieldLabel>Location</FieldLabel>
@@ -94,8 +88,6 @@ const JobAbout = () => {
             <FieldError>{errors.location?.message?.toString()}</FieldError>
           )}
         </Field>
-      </FieldGroup>
-      <FieldGroup className="w-full grid grid-cols-3 space-x-2">
         <Field>
           <FieldLabel>Salary Currency</FieldLabel>
           <Input
@@ -131,17 +123,17 @@ const JobAbout = () => {
             <FieldError>{errors.salaryMax?.message?.toString()}</FieldError>
           )}
         </Field>
-      </FieldGroup>
 
-      <Field>
-        <FieldLabel>Description</FieldLabel>
-        <textarea
-          placeholder="add a description for the job"
-          cols={5}
-          {...register("description")}
-        />
-      </Field>
-    </FieldSet>
+        <Field className="col-span-3">
+          <FieldLabel>Description</FieldLabel>
+          <textarea
+            placeholder="add a description for the job"
+            cols={5}
+            {...register("description")}
+          />
+        </Field>
+      </FieldGroup>
+    </JobFieldCard>
   );
 };
 

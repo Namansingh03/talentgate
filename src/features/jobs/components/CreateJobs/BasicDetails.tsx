@@ -20,6 +20,7 @@ import {
 import { Input } from "@/src/shared/ui/input";
 import { useFormContext } from "react-hook-form";
 import { ZodEnumSelect } from "@/src/shared/components/ZodEnumSelector";
+import JobFieldCard from "./JobFieldCard";
 
 const BasicDetails = () => {
   const {
@@ -28,16 +29,10 @@ const BasicDetails = () => {
   } = useFormContext<JobFormValues>();
 
   return (
-    <FieldSet className="w-full border-2 border-indigo-300 rounded-lg p-5 shadow-md">
-      <FieldTitle>
-        <h1 className="text-2xl font-semibold text-neutral-800">
-          Basic Details
-        </h1>
-      </FieldTitle>
-      <FieldDescription className="mt-0 space-y-2">
-        provide some basic details about the job
-      </FieldDescription>
-
+    <JobFieldCard
+      description="provide some basic details about the job"
+      title="Basic Details"
+    >
       <FieldGroup className="w-full flex flex-col">
         <Field>
           <FieldLabel>job title</FieldLabel>
@@ -91,7 +86,7 @@ const BasicDetails = () => {
           )}
         </Field>
       </FieldGroup>
-    </FieldSet>
+    </JobFieldCard>
   );
 };
 

@@ -24,4 +24,18 @@ type CompanyType = Prisma.CompanyGetPayload<{
   };
 }>;
 
-export type { CompanyType };
+type JobsCardType = Prisma.JobGetPayload<{
+  select: {
+    category: true;
+    title: true;
+    isRemote: true;
+    location: true;
+    type: true;
+    level: true;
+    description: true;
+    skills: true;
+    createdAt: true;
+    expiresAt: true;
+  };
+}>;
+export type { CompanyType, JobsCardType };

@@ -41,7 +41,8 @@ import {
 import { BubbleMenu as TiptapBubbleMenu } from "@tiptap/react/menus";
 import { FloatingMenu as TiptapFloatingMenu } from "@tiptap/react/menus";
 
-import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
+import "@/src/shared/components/tiptap-node/blockquote-node/blockquote-node.scss";
+import "@/src/shared/components/tiptap-node/heading-node/heading-node.scss";
 
 const Tiptap = ({
   content,

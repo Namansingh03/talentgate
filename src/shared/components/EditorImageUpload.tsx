@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { ImageIcon } from "lucide-react";
 import { Editor } from "@tiptap/react";
-import { Toggle } from "./toggle";
+import { Toggle } from "@/src/shared/ui/toggle";
 
 interface Props {
   editor: Editor;
