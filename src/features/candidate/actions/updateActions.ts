@@ -11,7 +11,7 @@ import {
   educationSchema,
   experienceSchema,
 } from "@/src/features/candidate";
-import { cleanData } from "@/src/shared/ui/cleanData";
+import { cleanData } from "@/src/shared/utils/cleanData";
 import { getUserIdOrThrow } from "@/src/shared/utils/getUserOrThrow";
 import { headers } from "next/headers";
 import { Prisma } from "@/prisma/generated/browser";

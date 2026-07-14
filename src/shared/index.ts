@@ -8,10 +8,9 @@ export * from "@/src/shared/utils/createResponse";
 export * from "@/src/shared/utils/formatDate";
 export * from "@/src/shared/utils/get-currentUser";
 export * from "@/src/shared/utils/getUsernameSuggestions";
-export * from "@/src/shared/utils/utils";
+export * from "@/src/shared/utils/cleanData";
 
 // ui
-
 export * from "@/src/shared/ui/TipTap";
 export * from "@/src/shared/ui/TipTapView";
 export * from "@/src/shared/ui/avatar";

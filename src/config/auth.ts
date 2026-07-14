@@ -1,11 +1,11 @@
 import prismaDb from "../server/db/db";
 import { betterAuth } from "better-auth";
 import resend from "../server/resend/resend";
-import CustomEmail from "../emails/CustomEmailSend";
+import CustomEmail from "@/src/shared/emails/CustomEmailSend";
 import { emailOTP, username } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import VerificationEmail from "../emails/VerificationEmail";
-import SendVerificationOtp from "../emails/SendVerificationOtp";
+import VerificationEmail from "@/src/shared/emails/VerificationEmail";
+import SendVerificationOtp from "@/src/shared/emails/SendVerificationOtp";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
