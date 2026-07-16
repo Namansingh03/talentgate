@@ -127,8 +127,9 @@ const JobAbout = () => {
         <Field className="col-span-3">
           <FieldLabel>Description</FieldLabel>
           <textarea
-            placeholder="add a description for the job"
-            cols={5}
+            className="overflow-x-visible h-auto p-2 rounded-md"
+            placeholder="add a description for the job at max 500 characters"
+            rows={5}
             {...register("description")}
           />
         </Field>

@@ -3,7 +3,7 @@
 import React from "react";
 import { Job } from "@/prisma/generated/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import {
   JobSchema,
   JobCategoryEnum,
@@ -13,11 +13,12 @@ import {
   JobTypeEnum,
 } from "@/src/features/jobs/schemas/JobsSchema";
 import BasicDetails from "./BasicDetails";
-import AuthorDetails from "./AuthorDetails";
 import { Button } from "@/src/shared/ui/button";
 import clsx from "clsx";
 import { useSidebar } from "@/src/shared/ui/sidebar";
 import JobAbout from "./JobAbout";
+import RequirementsCard from "./RequirementsCard";
+import SkillsRequired from "./SkillsRequired";
 
 type AdminDetails = {
   username?: string | null;
@@ -63,11 +64,11 @@ const CreateJobPage = ({
       salaryMax: job ? job.salaryMax : null,
       description: job ? job.description : "",
 
-      skillsRequired: job ? job.skills : [],
-      benefits: job ? job.benefits : "",
+      benefits: job ? job.benefits : [],
+      requirements: job ? job.requirements : [],
+      responsibilities: job ? job.responsibilities : [],
 
-      requirements: job ? job.requirements : "",
-      responsibilities: job ? job.responsibilities : "",
+      skillsRequired: job ? job.skills : [],
     },
     mode: "onSubmit",
   });
@@ -103,11 +104,13 @@ const CreateJobPage = ({
           >
             <BasicDetails />
             <JobAbout />
+            <RequirementsCard />
+            <SkillsRequired />
           </section>
 
           {/* right section */}
           <section className="w-sm bg-yellow-800 flex flex-col">
-            <AuthorDetails />
+            {/* <AuthorDetails /> */}
             <Button type="submit">Publish</Button>
           </section>
         </form>

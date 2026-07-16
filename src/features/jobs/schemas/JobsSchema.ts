@@ -33,15 +33,17 @@ export const JobTypeEnum = z.enum([
 ]);
 
 export const JobSchema = z.object({
-  benefits: z.string().nullable(),
+  benefits: z.array(z.string()).min(1, "min 1 benefit is required").nullable(),
   category: JobCategoryEnum,
   description: z.string(),
   expiresAt: z.date().nullable(),
   isRemote: z.boolean().default(false).optional(),
   JobExperienceLevel: JobExperienceLevelEnum,
   location: z.string(),
-  requirements: z.string().nullable(), //todo make this bullet form
-  responsibilities: z.string().nullable(), //todo make this bullet form
+  requirements: z.array(z.string()).min(1, "min 1 requirement is required"),
+  responsibilities: z
+    .array(z.string())
+    .min(1, "min 1 responsibility is required"),
   salaryCurrency: z.string(),
   salaryMin: z.number().min(10).nullable(),
   salaryMax: z.number().nullable(),

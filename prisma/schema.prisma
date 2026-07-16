@@ -142,9 +142,9 @@ model Job {
   title            String
   slug             String          @unique
   description      String
-  requirements     String?
-  responsibilities String?
-  benefits         String?
+  requirements     String[]
+  responsibilities String[]
+  benefits         String[]
   location         String
   isRemote         Boolean         @default(false)
   type             JobType         @default(FULL_TIME)
