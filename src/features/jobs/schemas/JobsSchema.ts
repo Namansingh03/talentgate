@@ -33,11 +33,11 @@ export const JobTypeEnum = z.enum([
 ]);
 
 export const JobSchema = z.object({
-  benefits: z.array(z.string()).min(1, "min 1 benefit is required").nullable(),
+  benefits: z.array(z.string()).min(1, "min 1 benefit is required"),
   category: JobCategoryEnum,
   description: z.string(),
   expiresAt: z.date().nullable(),
-  isRemote: z.boolean().default(false).optional(),
+  isRemote: z.boolean().default(false),
   JobExperienceLevel: JobExperienceLevelEnum,
   location: z.string(),
   requirements: z.array(z.string()).min(1, "min 1 requirement is required"),
@@ -45,8 +45,8 @@ export const JobSchema = z.object({
     .array(z.string())
     .min(1, "min 1 responsibility is required"),
   salaryCurrency: z.string(),
-  salaryMin: z.number().min(10).nullable(),
-  salaryMax: z.number().nullable(),
+  salaryMin: z.coerce.number().positive().min(10).nullable().default(100000),
+  salaryMax: z.coerce.number().positive().nullable().default(160000),
   skillsRequired: z.array(z.string()),
   slug: z.string(),
   jobStatus: JobStatusEnum,

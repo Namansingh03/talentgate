@@ -1,6 +1,6 @@
 "use server";
 
-import cloudinary from "@/lib/cloudinary";
+import cloudinary from "@/src/server/cloudinary/cloudinary";
 import type { UploadApiResponse } from "cloudinary";
 
 interface CloudinaryProps {

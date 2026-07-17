@@ -1,6 +1,6 @@
 "use server";
 
-import prismaDb from "@/lib/db";
+import prismaDb from "@/src/server/db/db";
 
 async function generateUsernameSuggestions(displayName: string) {
   const base = displayName

@@ -2,50 +2,58 @@
 
 import prismaDb from "@/src/server/db/db";
 import { createResponse } from "@/src/shared";
-import { Job } from "@/prisma/generated/browser";
+import { createJobType } from "../types/JobTypes";
 
-type createJobType = {
-  job: Job;
-  companySlug: string;
+type createJobDetails = {
+  jobDetails: createJobType;
+  adminUsername?: string | null;
+  companySlug?: string | null;
 };
 
-export async function createJob({ companySlug, job }: createJobType) {
+export async function createJobAction({
+  jobDetails,
+  adminUsername,
+  companySlug,
+}: createJobDetails) {
   try {
-    const companyExists = await prismaDb.company.findFirst({
-      where: { slug: companySlug },
-    });
-
-    if (!companyExists) {
-      return createResponse(false, "company does'nt exists");
+    if (!adminUsername || !companySlug) {
+      return createResponse(false, "username not found");
     }
 
-    if (job.id) {
-      await prismaDb.job.update({
-        where: {
-          id: job.id,
-        },
-        data: job,
-      });
-
-      return createResponse(true, "job entry updated successfully");
-    }
-
-    if (!job.id) {
-      await prismaDb.company.update({
-        where: {
-          slug: companySlug,
-        },
-        data: {
-          jobs: {
-            create: {
-              ...job,
+    const isAuthorized = await prismaDb.user.findFirst({
+      where: {
+        username: adminUsername,
+        memberships: {
+          some: {
+            company: {
+              slug: companySlug,
             },
           },
         },
-      });
+      },
+      select: {
+        role: true,
+      },
+    });
 
-      return createResponse(true, "job entry updated successfully");
+    if (isAuthorized?.role !== "ADMIN" && !isAuthorized) {
+      return createResponse(false, "not authorized");
     }
+
+    await prismaDb.company.update({
+      where: {
+        slug: companySlug,
+      },
+      data: {
+        jobs: {
+          create: {
+            ...jobDetails,
+          },
+        },
+      },
+    });
+
+    return createResponse(true, "job created successfully");
   } catch (error) {
     console.log("job creation error : ", error);
     return createResponse(false, "something went wrong while creating job");

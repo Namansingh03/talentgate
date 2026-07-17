@@ -21,15 +21,19 @@ import { ArrowDownNarrowWide } from "lucide-react";
 import { format } from "date-fns";
 import { JobFormValues } from "@/src/features/jobs/schemas/JobsSchema";
 import JobFieldCard from "./JobFieldCard";
+import clsx from "clsx";
 
 const JobAbout = () => {
   const {
     register,
     formState: { errors },
     setValue,
+    watch,
   } = useFormContext<JobFormValues>();
   const [checked, setChecked] = useState(false);
   const [date, setDate] = useState<Date>();
+
+  const expiresAt = watch("expiresAt");
 
   return (
     <JobFieldCard
@@ -50,13 +54,24 @@ const JobAbout = () => {
         </Field>
         <Field>
           <FieldLabel>Remote</FieldLabel>
-          <Checkbox
-            checked={checked}
-            onCheckedChange={() => {
-              setValue("isRemote", checked);
-              setChecked(!checked);
-            }}
-          />
+          <span className="flex flex-row gap-x-2 items-center">
+            <Checkbox
+              checked={checked}
+              onCheckedChange={(value) => {
+                const isChecked = value === true;
+                setChecked(isChecked);
+                setValue("isRemote", isChecked);
+              }}
+            />
+            <p
+              className={clsx(
+                "text-md",
+                checked ? "text-indigo-700" : "text-neutral-500",
+              )}
+            >
+              isRemote
+            </p>
+          </span>
           {errors.isRemote && (
             <FieldError>{errors.isRemote?.message?.toString()}</FieldError>
           )}
@@ -70,7 +85,7 @@ const JobAbout = () => {
                 data-empty={!date}
                 className="w-53 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
               >
-                {date ? format(date, "PPP") : "Pick a date"}
+                {expiresAt ? format(expiresAt, "PPP") : "Pick a date"}
                 <ArrowDownNarrowWide className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
@@ -79,7 +94,15 @@ const JobAbout = () => {
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(date) => {
+                  if (date) {
+                    setDate(date);
+                    setValue("expiresAt", date, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    });
+                  }
+                }}
                 defaultMonth={date}
               />
             </PopoverContent>
@@ -106,7 +129,10 @@ const JobAbout = () => {
           <Input
             placeholder="1,00,000"
             type="number"
-            {...register("salaryMin")}
+            min={1}
+            {...register("salaryMin", {
+              valueAsNumber: true,
+            })}
           />
           {errors.salaryMin && (
             <FieldError>{errors.salaryMin?.message?.toString()}</FieldError>
@@ -117,7 +143,10 @@ const JobAbout = () => {
           <Input
             placeholder="1,60,000"
             type="number"
-            {...register("salaryMax")}
+            min={1}
+            {...register("salaryMax", {
+              valueAsNumber: true,
+            })}
           />
           {errors.salaryMax && (
             <FieldError>{errors.salaryMax?.message?.toString()}</FieldError>
