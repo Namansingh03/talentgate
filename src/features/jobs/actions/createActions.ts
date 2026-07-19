@@ -36,7 +36,7 @@ export async function createJobAction({
       },
     });
 
-    if (isAuthorized?.role !== "ADMIN" && !isAuthorized) {
+    if (isAuthorized?.role === "CANDIDATE" && !isAuthorized) {
       return createResponse(false, "not authorized");
     }
 

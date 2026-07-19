@@ -4,7 +4,12 @@ import clsx from "clsx";
 import React, { useTransition } from "react";
 import { Dot, Edit2, Trash2 } from "lucide-react";
 import { Badge } from "@/src/shared/ui/badge";
-import { JobType, JobCategory, JobStatus } from "@/prisma/generated/enums";
+import {
+  JobType,
+  JobCategory,
+  JobStatus,
+  ExperienceLevel,
+} from "@/prisma/generated/enums";
 import { Button } from "@/src/shared/ui/button";
 import { deleteJob } from "@/src/features/jobs/actions/deleteActions";
 import { toast } from "sonner";
@@ -18,6 +23,7 @@ interface jobViewCardProps {
   type: JobType;
   status: JobStatus;
   location: string;
+  level: ExperienceLevel;
   id: string;
 }
 
@@ -36,12 +42,12 @@ const statusClassName = {
   EXPIRED: "text-red-600",
 };
 
-const JobViewCards = (job: jobViewCardProps) => {
+const JobViewCards = (initialData: jobViewCardProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const deleteJobFn = () => {
     startTransition(async () => {
-      const res = await deleteJob(job.id);
+      const res = await deleteJob(initialData.id);
       if (!res.success) {
         toast.error(res.message, { description: formatDate() });
         return;
@@ -55,26 +61,28 @@ const JobViewCards = (job: jobViewCardProps) => {
     <div className="w-full grid grid-col-8">
       <div className="flex flex-col col-span-2 gap-y-2 items-start ">
         <h1 className="capitalize text-lg text-neutral-700 font-semibold font-sans">
-          {job.title}
+          {initialData.title}
         </h1>
         <p className="text-sm text-neutral-500">
-          {job.createdAt.toDateString()}
+          {initialData.createdAt.toDateString()}
         </p>
       </div>
 
       {/* location */}
-      <h3 className="capitalize text-md font-medium">{job.location}</h3>
+      <h3 className="capitalize text-md font-medium">{initialData.location}</h3>
 
       {/* type */}
-      <Badge className={clsx(typeClassName[job.type])}>{job.type}</Badge>
+      <Badge className={clsx(typeClassName[initialData.type])}>
+        {initialData.type}
+      </Badge>
 
       {/* category */}
-      <h3 className="capitalize text-md font-medium">{job.category}</h3>
+      <h3 className="capitalize text-md font-medium">{initialData.category}</h3>
 
       {/* status */}
-      <p className={clsx(statusClassName[job.status])}>
-        <Dot className={clsx(statusClassName[job.status])} />
-        {job.status}
+      <p className={clsx(statusClassName[initialData.status])}>
+        <Dot className={clsx(statusClassName[initialData.status])} />
+        {initialData.status}
       </p>
 
       {/* actions */}

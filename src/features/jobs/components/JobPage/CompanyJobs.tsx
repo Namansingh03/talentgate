@@ -12,6 +12,13 @@ import {
 } from "@/src/shared/ui/dropdown-menu";
 import { Separator } from "@/src/shared/ui/separator";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  JobTypeEnum,
+  JobCategoryEnum,
+  JobExperienceLevelEnum,
+  JobStatusEnum,
+} from "../../schemas/JobsSchema";
+import JobViewCards from "./JobViewCards";
 
 interface bannerCardsInterface {
   title: string;
@@ -29,7 +36,16 @@ enum Filters {
 
 const filterOptions = Object.values(Filters);
 
-const CompanyJobs = () => {
+interface companyJobsProps {
+  title: string;
+  status: typeof JobStatusEnum;
+  category: typeof JobCategoryEnum;
+  type: typeof JobTypeEnum;
+  level: typeof JobExperienceLevelEnum;
+  location: string;
+}
+
+const CompanyJobs = ({ data }: companyJobsProps) => {
   const [selectedFilter, setSelectedFilter] = useState<Filters>(
     Filters.noFilter,
   );
@@ -124,7 +140,7 @@ const CompanyJobs = () => {
       </div>
 
       <div className="w-full flex flex-col rounded-t-lg border-2 border-neutral-400">
-        <div className="grid grid-cols-7 items-center px-6 py-3 rounded-t-lg bg-slate-100">
+        <div className="grid grid-cols-8 items-center px-6 py-3 rounded-t-lg bg-slate-100">
           <p className="text-sm col-span-2 font-medium capitalize text-neutral-500">
             Job Title
           </p>
@@ -133,6 +149,9 @@ const CompanyJobs = () => {
           </p>
           <p className="text-sm col-span-1 font-medium capitalize text-neutral-500">
             Type
+          </p>
+          <p className="text-sm col-span-1 font-medium capitalize text-neutral-500">
+            level
           </p>
           <p className="text-sm col-span-1 font-medium capitalize text-neutral-500">
             category
@@ -145,7 +164,7 @@ const CompanyJobs = () => {
           </p>
         </div>
 
-        {/* jobs view */}
+        <JobViewCards />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React from "react";
 import AdminNavbar from "@/src/features/company/components/AdminNavbar";
-import { CompanySidebar } from "@/src/features/company/components/CompanySidebar";
+import { CompanySidebar } from "@/src/shared/components/CompanySidebar";
 import { SidebarInset, SidebarProvider } from "@/src/shared/ui/sidebar";
 
 interface CompanyLayoutShellProps {
@@ -30,7 +30,7 @@ const CompanyLayoutShell = ({
           slug={slug}
         />
         <div className="flex flex-1 overflow-hidden">
-          <CompanySidebar slug={slug} image={image} name={name} />
+          <CompanySidebar slug={slug} image={image} name={name} role={role} />
           <SidebarInset>
             <main className="h-full overflow-y-auto p-6">{children}</main>
           </SidebarInset>

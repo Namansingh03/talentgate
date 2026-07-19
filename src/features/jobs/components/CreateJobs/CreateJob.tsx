@@ -108,6 +108,7 @@ const CreateJobPage = ({
       }
 
       toast.success(res.message, { description: formattedDate });
+      methods.reset();
     });
   };
 

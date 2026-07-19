@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
-
 import { authClient } from "@/src/config/auth-client";
 
 import {
@@ -33,9 +32,15 @@ interface CompanySidebarProps {
   slug: string | null;
   image?: string | null;
   name?: string | null;
+  role?: string;
 }
 
-export function CompanySidebar({ slug, image, name }: CompanySidebarProps) {
+export function CompanySidebar({
+  slug,
+  image,
+  name,
+  role,
+}: CompanySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { toggleSidebar, state } = useSidebar();
@@ -44,32 +49,32 @@ export function CompanySidebar({ slug, image, name }: CompanySidebarProps) {
     {
       label: "Dashboard",
       icon: Logs,
-      href: `/${slug}/admin`,
+      href: `/${slug}/${role?.toLowerCase()}`,
     },
     {
       label: "Jobs",
       icon: BriefcaseBusiness,
-      href: `/${slug}/admin/jobs`,
+      href: `/${slug}/jobs`,
     },
     {
       label: "Applications",
       icon: FileText,
-      href: `/${slug}/admin/application`,
+      href: `/${slug}/application`,
     },
     {
       label: "Candidates",
       icon: Users,
-      href: `/${slug}/admin/candidate`,
+      href: `/${slug}/candidate`,
     },
     {
       label: "Company Profile",
       icon: Building2,
-      href: `/${slug}/admin/companyProfile`,
+      href: `/${slug}/companyProfile`,
     },
     {
       label: "Settings",
       icon: Settings,
-      href: `/${slug}/admin/settings`,
+      href: `/${slug}/settings`,
     },
   ];
 
@@ -109,7 +114,7 @@ export function CompanySidebar({ slug, image, name }: CompanySidebarProps) {
       </SidebarHeader>
 
       {/* Navigation */}
-      <SidebarContent className={clsx("px-2 mt-10")}>
+      <SidebarContent className={clsx("px-2 mt-10 text-sm")}>
         <SidebarMenu>
           {sidebarLinks.map((item) => {
             const Icon = item.icon;

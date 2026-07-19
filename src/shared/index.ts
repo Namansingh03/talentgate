@@ -56,6 +56,7 @@ export * from "@/src/shared/components/JobsCard";
 export * from "@/src/shared/components/SelectedSkills";
 export * from "@/src/shared/components/ZodEnumSelector";
 export * from "@/src/shared/components/SkillsOptionCard";
+export * from "@/src/shared/components/CompanySidebar";
 
 // emails
 export * from "@/src/shared/emails/CustomEmailSend";

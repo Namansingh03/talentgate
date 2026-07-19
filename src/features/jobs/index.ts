@@ -2,7 +2,6 @@
 export * from "@/src/features/jobs/actions/createActions";
 export * from "@/src/features/jobs/actions/deleteActions";
 export * from "@/src/features/jobs/actions/getActions";
-// export * from "@/src/features/jobs/actions/updateActions";
 
 // components
 //* create jobs
