@@ -1,44 +1,47 @@
 "use client";
 
-import React, { useTransition } from "react";
-import { Job } from "@/prisma/generated/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FormProvider } from "react-hook-form";
+import clsx from "clsx";
+import { toast } from "sonner";
+import JobAbout from "./JobAbout";
+import { useTransition } from "react";
+import BasicDetails from "./BasicDetails";
+import { RocketIcon } from "lucide-react";
+import { formatDate } from "@/src/shared";
+import SkillsRequired from "./SkillsRequired";
 import {
   JobSchema,
   JobFormValues,
 } from "@/src/features/jobs/schemas/JobsSchema";
-import BasicDetails from "./BasicDetails";
 import { Button } from "@/src/shared/ui/button";
-import clsx from "clsx";
-import { useSidebar } from "@/src/shared/ui/sidebar";
-import JobAbout from "./JobAbout";
+import { Roles } from "@/prisma/generated/enums";
 import RequirementsCard from "./RequirementsCard";
-import SkillsRequired from "./SkillsRequired";
 import AdminDetailsCard from "./AdminDetailsCard";
-import { RocketIcon } from "lucide-react";
+import { useSidebar } from "@/src/shared/ui/sidebar";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, FormProvider } from "react-hook-form";
+import { createJobTypeClient } from "../../types/JobTypes";
 import { createJobAction } from "../../actions/createActions";
-import { toast } from "sonner";
-import { formatDate } from "@/src/shared";
 
 type AdminDetails = {
   name?: string | null;
   email?: string | null;
   image?: string | null;
   username?: string | null;
+  role?: Roles;
 };
 
 type CompanyDetails = {
-  slug: string | null;
-  name: string | null;
-  location: string | null;
+  slug?: string | null;
+  name?: string | null;
+  location?: string | null;
 };
 
 type CreateJobPageProps = {
-  job: Job | null;
+  job: createJobTypeClient | null;
   newJob: boolean;
-  company: CompanyDetails;
+  company?: CompanyDetails;
   admin: AdminDetails;
+  jobId?: string;
 };
 
 const CreateJobPage = ({
@@ -46,6 +49,7 @@ const CreateJobPage = ({
   admin,
   company,
   newJob = true,
+  jobId,
 }: CreateJobPageProps) => {
   const methods = useForm({
     resolver: zodResolver(JobSchema),
@@ -79,8 +83,10 @@ const CreateJobPage = ({
   const onSubmit = (data: JobFormValues) => {
     startTransition(async () => {
       const res = await createJobAction({
+        jobId,
+        newJob,
         adminUsername: admin.username,
-        companySlug: company.slug,
+        companySlug: company?.slug,
         jobDetails: {
           benefits: data.benefits,
           category: data.category,
@@ -151,7 +157,8 @@ const CreateJobPage = ({
               type="submit"
               className="bg-indigo-900 text-xl font-mono p-6 rounded-xl text-white"
             >
-              <span>Publish</span> <RocketIcon className="w-14 h-14 ml-2" />
+              <span>{newJob ? "Publish" : "Update"}</span>{" "}
+              <RocketIcon className="w-14 h-14 ml-2" />
             </Button>
           </section>
         </form>

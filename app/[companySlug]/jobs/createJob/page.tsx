@@ -1,10 +1,5 @@
-"use server";
-
-import { auth } from "@/src/config/auth";
+import { getCompanyDetailsAndUserDetails } from "@/src/features/jobs";
 import CreateJobPage from "@/src/features/jobs/components/CreateJobs/CreateJob";
-import prismaDb from "@/src/server/db/db";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 type PageProps = {
   params: Promise<{
@@ -12,68 +7,43 @@ type PageProps = {
   }>;
 };
 
-const page = async ({ params }: PageProps) => {
+const Page = async ({ params }: PageProps) => {
   const { companySlug } = await params;
 
   if (!companySlug) {
     throw new Error("something went wrong");
   }
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const res = await getCompanyDetailsAndUserDetails(companySlug);
 
-  if (!session?.user) {
-    redirect("/");
+  if (!res.success || !res.data) {
+    return;
   }
 
-  const adminDetails = await prismaDb.user.findFirst({
-    where: {
-      id: session.user.id,
-      role: "ADMIN",
-      memberships: {
-        some: {
-          company: {
-            slug: companySlug,
-          },
-        },
-      },
-    },
-    select: {
-      email: true,
-      image: true,
-      name: true,
-      memberships: {
-        select: {
-          company: {
-            select: {
-              slug: true,
-              name: true,
-              location: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const { companyDetails, userDetails } = res.data;
 
-  if (!adminDetails) {
-    throw new Error("no user found");
+  if (!companyDetails.data || !userDetails.data) {
+    return null;
   }
-
   return (
     <CreateJobPage
+      jobId={undefined}
       job={null}
       admin={{
-        email: session.user.email,
-        image: session.user.image,
-        name: session.user.name,
-        username: session.user.username,
+        email: userDetails.data.email,
+        image: userDetails.data.image,
+        name: userDetails.data.name,
+        username: userDetails.data.username,
+        role: userDetails.data.role,
       }}
-      company={adminDetails.memberships[0].company}
+      company={{
+        location: companyDetails.data.location,
+        name: companyDetails.data.name,
+        slug: companySlug,
+      }}
       newJob={true}
     />
   );
 };
 
-export default page;
+export default Page;

@@ -64,7 +64,12 @@ const UserNavbar = () => {
   return (
     <nav className="w-full px-10 py-3 flex items-center justify-between shadow-md">
       <div className="flex items-center gap-x-24">
-        <h1 className="text-2xl font-bold text-blue-800">Talentgate</h1>
+        <h1
+          className="text-2xl font-bold text-blue-800"
+          onClick={() => router.replace("/")}
+        >
+          Talentgate
+        </h1>
 
         <ul className="flex gap-x-10 text-md">
           {navItems.map((item) => (

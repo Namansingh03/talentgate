@@ -11,10 +11,8 @@ import {
   CardContent,
   CardHeader,
   Separator,
-  Button,
   CardTitle,
 } from "@/src/shared";
-import Link from "next/link";
 
 type AdminDetailType = {
   name?: string | null;
@@ -23,14 +21,14 @@ type AdminDetailType = {
 };
 
 type CompanyDetailsType = {
-  slug: string | null;
-  name: string | null;
-  location: string | null;
+  slug?: string | null;
+  name?: string | null;
+  location?: string | null;
 };
 
 interface AdminCardProps {
   admin: AdminDetailType | null;
-  company: CompanyDetailsType | null;
+  company?: CompanyDetailsType | null;
 }
 
 function getInitials(name?: string | null) {

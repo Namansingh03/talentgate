@@ -1,8 +1,6 @@
-"use server";
-
 import React from "react";
 import CompanyJobs from "@/src/features/jobs/components/JobPage/CompanyJobs";
-import { getJobsPagination } from "@/src/features/jobs";
+import { getJobCardDetails } from "@/src/features/jobs";
 
 type PageProps = {
   params: Promise<{
@@ -10,16 +8,20 @@ type PageProps = {
   }>;
 };
 
-const page = async ({ params }: PageProps) => {
+const Page = async ({ params }: PageProps) => {
   const { companySlug } = await params;
 
-  const res = await getJobsPagination({ companySlug });
+  const res = await getJobCardDetails(companySlug);
 
-  if (!res.success || !res.data) {
+  if (!res.success) {
     throw new Error(res.message);
   }
 
-  return <CompanyJobs />;
+  if (!res.data) {
+    return null;
+  }
+
+  return <CompanyJobs initialData={res.data} />;
 };
 
-export default page;
+export default Page;

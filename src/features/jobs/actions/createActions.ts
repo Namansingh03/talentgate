@@ -2,42 +2,50 @@
 
 import prismaDb from "@/src/server/db/db";
 import { createResponse } from "@/src/shared";
-import { createJobType } from "../types/JobTypes";
+import { createJobTypeServer } from "../types/JobTypes";
+import { getSessionRole } from "@/src/shared/utils/getSessionRole";
 
 type createJobDetails = {
-  jobDetails: createJobType;
+  jobDetails: createJobTypeServer;
   adminUsername?: string | null;
   companySlug?: string | null;
+  newJob: boolean;
+  jobId?: string;
 };
 
 export async function createJobAction({
   jobDetails,
   adminUsername,
   companySlug,
+  newJob,
+  jobId,
 }: createJobDetails) {
   try {
     if (!adminUsername || !companySlug) {
       return createResponse(false, "username not found");
     }
 
-    const isAuthorized = await prismaDb.user.findFirst({
-      where: {
-        username: adminUsername,
-        memberships: {
-          some: {
-            company: {
-              slug: companySlug,
-            },
-          },
-        },
-      },
-      select: {
-        role: true,
-      },
-    });
+    const isAuthorized = await getSessionRole("CANDIDATE");
 
-    if (isAuthorized?.role === "CANDIDATE" && !isAuthorized) {
-      return createResponse(false, "not authorized");
+    if (!isAuthorized.success) {
+      return createResponse(false, isAuthorized.message);
+    }
+
+    if (!newJob) {
+      if (!jobId) {
+        return createResponse(false, "jobId not found");
+      }
+
+      await prismaDb.job.update({
+        where: {
+          id: jobId,
+        },
+        data: {
+          ...jobDetails,
+        },
+      });
+
+      return createResponse(true, "job updated successfully");
     }
 
     await prismaDb.company.update({
