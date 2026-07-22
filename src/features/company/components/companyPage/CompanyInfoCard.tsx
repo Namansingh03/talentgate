@@ -3,10 +3,8 @@
 import React from "react";
 import { sizeLabels } from "./CompanyPageHead";
 import { format } from "date-fns";
-import { CiGlobe, CiShare2 } from "react-icons/ci";
-import { FaShapes, FaUsers } from "react-icons/fa";
-import { FaLocationDot } from "react-icons/fa6";
-import { SlCalender } from "react-icons/sl";
+import clsx from "clsx";
+import { Calendar, Globe, MapPin, Shapes, Share2, Users } from "lucide-react";
 
 interface CompanyInfoCardProps {
   website: string | null;
@@ -32,91 +30,101 @@ const CompanyInfoCard = ({
       <h2 className="text-lg font-bold mb-6 text-on-surface">
         Company Information
       </h2>
-      <div className="space-y-6">
+      <div className={clsx("space-y-6")}>
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-slate-400">
-            <CiGlobe />
+            <Globe className="w-4 h-4" />
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold  uppercase tracking-widest mb-1">
               Website
             </p>
-            <a
-              className="text-sm font-medium text-primary hover:underline"
-              href="#"
-            >
-              {website ?? "company website url"}
-            </a>
+            {website ? (
+              <a
+                className="text-sm text-neutral-600 hover:underline"
+                href={website}
+              >
+                {website}
+              </a>
+            ) : (
+              "company website url"
+            )}
           </div>
         </div>
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-slate-400">
-            <CiShare2 />
+            <Share2 className="w-4 h-4" />
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1">
               LinkedIn
             </p>
-            <a
-              className="text-sm font-medium text-primary hover:underline"
-              href="#"
-            >
-              {linkedin ?? "company linkedin url"}
-            </a>
+            {linkedin ? (
+              <a
+                className="text-sm text-neutral-600 hover:underline"
+                href={linkedin}
+              >
+                {linkedin}
+              </a>
+            ) : (
+              "company linkedin url"
+            )}
           </div>
         </div>
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-slate-400">
-            <FaShapes />
+            <Shapes className="w-4 h-4" />
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1">
               Industry
             </p>
-            <p className="text-sm font-medium text-on-surface">
+            <p className="text-sm text-neutral-600 ">
               {industry ?? "industry"}
             </p>
           </div>
         </div>
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-slate-400">
-            <FaUsers />
+            <Users className="w-4 h-4" />
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1">
               Company Size
             </p>
             <div className="text-sm flex flex-row items-center justify-center gap-x-3 font-medium text-on-surface">
-              <span>{companySize ?? "company size"}</span>
+              <span className="text-sm text-neutral-600 lowercase">
+                {companySize ?? "company size"}
+              </span>
               <span>,</span>
-              <span>{sizeLabels[companySize]}</span>
+              <span className="text-xs text-neutral-600">
+                {sizeLabels[companySize]}
+              </span>
             </div>
           </div>
         </div>
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-slate-400">
-            <FaLocationDot />
+            <MapPin className="w-4 h-4" />
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1">
               Location
             </p>
-            <p className="text-sm font-medium text-on-surface">
+            <p className="text-sm text-neutral-600">
               {location ?? "city, country"}
             </p>
           </div>
         </div>
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-slate-400">
-            <SlCalender />
+            <Calendar className="w-4 h-4" />
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1">
               Joined
             </p>
-            <p className="text-sm font-medium text-on-surface">
-              {formattedCreatedAt}
-            </p>
+            <p className="text-sm text-neutral-600">{formattedCreatedAt}</p>
           </div>
         </div>
       </div>

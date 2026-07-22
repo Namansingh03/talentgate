@@ -23,9 +23,9 @@ export const companySchema = z.object({
       "Slug can only contain lowercase letters, numbers, and hyphens",
     ),
 
-  logo: z.file().nullable(),
+  logo: z.union([z.string().url(), z.file()]).nullable(),
 
-  banner: z.file().nullable(),
+  banner: z.union([z.string().url(), z.file()]).nullable(),
 
   website: z.string().url("Website must be a valid URL"),
 

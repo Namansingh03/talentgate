@@ -1,17 +1,13 @@
 "use server";
 
 import prismaDb from "@/src/server/db/db";
-import { uploadImage } from "@/src/shared/utils/UploadImage";
 import { createResponse } from "@/src/shared/utils/createResponse";
-import { CompanyFormValues } from "@/src/features/company/schemas/companySchema";
 import { getUserIdOrThrow } from "@/src/shared/utils/getUserOrThrow";
 
 export async function getCompanyDetails(slug: string) {
   try {
     if (!slug) {
-      return createResponse(false, "company not found", undefined, {
-        redirectUrl: "/signup",
-      });
+      return createResponse(false, "slug not found", undefined);
     }
 
     const res = await prismaDb.company.findUnique({
@@ -33,11 +29,14 @@ export async function getCompanyDetails(slug: string) {
         website: true,
         slug: true,
         jobs: {
-          where: {
-            status: "ACTIVE",
-          },
-          orderBy: {
-            createdAt: "desc",
+          select: {
+            id: true,
+            title: true,
+            location: true,
+            isRemote: true,
+            salaryMax: true,
+            salaryMin: true,
+            category: true,
           },
         },
       },

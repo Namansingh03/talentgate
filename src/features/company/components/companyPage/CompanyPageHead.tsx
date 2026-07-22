@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Button } from "@/src/shared/ui/button";
 import Image from "next/image";
 import { FiCheckCircle } from "react-icons/fi";
+import { Edit2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export const sizeLabels: Record<string, string> = {
   STARTUP: "10-20 employees",
@@ -24,6 +26,7 @@ interface CompanyPageHeadProps {
   location: string | null;
   website: string | null;
   linkedin: string | null;
+  slug: string;
 }
 
 const CompanyPageHead = ({
@@ -36,7 +39,10 @@ const CompanyPageHead = ({
   name,
   size,
   website,
+  slug,
 }: CompanyPageHeadProps) => {
+  const router = useRouter();
+
   return (
     <section className="mb-12 relative">
       <div className="h-48 w-full rounded-lg  overflow-hidden relative">
@@ -48,6 +54,16 @@ const CompanyPageHead = ({
           src={bannerImage ?? ""}
         />
         <div className="absolute inset-0 bg-linear-to-t from-background to-transparent"></div>
+        <Button
+          size="icon"
+          variant="secondary"
+          className="absolute top-4 right-4 z-20 rounded-full shadow-lg backdrop-blur-sm bg-white/90 hover:bg-white"
+          onClick={() => {
+            router.push(`/${slug}/companyProfile/update`);
+          }}
+        >
+          <Edit2 className="h-4 w-4" />
+        </Button>
       </div>
       <div className="flex flex-col md:flex-row items-end gap-6 -mt-16 px-8 relative z-10">
         <div className="w-32 h-32 rounded-full bg-white p-1 shadow-xl">

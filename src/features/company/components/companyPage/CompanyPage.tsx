@@ -1,12 +1,12 @@
 "use client";
 
-import { MdOutlineWork } from "react-icons/md";
-import { CompanyType } from "@/src/features/company/types/companyPrismaTypes";
-
+import { CompanyType } from "@/src/features/company/types/clientTypes/companyPrismaTypes";
 import TipTapView from "@/src/shared/ui/TipTapView";
 import CompanyPageHead from "./CompanyPageHead";
 import CompanyInfoCard from "./CompanyInfoCard";
 import { FaRegIdBadge } from "react-icons/fa";
+import { Separator } from "@/src/shared";
+import CompanyPageJobCard from "./CompanyPageJobCard";
 
 const CompanyPage = ({ data }: { data: CompanyType }) => {
   const {
@@ -36,6 +36,7 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
     <div className="min-h-screen bg-neutral-100">
       <div className="max-w-8xl mx-auto p-10">
         <CompanyPageHead
+          slug={slug}
           bannerImage={banner}
           industry={industry}
           isVerified={isVerified}
@@ -49,10 +50,11 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-8">
             <div className="bg-surface-container-lowest rounded-lg p-8 shadow-[0px_20px_40px_rgba(77,68,227,0.06)]">
-              <h2 className="text-xl font-bold capitalize mb-6 text-on-surface">
+              <h2 className="text-xl font-bold capitalize text-on-surface">
                 {slug ?? "company slug"}
               </h2>
-              {/* //! here tip tap */}
+              <Separator className="my-2" />
+
               <TipTapView html={output} />
             </div>
             <div className="flex flex-col gap-6">
@@ -61,10 +63,24 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                   Open Roles at {slug ?? "company slug"}
                 </h2>
                 <span className="text-sm font-medium text-primary">
-                  {jobs.length} positions available
+                  {/* {jobs.length} positions available */}
                 </span>
               </div>
-              <div>jobs</div>
+              <div className="flex flex-col gap-y-8">
+                {jobs.map((job) => (
+                  <CompanyPageJobCard
+                    id={job.id}
+                    key={job.id}
+                    title={job.title}
+                    companySlug={slug}
+                    category={job.category}
+                    isRemote={job.isRemote}
+                    location={job.location}
+                    salaryMax={job.salaryMax}
+                    salaryMin={job.salaryMin}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-8">
@@ -82,21 +98,6 @@ const CompanyPage = ({ data }: { data: CompanyType }) => {
                 Company Stats
               </h2>
               <div className="grid grid-cols-1 gap-6">
-                <div className="bg-surface-container-low p-4 rounded-xl flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm">
-                    <span className="material-symbols-outlined">
-                      <MdOutlineWork />
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-black text-on-surface leading-none">
-                      number of jobs available
-                    </p>
-                    <p className="text-md font-medium text-on-surface-variant">
-                      {jobs.length}
-                    </p>
-                  </div>
-                </div>
                 <div className="bg-surface-container-low p-4 rounded-xl flex items-center gap-4">
                   <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-tertiary shadow-sm">
                     <span className="material-symbols-outlined">

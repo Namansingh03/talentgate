@@ -23,7 +23,7 @@ export async function createCompany(data: CompanyFormValues) {
       return createResponse(false, "Company already exist with same slug");
     }
 
-    if (banner) {
+    if (banner && banner instanceof File) {
       const res = await uploadImage({
         file: banner,
         slug: "companyBannerImage",
@@ -37,7 +37,7 @@ export async function createCompany(data: CompanyFormValues) {
       bannerImageUrl = res.url;
     }
 
-    if (logo) {
+    if (logo && logo instanceof File) {
       const res = await uploadImage({
         file: logo,
         slug: "companyLogoImage",

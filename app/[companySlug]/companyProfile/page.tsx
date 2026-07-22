@@ -11,7 +11,7 @@ async function CompanyProfile({
 
   const res = await getCompanyDetails(companySlug);
 
-  if (!res.success && !res.data) {
+  if (!res.success || !res.data) {
     throw new Error(res.message);
   }
 
