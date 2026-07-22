@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import BannerCard from "./BannerCard";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,39 +14,51 @@ import { Separator } from "@/src/shared/ui/separator";
 import { usePathname, useRouter } from "next/navigation";
 import { jobViewCardType } from "../../types/JobTypes";
 
-interface bannerCardsInterface {
-  title: string;
-  value: number;
-  description?: string;
-}
-
-enum Filters {
-  noFilter = "all",
-  active = "active",
-  drafts = "drafts",
-  closed = "closed",
-  expired = "expired",
-}
-
-const filterOptions = Object.values(Filters);
+export const FilterOptions = {
+  JobType: ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERNSHIP", "FREELANCE"],
+  ExperienceLevel: ["INTERN", "JUNIOR", "MID", "SENIOR", "LEAD"],
+  JobStatus: ["DRAFT", "ACTIVE", "CLOSED", "EXPIRED"],
+} as const;
 
 interface initialDataProps {
   initialData: jobViewCardType[];
 }
 
+type FilterKey = keyof typeof FilterOptions | "All";
+
 const CompanyJobs = ({ initialData }: initialDataProps) => {
-  const [selectedFilter, setSelectedFilter] = useState<Filters>(
-    Filters.noFilter,
-  );
+  const [selectedFilterOption, setSelectedFilterOption] =
+    useState<FilterKey>("All");
+  const [selectedFilterValue, setSelectedFilterValue] = useState<string>("All");
   const router = useRouter();
   const pathname = usePathname();
 
-  const bannerCards: bannerCardsInterface[] = [
-    { title: "total jobs", value: 28, description: "+3% this month" },
-    { title: "active postings", value: 10, description: "75% this month" },
-    { title: "total applicants", value: 20, description: "+12% last week" },
-    { title: "average fit score", value: 82, description: "high quality" },
+  const filterKeys: FilterKey[] = [
+    "All",
+    ...(Object.keys(FilterOptions) as (keyof typeof FilterOptions)[]),
   ];
+
+  const filterValues =
+    selectedFilterOption === "All"
+      ? ["All"]
+      : ["All", ...FilterOptions[selectedFilterOption]];
+
+  const filters = {
+    JobType: (job: jobViewCardType, value: string) => job.type === value,
+
+    ExperienceLevel: (job: jobViewCardType, value: string) =>
+      job.level === value,
+
+    JobStatus: (job: jobViewCardType, value: string) => job.status === value,
+  } as const;
+
+  const filteredJobs = initialData.filter((job) => {
+    if (selectedFilterOption === "All" || selectedFilterValue === "All") {
+      return true;
+    }
+
+    return filters[selectedFilterOption](job, selectedFilterValue);
+  });
 
   return (
     <div className="w-full h-auto flex flex-col gap-y-8 p-8">
@@ -71,18 +81,6 @@ const CompanyJobs = ({ initialData }: initialDataProps) => {
         </Button>
       </div>
 
-      {/* banner cards */}
-      <div className="w-full grid grid-cols-4 gap-4">
-        {bannerCards.map((val) => (
-          <BannerCard
-            title={val.title}
-            value={val.value}
-            description={val.description}
-            key={val.title}
-          />
-        ))}
-      </div>
-
       {/* filter options */}
       <div className="w-full flex flex-col gap-y-3">
         <div className="w-full flex flex-row items-center justify-between">
@@ -93,32 +91,60 @@ const CompanyJobs = ({ initialData }: initialDataProps) => {
             </span>
           </p>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs capitalize gap-1.5"
-              >
-                <ListFilter className="size-3.5" />
-                {selectedFilter}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="text-sm text-neutral-700"
-            >
-              {filterOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option}
-                  className="capitalize"
-                  onClick={() => setSelectedFilter(option)}
+          <div className="flex flex-row gap-x-5">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs capitalize gap-1.5"
                 >
-                  {option}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                  <ListFilter className="size-3.5" />
+                  {selectedFilterOption}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="text-sm text-neutral-700"
+              >
+                {filterKeys.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    className="capitalize"
+                    onClick={() => setSelectedFilterOption(option)}
+                  >
+                    {option}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs capitalize gap-1.5"
+                >
+                  <ListFilter className="size-3.5" />
+                  {selectedFilterValue}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="text-sm text-neutral-700"
+              >
+                {filterValues.map((option) => (
+                  <DropdownMenuItem
+                    key={option}
+                    className="capitalize"
+                    onClick={() => setSelectedFilterValue(option)}
+                  >
+                    {option}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         <Separator />
       </div>
@@ -148,7 +174,7 @@ const CompanyJobs = ({ initialData }: initialDataProps) => {
           </p>
         </div>
 
-        <JobViewCards jobs={initialData} />
+        <JobViewCards jobs={filteredJobs} />
       </div>
     </div>
   );
