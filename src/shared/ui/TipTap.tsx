@@ -54,12 +54,7 @@ const Tiptap = ({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
       Highlight.configure({ multicolor: true }),
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-      }),
       Image.configure({
         inline: false,
         allowBase64: false,
@@ -136,7 +131,7 @@ function LinkComponent({
 
   return (
     <Popover open={isLinkPopoverOpen} onOpenChange={setIsLinkPopoverOpen}>
-      <PopoverTrigger>{children}</PopoverTrigger>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
       {/* // this is the main */}
       {/* trigger point */}
       <PopoverContent className="w-80 p-4">

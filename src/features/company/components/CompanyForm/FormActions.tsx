@@ -7,9 +7,10 @@ import { Button } from "@/src/shared/ui/button";
 interface FormActionsProps {
   isPending: boolean;
   onCancel: () => void;
+  type: "create" | "update";
 }
 
-export function FormActions({ isPending, onCancel }: FormActionsProps) {
+export function FormActions({ isPending, onCancel, type }: FormActionsProps) {
   return (
     <div className="flex items-center justify-end gap-3 pb-10">
       <Button
@@ -28,10 +29,12 @@ export function FormActions({ isPending, onCancel }: FormActionsProps) {
         {isPending ? (
           <span className="flex items-center gap-2">
             <Loader2Icon className="w-4 h-4 animate-spin" />
-            Creating…
+            {type === "create" ? "creating..." : "updating..."}
           </span>
+        ) : type === "create" ? (
+          "create"
         ) : (
-          "Create company →"
+          "update"
         )}
       </Button>
     </div>

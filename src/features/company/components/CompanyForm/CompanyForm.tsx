@@ -18,6 +18,7 @@ import { DescriptionSection } from "./DescriptionSection";
 import { FormActions } from "./FormActions";
 import { useCompanyImages } from "@/src/features/company/hooks/useCompanyImages";
 import { CompanyFormType } from "../../types/clientTypes/companyPrismaTypes";
+import { updateCompanyProfile } from "@/src/features/admin/actions/updateActions";
 
 interface CompanyFormProps {
   companyDetails?: CompanyFormType | null;
@@ -27,6 +28,7 @@ interface CompanyFormProps {
 const CompanyForm = ({ companyDetails, type = "create" }: CompanyFormProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const formattedDate = formatDate();
 
   const {
     register,
@@ -60,21 +62,70 @@ const CompanyForm = ({ companyDetails, type = "create" }: CompanyFormProps) => {
     handleFileChange,
     handleBannerChange,
     handleCropSave,
-  } = useCompanyImages(setValue);
+  } = useCompanyImages(
+    setValue,
+    companyDetails?.logo ?? "",
+    companyDetails?.banner ?? "",
+  );
 
   const onSubmit = (data: CompanyFormValues) => {
     startTransition(async () => {
-      const res = await createCompany(data);
-      if (!res.success) {
-        toast.error(res.message, { description: formatDate() });
-        if (res.redirectUrl) router.push(res.redirectUrl);
-        return;
+      try {
+        if (type === "update") {
+          if (!companyDetails?.slug) {
+            toast.error("Company information is missing.");
+            return;
+          }
+
+          const res = await updateCompanyProfile({
+            data,
+            companySlug: companyDetails.slug,
+          });
+
+          if (!res.success) {
+            toast.error(res.message, { description: formattedDate });
+
+            if (res.redirectUrl) {
+              router.push(res.redirectUrl);
+            }
+
+            return;
+          }
+
+          toast.success("Company profile updated successfully", {
+            description: formattedDate,
+          });
+
+          router.push(`/${companyDetails.slug}/companyProfile`);
+          return;
+        }
+
+        const res = await createCompany(data);
+
+        if (!res.success) {
+          toast.error(res.message, { description: formattedDate });
+
+          if (res.redirectUrl) {
+            router.push(res.redirectUrl);
+          }
+
+          return;
+        }
+
+        toast.success(res.message, {
+          description: formattedDate,
+        });
+
+        router.push(`/${data.slug}/admin`);
+      } catch (error) {
+        console.error(error);
+
+        toast.error("Something went wrong.", {
+          description: formattedDate,
+        });
       }
-      toast.success(res.message, { description: formatDate() });
-      router.push(`/${data.slug}/admin`);
     });
   };
-
   return (
     <div className="w-5xl max-w-6xl p-8 rounded-lg bg-white  ">
       {/* Page title */}
@@ -94,8 +145,8 @@ const CompanyForm = ({ companyDetails, type = "create" }: CompanyFormProps) => {
         <BrandingSection
           register={register}
           errors={errors}
-          logoImage={logoImage ?? companyDetails?.logo}
-          bannerImage={bannerImage ?? companyDetails?.banner}
+          logoImage={logoImage}
+          bannerImage={bannerImage}
           onLogoChange={handleFileChange}
           onBannerChange={handleBannerChange}
         />
@@ -111,7 +162,11 @@ const CompanyForm = ({ companyDetails, type = "create" }: CompanyFormProps) => {
           content={companyDetails?.description}
         />
 
-        <FormActions isPending={isPending} onCancel={() => router.back()} />
+        <FormActions
+          isPending={isPending}
+          onCancel={() => router.back()}
+          type={type}
+        />
       </form>
 
       <ImageCropDialog

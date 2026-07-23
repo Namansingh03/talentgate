@@ -17,6 +17,7 @@ export * from "@/src/features/company/components/CompanyForm/CompanyForm";
 export * from "@/src/features/company/components/CompanyForm/DescriptionSection";
 export * from "@/src/features/company/components/CompanyForm/FormActions";
 export * from "@/src/features/company/components/CompanyForm/SectionHeading";
+export * from "@/src/features/company/components/CompanySidebar";
 
 // schemas
 export * from "@/src/features/company/schemas/companySchema";

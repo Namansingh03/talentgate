@@ -28,6 +28,7 @@ model User {
   savedJobs        SavedJob[]
   accounts         Account[]
   sessions         Session[]
+  notifications    Notification[]
 
   @@map("user")
 }
@@ -134,6 +135,23 @@ model RecruiterUpgradeRequest {
   @@unique([userId, companyId, status])
   @@index([userId])
   @@index([companyId])
+}
+
+model Notification {
+  id      String @id @default(cuid())
+  userId  String
+  title   String
+  message String
+
+  type NotificationType
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
 }
 
 model Job {
@@ -312,4 +330,10 @@ enum JobStatus {
   ACTIVE
   CLOSED
   EXPIRED
+}
+
+enum NotificationType {
+  RECRUITER_REQUEST
+  REQUEST_APPROVED
+  REQUEST_REJECTED
 }

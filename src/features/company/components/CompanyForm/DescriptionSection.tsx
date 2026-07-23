@@ -5,10 +5,11 @@ import { UseFormSetValue } from "react-hook-form";
 import { CompanyFormValues } from "@/src/features/company/schemas/companySchema";
 import TiptapEditor from "@/src/shared/ui/TipTap";
 import { SectionHeading } from "./SectionHeading";
+import { JsonValue } from "@prisma/client/runtime/client";
 
 interface DescriptionSectionProps {
   setValue: UseFormSetValue<CompanyFormValues>;
-  content?: string;
+  content?: JsonValue;
 }
 
 export function DescriptionSection({
@@ -28,7 +29,7 @@ export function DescriptionSection({
             shouldValidate: true,
           })
         }
-        content={content}
+        content={content?.toString()}
       />
     </div>
   );

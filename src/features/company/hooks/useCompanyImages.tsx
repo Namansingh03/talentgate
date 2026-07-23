@@ -5,8 +5,8 @@ import { UseFormSetValue } from "react-hook-form";
 import { CompanyFormValues } from "@/src/features/company/schemas/companySchema";
 
 interface UseCompanyImagesReturn {
-  logoImage: string;
-  bannerImage: string;
+  logoImage: string | null;
+  bannerImage: string | null;
   cropImage: string | null;
   cropOpen: boolean;
   setCropOpen: (open: boolean) => void;

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { sizeLabels } from "./CompanyPageHead";
-import { format } from "date-fns";
 import clsx from "clsx";
 import { Calendar, Globe, MapPin, Shapes, Share2, Users } from "lucide-react";
 
@@ -23,8 +22,6 @@ const CompanyInfoCard = ({
   location,
   website,
 }: CompanyInfoCardProps) => {
-  const formattedCreatedAt = format(joined, "dd MMM yyyy : hh/mm/");
-
   return (
     <div className="bg-surface-container-lowest rounded-lg p-8 shadow-[0px_20px_40px_rgba(77,68,227,0.06)]">
       <h2 className="text-lg font-bold mb-6 text-on-surface">
@@ -124,7 +121,7 @@ const CompanyInfoCard = ({
             <p className="text-xs font-bold uppercase tracking-widest mb-1">
               Joined
             </p>
-            <p className="text-sm text-neutral-600">{formattedCreatedAt}</p>
+            <p className="text-sm text-neutral-600">{joined.toDateString()}</p>
           </div>
         </div>
       </div>

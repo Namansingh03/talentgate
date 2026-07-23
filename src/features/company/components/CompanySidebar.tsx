@@ -23,7 +23,7 @@ import {
   FileText,
   LogOutIcon,
   Logs,
-  Settings,
+  // Settings,
   User2Icon,
   Users,
 } from "lucide-react";
@@ -59,7 +59,7 @@ export function CompanySidebar({
     {
       label: "Applications",
       icon: FileText,
-      href: `/${slug}/application`,
+      href: `/${slug}/admin/applications`,
     },
     {
       label: "Candidates",
@@ -71,11 +71,11 @@ export function CompanySidebar({
       icon: Building2,
       href: `/${slug}/companyProfile`,
     },
-    {
-      label: "Settings",
-      icon: Settings,
-      href: `/${slug}/settings`,
-    },
+    // {
+    //   label: "Settings",
+    //   icon: Settings,
+    //   href: `/${slug}/settings`,
+    // },
   ];
 
   return (

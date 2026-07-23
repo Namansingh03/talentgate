@@ -2,7 +2,7 @@
 
 import React from "react";
 import AdminNavbar from "@/src/features/company/components/AdminNavbar";
-import { CompanySidebar } from "@/src/shared/components/CompanySidebar";
+import { CompanySidebar } from "@/src/features/company/components/CompanySidebar";
 import { SidebarInset, SidebarProvider } from "@/src/shared/ui/sidebar";
 
 interface CompanyLayoutShellProps {

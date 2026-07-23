@@ -2,9 +2,7 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
-import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 
 import "@/src/shared/components/tiptap-node/blockquote-node/blockquote-node.scss";
@@ -16,15 +14,7 @@ interface RichTextProps {
 export default function TipTapView({ html }: RichTextProps) {
   const editor = useEditor({
     editable: false,
-    extensions: [
-      StarterKit,
-      Underline,
-      Highlight.configure({ multicolor: true }),
-      Link.configure({
-        openOnClick: true,
-      }),
-      Image,
-    ],
+    extensions: [StarterKit, Highlight.configure({ multicolor: true }), Image],
     content: html,
     immediatelyRender: false,
   });

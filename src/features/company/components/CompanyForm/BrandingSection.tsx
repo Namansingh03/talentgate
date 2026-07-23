@@ -10,8 +10,8 @@ import { SectionHeading } from "./SectionHeading";
 interface BrandingSectionProps {
   register: UseFormRegister<CompanyFormValues>;
   errors: FieldErrors<CompanyFormValues>;
-  logoImage: string;
-  bannerImage: string;
+  logoImage: string | null;
+  bannerImage: string | null;
   onLogoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBannerChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -24,6 +24,8 @@ export function BrandingSection({
   onLogoChange,
   onBannerChange,
 }: BrandingSectionProps) {
+  console.log("banner image : ", bannerImage, "logo image : ", logoImage);
+
   return (
     <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-7">
       <SectionHeading
