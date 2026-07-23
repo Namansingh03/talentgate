@@ -10,7 +10,7 @@ import { CompanyFormValues } from "../../company";
 
 interface UpdateCompanyProfileProps {
   data: CompanyFormValues;
-  companySlug: string;
+  companySlug?: string;
 }
 
 export async function updateCompanyProfile({
