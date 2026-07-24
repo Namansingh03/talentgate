@@ -133,7 +133,7 @@ export function CompanySidebar({
                   className={clsx(
                     "px-3 py-2",
                     pathname === item.href
-                      ? "bg-blue-200 text-indigo-600 border-r-4 border-indigo-900 rounded-lg"
+                      ? "bg-blue-300 text-indigo-600 border-r-4 border-indigo-900 rounded-lg"
                       : " text-neutral-700 text-md",
                   )}
                 >
@@ -146,7 +146,7 @@ export function CompanySidebar({
                           : "text-neutral-600",
                       )}
                     />
-                    <span>{item.label}</span>
+                    <span className={""}>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

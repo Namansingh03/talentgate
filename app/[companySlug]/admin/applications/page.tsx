@@ -1,7 +1,8 @@
+import ApplicationsRequestsPage from "@/src/features/company/components/ApplicationsRequests/ApplicationsRequestsPage";
 import React from "react";
 
 const Page = async () => {
-  return <div>application</div>;
+  return <ApplicationsRequestsPage />;
 };
 
 export default Page;
